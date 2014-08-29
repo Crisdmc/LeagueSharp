@@ -48,10 +48,11 @@ namespace LazyYi
                 Config.AddSubMenu(new Menu("Combo", "combo"));
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useWon", "Use W on %")).SetValue(new Slider(35, 100, 0));
+                Config.SubMenu("combo").AddItem(new MenuItem("useWon", "Use W on %")).SetValue(new Slider(40, 100, 0));
                 Config.SubMenu("combo").AddItem(new MenuItem("shortW", "Short W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(true);
 
                 // Lane Clear
                 Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
@@ -76,8 +77,8 @@ namespace LazyYi
 
             if (Master.orbwalker.ActiveMode.ToString() == "Combo")
             {
-                // Se tem alguém no range do Q, pega target
-                if(Master.Q.IsReady())
+                // Se tem alguém no range do Q e estiver configurado para usar no combo, pega target
+                if (Master.Q.IsReady() && Config.Item("useQ").GetValue<bool>())
                 {
                     target = SimpleTs.GetTarget(Master.Q.Range, SimpleTs.DamageType.Physical);
                 }
@@ -94,11 +95,12 @@ namespace LazyYi
 
             if (Master.orbwalker.ActiveMode.ToString() == "Mixed")
             {
-                
+                Master.orbwalker.SetMovement(true);
             }
 
             if (Master.orbwalker.ActiveMode.ToString() == "LaneClear")
             {
+                Master.orbwalker.SetMovement(true);
                 Master.doLaneClear();
             }
         }

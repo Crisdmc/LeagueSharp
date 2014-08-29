@@ -67,7 +67,14 @@ namespace LazyYi
             // verifica se target é válido
             if (!target.IsValidTarget())
             {
+                orbwalker.SetMovement(true);
                 return;
+            }
+
+            // Se o orbwalker lock está ativado
+            if (Script.Config.Item("orbLock").GetValue<bool>())
+            {
+                orbwalker.SetMovement(false);
             }
 
             // Se o Q está configurado para usar
