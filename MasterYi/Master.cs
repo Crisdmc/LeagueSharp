@@ -13,30 +13,39 @@ namespace LazyYi
 {
     class Master
     {
-        public static Obj_AI_Hero Player = ObjectManager.Player;
+        private Obj_AI_Hero player = ObjectManager.Player;
+        private Spellbook sBook;
+        public Orbwalking.Orbwalker orbwalker;
+        private Obj_AI_Hero target;
 
-        public static Spellbook sBook = Player.Spellbook;
+        private SpellDataInst Qdata;
+        private SpellDataInst Wdata;
+        private SpellDataInst Edata;
+        private SpellDataInst Rdata;
+        private Spell Q = new Spell(SpellSlot.Q, 600);
+        private Spell W = new Spell(SpellSlot.W, 0);
+        private Spell E = new Spell(SpellSlot.E, 0);
+        private Spell R = new Spell(SpellSlot.R, 0);
 
-        public static Orbwalking.Orbwalker orbwalker;
+        private void load()
+        {
+            sBook = player.Spellbook;
+            Qdata = sBook.GetSpell(SpellSlot.Q);
+            Wdata = sBook.GetSpell(SpellSlot.W);
+            Edata = sBook.GetSpell(SpellSlot.E);
+            Rdata = sBook.GetSpell(SpellSlot.R);
+        }
 
-        public static SpellDataInst Qdata = sBook.GetSpell(SpellSlot.Q);
-        public static SpellDataInst Wdata = sBook.GetSpell(SpellSlot.W);
-        public static SpellDataInst Edata = sBook.GetSpell(SpellSlot.E);
-        public static SpellDataInst Rdata = sBook.GetSpell(SpellSlot.R);
-        public static Spell Q = new Spell(SpellSlot.Q, 600);
-        public static Spell W = new Spell(SpellSlot.W, 0);
-        public static Spell E = new Spell(SpellSlot.E, 0);
-        public static Spell R = new Spell(SpellSlot.R, 0);
-
-        public static void doLaneClear()
+        public void laneClear(bool useQLC)
         {
             // Verifica se o Q está pronto e está configurado para usar
-            if (Master.Q.IsReady() && Script.Config.Item("useQLC").GetValue<bool>())
+            if (Q.IsReady() && useQLC)
             {
                 // Obtem todos os minions do time inimigo, no range do Q
-                var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Master.Q.Range, MinionTypes.All, MinionTeam.Enemy);
+                var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.Enemy);
                 var closestMinion = new Obj_AI_Base();
                 
+                // Se tiver encontrado algum minion no range
                 if (allMinions.Count() > 0)
                 {
                     foreach (Obj_AI_Base minion in allMinions)
@@ -45,7 +54,7 @@ namespace LazyYi
                         {
                             closestMinion = minion;
                         }
-                        else if (Master.Player.Distance(minion.Position) < Master.Player.Distance(closestMinion.Position))
+                        else if (player.Distance(minion.Position) < player.Distance(closestMinion.Position))
                         {
                             closestMinion = minion;
                         }
@@ -62,8 +71,10 @@ namespace LazyYi
             }
         }
 
-        public static void doCombo(Obj_AI_Hero target)
+        public void combo(Menu comboMenu)
         {
+            obtainTarget(comboMenu.Item("useQ").GetValue<bool>());
+           
             // verifica se target é válido
             if (!target.IsValidTarget())
             {
@@ -72,37 +83,37 @@ namespace LazyYi
             }
 
             // Se o orbwalker lock está ativado
-            if (Script.Config.Item("orbLock").GetValue<bool>())
+            if (comboMenu.Item("orbLock").GetValue<bool>())
             {
                 orbwalker.SetMovement(false);
             }
 
             // Se o Q está configurado para usar
-            if (Script.Config.Item("useQ").GetValue<bool>())
+            if (comboMenu.Item("useQ").GetValue<bool>())
             {
                 useQ(target);
             }
 
             // Se o E está configurado para usar
-            if (Script.Config.Item("useE").GetValue<bool>())
+            if (comboMenu.Item("useE").GetValue<bool>())
             {
                 useE(target);
             }
 
             // Se o W está configurado para usar
-            if (Script.Config.Item("useW").GetValue<bool>())
+            if (comboMenu.Item("useW").GetValue<bool>())
             {
-                useW(target);
+                useW(target, comboMenu);
             }
 
             // Se o R está configurado para usar
-            if (Script.Config.Item("useR").GetValue<bool>())
+            if (comboMenu.Item("useR").GetValue<bool>())
             {
                 useR(target);
             }
         }
 
-        public static void useQ(Obj_AI_Hero target)
+        private void useQ(Obj_AI_Hero target)
         {
             // Se o que não pode ser usado
             if (!Q.IsReady())
@@ -114,46 +125,7 @@ namespace LazyYi
             Q.Cast(target);
         }
 
-        public static void useR(Obj_AI_Hero target)
-        {
-            // Se o R não está disponível
-            if (!R.IsReady())
-            {
-                return;
-            }
-
-            float trueAARange = Player.AttackRange + target.BoundingRadius;
-
-            // Distancia até o target
-            float dist = Player.Distance(target);
-
-            if (dist < trueAARange)
-            {
-                R.Cast();
-            }
-        }
-
-        public static void useE(Obj_AI_Hero target)
-        {
-            // Se o E não está disponível
-            if (!E.IsReady())
-            {
-                return;
-            }
-
-            float trueAARange = Player.AttackRange + target.BoundingRadius;
-
-            // Distancia até o target
-            float dist = Player.Distance(target);
-            
-            if (dist < trueAARange) 
-            {
-                E.Cast();
-            }
-
-        }
-
-        public static void useW(Obj_AI_Hero target)
+        private void useW(Obj_AI_Hero target, Menu comboMenu)
         {
             // Se o W não está disponível
             if (!W.IsReady())
@@ -162,29 +134,107 @@ namespace LazyYi
             }
 
             // Verifica se HP está abaixo do configurado para usar o W
-            if (myHPPercent() < Script.Config.Item("useWon").GetValue<Slider>().Value)
+
+            if (myHPPercent() < comboMenu.Item("useWon").GetValue<Slider>().Value)
             {
                 W.Cast();
 
-                if (Script.Config.Item("shortW").GetValue<bool>())
+                if (comboMenu.Item("shortW").GetValue<bool>())
                 {
-                    float trueAARange = Player.AttackRange + target.BoundingRadius;
+                    float trueAARange = player.AttackRange + target.BoundingRadius;
 
-                    if (Script.Config.Item("shortW").GetValue<bool>() && Q.IsReady() && target.IsValidTarget() && Script.Config.Item("useQ").GetValue<bool>())
+                    if (Q.IsReady() && target.IsValidTarget() && comboMenu.Item("useQ").GetValue<bool>())
                     {
                         Q.Cast(target);
                     }
-                    else if (Player.Distance(target) <= trueAARange)
+                    else if (player.Distance(target) <= trueAARange)
                     {
-                        Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                        player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                     }
                 }
             }
         }
 
-        public static int myHPPercent()
+        private void useE(Obj_AI_Hero target)
         {
-            return (int)((Player.Health / Player.MaxHealth) * 100);
+            // Se o E não está disponível
+            if (!E.IsReady())
+            {
+                return;
+            }
+
+            float trueAARange = player.AttackRange + target.BoundingRadius;
+
+            // Distancia até o target
+            float dist = player.Distance(target);
+
+            if (dist < trueAARange)
+            {
+                E.Cast();
+            }
+
+        }
+
+        private void useR(Obj_AI_Hero target)
+        {
+            // Se o R não está disponível
+            if (!R.IsReady())
+            {
+                return;
+            }
+
+            float trueAARange = player.AttackRange + target.BoundingRadius;
+
+            // Distancia até o target
+            float dist = player.Distance(target);
+
+            if (dist < trueAARange)
+            {
+                R.Cast();
+            }
+        }
+
+        private Obj_AI_Hero obtainTarget(bool useQ)
+        {
+            // Se tem alguém no range do Q e estiver configurado para usar no combo, pega target
+            if (Q.IsReady() && useQ)
+            {
+                target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Physical);
+            }
+            // Pega target pelo range básico
+            else
+            {
+                target = SimpleTs.GetTarget(250, SimpleTs.DamageType.Physical); //125
+            }
+
+            return target;
+        }
+
+        private int myHPPercent()
+        {
+            return (int)((player.Health / player.MaxHealth) * 100);
+        }
+
+        public Spell getSpell(String spellKey)
+        {
+            switch (spellKey)
+            {
+                case "Q":
+                    return Q;
+                case "W":
+                    return W;
+                case "E":
+                    return E;
+                case "R":
+                    return R;
+                default:
+                    return Q;
+            }
+        }
+
+        public Obj_AI_Hero getPlayer()
+        {
+            return player;
         }
     }
 }

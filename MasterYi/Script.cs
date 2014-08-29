@@ -14,20 +14,19 @@ namespace LazyYi
     internal class Script
     {
 
-        public const string CharName = "MasterYi";
+        private const string CharName = "MasterYi";
 
-        public static Menu Config;
+        private Menu Config;
 
-        public static Obj_AI_Hero target;
+        private Master masterYi = new Master();
 
         public Script()
         {
-            /* CallBAcks */
+            /* CallBacks */
             CustomEvents.Game.OnGameLoad += onLoad;
-
         }
 
-        private static void onLoad(EventArgs args)
+        private void onLoad(EventArgs args)
         {
 
             Game.PrintChat("LazyYi - by Crisdmc");
@@ -37,7 +36,7 @@ namespace LazyYi
                 Config = new Menu("LazyYi", "MasterYi", true);
                 // OrbWalker
                 Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
-                Master.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
+                masterYi.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
                 
                 // Target Selector
                 var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
@@ -58,6 +57,10 @@ namespace LazyYi
                 Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
                 Config.SubMenu("laneclear").AddItem(new MenuItem("useQLC", "Use Q")).SetValue(true);
 
+                // Draw
+                Config.AddSubMenu(new Menu("Draw", "draw"));
+                Config.SubMenu("draw").AddItem(new MenuItem("drawQ", "Draw Q")).SetValue(true);
+
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
                 Game.OnGameUpdate += OnGameUpdate;
@@ -72,42 +75,35 @@ namespace LazyYi
 
         }
 
-        private static void OnGameUpdate(EventArgs args)
+        private void OnGameUpdate(EventArgs args)
         {
 
-            if (Master.orbwalker.ActiveMode.ToString() == "Combo")
+            if (masterYi.orbwalker.ActiveMode.ToString() == "Combo")
             {
-                // Se tem alguém no range do Q e estiver configurado para usar no combo, pega target
-                if (Master.Q.IsReady() && Config.Item("useQ").GetValue<bool>())
-                {
-                    target = SimpleTs.GetTarget(Master.Q.Range, SimpleTs.DamageType.Physical);
-                }
-                    
-                // Pega target pelo range básico
-                else
-                {
-                    target = SimpleTs.GetTarget(250, SimpleTs.DamageType.Physical); //125
-                }
-                    
-
-                Master.doCombo(target);
+                masterYi.combo(Config.SubMenu("combo")); 
             }
 
-            if (Master.orbwalker.ActiveMode.ToString() == "Mixed")
+            if (masterYi.orbwalker.ActiveMode.ToString() == "Mixed")
             {
-                Master.orbwalker.SetMovement(true);
+                masterYi.orbwalker.SetMovement(true);
             }
 
-            if (Master.orbwalker.ActiveMode.ToString() == "LaneClear")
+            if (masterYi.orbwalker.ActiveMode.ToString() == "LaneClear")
             {
-                Master.orbwalker.SetMovement(true);
-                Master.doLaneClear();
+                masterYi.orbwalker.SetMovement(true);
+                masterYi.laneClear(Config.Item("useQLC").GetValue<bool>());
             }
         }
 
-        private static void onDraw(EventArgs args)
+        private void onDraw(EventArgs args)
         {
-            Drawing.DrawCircle(Master.Player.Position, Master.Q.Range, Color.Blue);
+            if (Config.Item("drawQ").GetValue<bool>())
+            {
+                Obj_AI_Hero player = masterYi.getPlayer();
+                Spell spellQ = masterYi.getSpell("Q");
+
+                Drawing.DrawCircle(player.Position, spellQ.Range, Color.Blue);
+            }
         }
 
         private static void OnCreateObject(GameObject sender, EventArgs args)
