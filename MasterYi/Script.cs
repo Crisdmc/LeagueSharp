@@ -49,6 +49,7 @@ namespace LazyYi
                 Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useWon", "Use W on %")).SetValue(new Slider(35, 100, 0));
+                Config.SubMenu("combo").AddItem(new MenuItem("shortW", "Short W")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
 

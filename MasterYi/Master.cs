@@ -158,6 +158,20 @@ namespace LazyYi
             if (myHPPercent() < Script.Config.Item("useWon").GetValue<Slider>().Value)
             {
                 W.Cast();
+
+                if (Script.Config.Item("shortW").GetValue<bool>())
+                {
+                    float trueAARange = Player.AttackRange + target.BoundingRadius;
+
+                    if (Script.Config.Item("shortW").GetValue<bool>() && Q.IsReady() && target.IsValidTarget() && Script.Config.Item("useQ").GetValue<bool>())
+                    {
+                        Q.Cast(target);
+                    }
+                    else if (Player.Distance(target) <= trueAARange)
+                    {
+                        Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                    }
+                }
             }
         }
 
