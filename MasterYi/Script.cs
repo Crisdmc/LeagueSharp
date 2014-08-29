@@ -98,23 +98,7 @@ namespace LazyYi
 
             if (Master.orbwalker.ActiveMode.ToString() == "LaneClear")
             {
-                // Verifica se o Q está pronto
-                if (Master.Q.IsReady())
-                {
-                    // Obtem todos os minions do time inimigo, no range do Q
-                    var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Master.Q.Range, MinionTypes.All, MinionTeam.Enemy);
-                    var closestMinion = new Obj_AI_Base();
-
-                    foreach (Obj_AI_Base minion in allMinions)
-                    {
-                        if (Master.Player.Distance(minion.Position) < Master.Player.Distance(closestMinion.Position))
-                        {
-                            closestMinion = minion;
-                        }
-                    }
-
-                    Master.doLaneClear(closestMinion);
-                }
+                Master.doLaneClear();
             }
         }
 

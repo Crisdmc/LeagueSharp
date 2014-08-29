@@ -28,17 +28,37 @@ namespace LazyYi
         public static Spell E = new Spell(SpellSlot.E, 0);
         public static Spell R = new Spell(SpellSlot.R, 0);
 
-        public static void doLaneClear(Obj_AI_Base minion)
+        public static void doLaneClear()
         {
-            if (!minion.IsValidTarget())
+            // Verifica se o Q está pronto e está configurado para usar
+            if (Master.Q.IsReady() && Script.Config.Item("useQLC").GetValue<bool>())
             {
-                return;
-            }
-
-            // Se o Q está configurado para usar
-            if (Script.Config.Item("useQLC").GetValue<bool>())
-            {
-                Q.Cast(minion);
+                // Obtem todos os minions do time inimigo, no range do Q
+                var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Master.Q.Range, MinionTypes.All, MinionTeam.Enemy);
+                var closestMinion = new Obj_AI_Base();
+                
+                if (allMinions.Count() > 0)
+                {
+                    foreach (Obj_AI_Base minion in allMinions)
+                    {
+                        if (allMinions.IndexOf(minion) == 0)
+                        {
+                            closestMinion = minion;
+                        }
+                        else if (Master.Player.Distance(minion.Position) < Master.Player.Distance(closestMinion.Position))
+                        {
+                            closestMinion = minion;
+                        }
+                    }
+                    if (!closestMinion.IsValidTarget())
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Q.Cast(closestMinion);
+                    }
+                }
             }
         }
 
