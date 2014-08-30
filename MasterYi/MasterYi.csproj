@@ -7,8 +7,8 @@
     <ProjectGuid>{7EEFEA0F-DD16-4C82-877E-385E936F9ACC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LazyYi</RootNamespace>
-    <AssemblyName>LazyYi</AssemblyName>
+    <RootNamespace>MasterYi</RootNamespace>
+    <AssemblyName>MasterYi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PreBuildEvent />
@@ -65,6 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="entity\JungleCamp.cs" />
+    <Compile Include="entity\JungleMinion.cs" />
+    <Compile Include="Jungle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Master.cs" />

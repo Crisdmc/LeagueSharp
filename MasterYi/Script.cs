@@ -9,7 +9,7 @@ using LeagueSharp.Common;
 using System.Drawing;
 
 
-namespace LazyYi
+namespace MasterYi
 {
     internal class Script
     {
@@ -18,7 +18,8 @@ namespace LazyYi
 
         private Menu Config;
 
-        private Master masterYi = new Master();
+        private Master masterYi;
+        private Jungle jg;
 
         public Script()
         {
@@ -28,12 +29,13 @@ namespace LazyYi
 
         private void onLoad(EventArgs args)
         {
-
-            Game.PrintChat("LazyYi - by Crisdmc");
+            masterYi = new Master();
+            jg = new Jungle();
+            Game.PrintChat("MasterYi - by Crisdmc");
 
             try
             {
-                Config = new Menu("LazyYi", "MasterYi", true);
+                Config = new Menu("MasterYi", "MasterYi", true);
                 // OrbWalker
                 Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
                 masterYi.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
@@ -52,6 +54,7 @@ namespace LazyYi
                 Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
                 Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(true);
+                Config.SubMenu("combo").AddItem(new MenuItem("usePacket", "Use Packet")).SetValue(false);
 
                 // Lane Clear
                 Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
@@ -61,12 +64,13 @@ namespace LazyYi
                 Config.AddSubMenu(new Menu("Draw", "draw"));
                 Config.SubMenu("draw").AddItem(new MenuItem("drawQ", "Draw Q")).SetValue(true);
 
+                // Jungle Slack
+                Config.AddSubMenu(new Menu("Jungle Slack", "slack"));
+                Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(false);
+
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
                 Game.OnGameUpdate += OnGameUpdate;
-
-                GameObject.OnCreate += OnCreateObject;
-                GameObject.OnDelete += OnDeleteObject;
             }
             catch
             {
@@ -93,25 +97,21 @@ namespace LazyYi
                 masterYi.orbwalker.SetMovement(true);
                 masterYi.laneClear(Config.Item("useQLC").GetValue<bool>());
             }
+
+            if (Config.Item("activeSlack").GetValue<bool>())
+            {
+                //Game.PrintChat("<font color='#F7A100'>Slack on development phase!</font>");
+                masterYi.orbwalker.SetMovement(true);
+                jg.teste();
+            }
         }
 
         private void onDraw(EventArgs args)
         {
             if (Config.Item("drawQ").GetValue<bool>())
             {
-                Obj_AI_Hero player = masterYi.getPlayer();
-                Spell spellQ = masterYi.getSpell("Q");
-
-                Drawing.DrawCircle(player.Position, spellQ.Range, Color.Blue);
+                Drawing.DrawCircle(masterYi.player.Position, masterYi.Q.Range, Color.Blue);
             }
-        }
-
-        private static void OnCreateObject(GameObject sender, EventArgs args)
-        {
-        }
-
-        private static void OnDeleteObject(GameObject sender, EventArgs args)
-        {
         }
     }
 }

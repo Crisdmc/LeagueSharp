@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LazyYi
+namespace MasterYi
 {
     class Program
     {
