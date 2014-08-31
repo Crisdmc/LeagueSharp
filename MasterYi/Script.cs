@@ -112,7 +112,6 @@ namespace MasterYi
             {
                 Drawing.DrawCircle(masterYi.player.Position, masterYi.Q.Range, Color.Blue);
             }
-            Drawing.DrawCircle(masterYi.player.Position, 300, Color.Blue);
         }
     }
 }
