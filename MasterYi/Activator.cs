@@ -27,7 +27,7 @@ namespace MasterYi
 
             try
             {
-                Config = new Menu("LazyActivator", "LazyActivator", true);
+                Config = new Menu("YiActivator", "YiActivator", true);
 
                 Config.AddSubMenu(new Menu("Def. Itens", "defItens"));
                 Config.SubMenu("defItens").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
@@ -37,6 +37,7 @@ namespace MasterYi
                 Config.SubMenu("clear").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
+                Config.SubMenu("clear").AddItem(new MenuItem("flee", "Flee")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("snare", "Snare")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("taunt", "Taunt")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
@@ -104,6 +105,14 @@ namespace MasterYi
             if (Config.Item("fear").GetValue<bool>())
             {
                 if (_player.HasBuffOfType(BuffType.Fear))
+                {
+                    cc = true;
+                }
+            }
+
+            if (Config.Item("flee").GetValue<bool>())
+            {
+                if (_player.HasBuffOfType(BuffType.Flee))
                 {
                     cc = true;
                 }

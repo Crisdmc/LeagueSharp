@@ -30,11 +30,10 @@ namespace MasterYi
 
         private void onLoad(EventArgs args)
         {
-            masterYi = new Master();
-
             // Se for o Master Yi
-            if (masterYi.player.BaseSkinName == charName)
+            if (ObjectManager.Player.BaseSkinName == charName)
             {
+                masterYi = new Master();
                 jg = new Jungle();
                 activator = new Activator();
 
