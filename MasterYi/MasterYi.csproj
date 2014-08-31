@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activator.cs" />
     <Compile Include="entity\JungleCamp.cs" />
     <Compile Include="entity\JungleMinion.cs" />
     <Compile Include="Jungle.cs" />

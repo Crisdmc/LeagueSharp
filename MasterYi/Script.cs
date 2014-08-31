@@ -20,6 +20,7 @@ namespace MasterYi
 
         private Master masterYi;
         private Jungle jg;
+        private Activator activator;
 
         public Script()
         {
@@ -30,82 +31,85 @@ namespace MasterYi
         private void onLoad(EventArgs args)
         {
             masterYi = new Master();
-            jg = new Jungle();
 
-            // Se não for o Master Yi
-            if (masterYi.player.BaseSkinName != charName)
+            // Se for o Master Yi
+            if (masterYi.player.BaseSkinName == charName)
             {
-                return;
+                jg = new Jungle();
+                activator = new Activator();
+
+                // Boas vindas
+                Game.PrintChat(string.Format("<font color='#3BB9FF'>{0} - by Crisdmc - </font>Loaded", charName));
+
+                try
+                {
+                    Config = new Menu("MasterYi", "MasterYi", true);
+                    // OrbWalker
+                    Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
+                    masterYi.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
+
+                    // Target Selector
+                    var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
+                    SimpleTs.AddToMenu(TargetSelectorMenu);
+                    Config.AddSubMenu(TargetSelectorMenu);
+
+                    // Combo
+                    Config.AddSubMenu(new Menu("Combo", "combo"));
+                    Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("usePacket", "Use Packet")).SetValue(false);
+
+                    // W options
+                    Config.AddSubMenu(new Menu("W Options", "wOptions"));
+                    Config.SubMenu("wOptions").AddItem(new MenuItem("useWWhen", "")).SetValue(new StringList(new[] { "Combo", "After Attack", "Combo(AA)" }, 2));
+                    Config.SubMenu("wOptions").AddItem(new MenuItem("useWon", "Use W on %")).SetValue(new Slider(40, 100, 0));
+                    Config.SubMenu("wOptions").AddItem(new MenuItem("shortW", "Interrupt W")).SetValue(true);
+                    Config.SubMenu("wOptions").AddItem(new MenuItem("shortWRange", "")).SetValue(new StringList(new[] { "AA Range", "300" }, 0));
+
+                    // Lane Clear
+                    Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
+                    Config.SubMenu("laneclear").AddItem(new MenuItem("useQLC", "Use Q")).SetValue(true);
+
+                    // Draw
+                    Config.AddSubMenu(new Menu("Draw", "draw"));
+                    Config.SubMenu("draw").AddItem(new MenuItem("drawQ", "Q")).SetValue(true);
+
+                    // Jungle Slack
+                    Config.AddSubMenu(new Menu("Jungle Slack", "slack"));
+                    Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(new KeyBind("F1".ToCharArray()[0], KeyBindType.Toggle, false));
+
+                    // Additionals
+                    Config.AddSubMenu(new Menu("Additionals", "additionals"));
+                    Config.SubMenu("additionals").AddItem(new MenuItem("autoUpSkill", "Auto Up Skills")).SetValue(true);
+                    Config.SubMenu("additionals").AddItem(new MenuItem("autoSkillOrder", "")).SetValue(new StringList(new[] { "Q>E>W(2W)", "Q>W>E(2E)" }, 0));
+
+                    Config.AddToMainMenu();
+                }
+                catch
+                {
+                    Game.PrintChat("MasterYi error creating menu!");
+                }
+
+                // attach events
+                Drawing.OnDraw += onDraw;
+                Game.OnGameUpdate += OnGameUpdate;
+                CustomEvents.Unit.OnLevelUp += onLevelUpEvent;
+                Orbwalking.AfterAttack += afterAttackEvent;
+
+                // Se o auto up de skill estiver ligado
+                if (Config.Item("autoUpSkill").GetValue<bool>())
+                {
+                    int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
+                    masterYi.autoUpSkill(order, masterYi.player.Level);
+                }
             }
-
-            // Boas vindas
-            Game.PrintChat(string.Format("<font color='#3BB9FF'>{0} - by Crisdmc - </font>Loaded", charName));
-
-            try
+            else
             {
-                Config = new Menu("MasterYi", "MasterYi", true);
-                // OrbWalker
-                Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker"));
-                masterYi.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
-                
-                // Target Selector
-                var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
-                SimpleTs.AddToMenu(TargetSelectorMenu);
-                Config.AddSubMenu(TargetSelectorMenu);
-                
-                // Combo
-                Config.AddSubMenu(new Menu("Combo", "combo"));
-                Config.SubMenu("combo").AddItem(new MenuItem("useQ", "Use Q")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(true);
-                Config.SubMenu("combo").AddItem(new MenuItem("usePacket", "Use Packet")).SetValue(false);
-
-                // W options
-                Config.AddSubMenu(new Menu("W Options", "wOptions"));
-                Config.SubMenu("wOptions").AddItem(new MenuItem("useWWhen", "")).SetValue(new StringList(new[] { "Combo", "After Attack", "Combo(AA)" }, 2));
-                Config.SubMenu("wOptions").AddItem(new MenuItem("useWon", "Use W on %")).SetValue(new Slider(40, 100, 0));
-                Config.SubMenu("wOptions").AddItem(new MenuItem("shortW", "Interrupt W")).SetValue(true);
-                Config.SubMenu("wOptions").AddItem(new MenuItem("shortWRange", "")).SetValue(new StringList(new[] { "AA Range", "300" }, 0));
-
-                // Lane Clear
-                Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
-                Config.SubMenu("laneclear").AddItem(new MenuItem("useQLC", "Use Q")).SetValue(true);
-
-                // Draw
-                Config.AddSubMenu(new Menu("Draw", "draw"));
-                Config.SubMenu("draw").AddItem(new MenuItem("drawQ", "Q")).SetValue(true);
-
-                // Jungle Slack
-                Config.AddSubMenu(new Menu("Jungle Slack", "slack"));
-                Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(new KeyBind("F1".ToCharArray()[0], KeyBindType.Toggle,false));
-
-                // Additionals
-                Config.AddSubMenu(new Menu("Additionals", "additionals"));
-                Config.SubMenu("additionals").AddItem(new MenuItem("autoUpSkill", "Auto Up Skills")).SetValue(true);
-                Config.SubMenu("additionals").AddItem(new MenuItem("autoSkillOrder", "")).SetValue(new StringList(new[] { "Q>E>W(2W)", "Q>W>E(2E)" }, 0));
-
-                Config.AddToMainMenu();
+                activator = new Activator();
             }
-            catch
-            {
-                Game.PrintChat("MasterYi error creating menu!");
-            }
-
-            // attach events
-            Drawing.OnDraw += onDraw;
-            Game.OnGameUpdate += OnGameUpdate;
-            CustomEvents.Unit.OnLevelUp += onLevelUpEvent;
-            Orbwalking.AfterAttack += afterAttackEvent;
-
-            // Se o auto up de skill estiver ligado
-            if (Config.Item("autoUpSkill").GetValue<bool>())
-            {
-                int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
-                masterYi.autoUpSkill(order, masterYi.player.Level);
-            }
-
         }
 
         private void OnGameUpdate(EventArgs args)
