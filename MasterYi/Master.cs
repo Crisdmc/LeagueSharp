@@ -27,6 +27,11 @@ namespace MasterYi
         private Spell _E = new Spell(SpellSlot.E, 0);
         private Spell _R = new Spell(SpellSlot.R, 0);
 
+        public Master()
+        {
+            load();
+        }
+
         private void load()
         {
             sBook = _player.Spellbook;
@@ -216,6 +221,33 @@ namespace MasterYi
         private int myHPPercent()
         {
             return (int)((_player.Health / _player.MaxHealth) * 100);
+        }
+
+        /* Order-> 0 = QEW(2W)  1 = QWE(2E)
+         */
+        public void autoUpSkill(int order, int newLevel)
+        {
+            List<int> firstOrderLevels = new List<int>() { 1, 3, 5, 7, 9 };
+            List<int> secondOrderLevels = new List<int>() { 4, 8, 10, 12, 13 };
+            List<int> thirdOrderLevels = new List<int>() { 2, 14, 15, 17, 18 };
+            
+            // Se estiver em nível de evoluir determinado skill
+            if (firstOrderLevels.Contains(newLevel))
+            {
+                sBook.LevelUpSpell(SpellSlot.Q);
+            }
+            else if (secondOrderLevels.Contains(newLevel))
+            {
+                sBook.LevelUpSpell(order == 0 ? SpellSlot.E : SpellSlot.W);
+            }
+            else if (thirdOrderLevels.Contains(newLevel))
+            {
+                sBook.LevelUpSpell(order == 0 ? SpellSlot.W : SpellSlot.E);
+            }
+            else
+            {
+                sBook.LevelUpSpell(SpellSlot.R);
+            }
         }
 
         public Spell Q

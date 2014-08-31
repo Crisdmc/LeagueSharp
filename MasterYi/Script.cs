@@ -76,13 +76,28 @@ namespace MasterYi
                 Config.AddSubMenu(new Menu("Jungle Slack", "slack"));
                 Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(new KeyBind("F1".ToCharArray()[0], KeyBindType.Toggle,false));
 
+                // Additionals
+                Config.AddSubMenu(new Menu("Additionals", "additionals"));
+                Config.SubMenu("additionals").AddItem(new MenuItem("autoUpSkill", "Auto Up Skill")).SetValue(true);
+                Config.SubMenu("additionals").AddItem(new MenuItem("autoSkillOrder", "")).SetValue(new StringList(new[] { "Q>E>W(2W)", "Q>W>E(2E)" }, 0));
+
                 Config.AddToMainMenu();
-                Drawing.OnDraw += onDraw;
-                Game.OnGameUpdate += OnGameUpdate;
             }
             catch
             {
-                Game.PrintChat("MasterYi script error!");
+                Game.PrintChat("MasterYi error creating menu!");
+            }
+
+            // attach events
+            Drawing.OnDraw += onDraw;
+            Game.OnGameUpdate += OnGameUpdate;
+            CustomEvents.Unit.OnLevelUp += onLevelUpEvent;
+
+            // Se o auto up de skill estiver ligado
+            if (Config.Item("autoUpSkill").GetValue<bool>())
+            {
+                int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
+                masterYi.autoUpSkill(order, masterYi.player.Level);
             }
 
         }
@@ -119,6 +134,17 @@ namespace MasterYi
             {
                 Drawing.DrawCircle(masterYi.player.Position, masterYi.Q.Range, Color.Blue);
             }
+        }
+
+        private void onLevelUpEvent(Obj_AI_Base champ, CustomEvents.Unit.OnLevelUpEventArgs evt)
+        {
+            // se for eu que evolui de level
+            if (champ.IsMe && Config.Item("autoUpSkill").GetValue<bool>())
+            {
+                int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
+                masterYi.autoUpSkill(order, evt.NewLevel);
+            }
+
         }
     }
 }
