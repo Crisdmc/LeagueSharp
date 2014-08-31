@@ -76,11 +76,13 @@ namespace MasterYi
             }
         }
 
-        public void combo(Menu comboMenu)
+        public void combo(Menu menu)
         {
-            obtainTarget(comboMenu.Item("useQ").GetValue<bool>());
-            bool usePacket = comboMenu.Item("usePacket").GetValue<bool>();
-           
+            bool comboUseQ = menu.Item("useQ").GetValue<bool>();
+            bool usePacket = menu.Item("usePacket").GetValue<bool>();
+            
+            obtainTarget(comboUseQ);
+            
             // verifica se target é válido
             if (!target.IsValidTarget())
             {
@@ -88,32 +90,42 @@ namespace MasterYi
                 return;
             }
 
+            // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
+            if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
+            {
+                int shortWRangeOpt = menu.Item("shortWRange").GetValue<StringList>().SelectedIndex;
+                float trueAARange = _player.AttackRange + target.BoundingRadius;
+                interruptW(comboUseQ, usePacket, shortWRangeOpt == 0 ? trueAARange : 300);
+            }
+
             // Se o orbwalker lock está ativado
-            if (comboMenu.Item("orbLock").GetValue<bool>())
+            if (menu.Item("orbLock").GetValue<bool>())
             {
                 orbwalker.SetMovement(false);
             }
 
             // Se o Q está configurado para usar
-            if (comboMenu.Item("useQ").GetValue<bool>())
+            if (comboUseQ)
             {
                 useQ(target, usePacket);
             }
 
             // Se o E está configurado para usar
-            if (comboMenu.Item("useE").GetValue<bool>())
+            if (menu.Item("useE").GetValue<bool>())
             {
                 useE(target, usePacket);
             }
 
-            // Se o W está configurado para usar
-            if (comboMenu.Item("useW").GetValue<bool>())
+            // Se o W está configurado para usar e está configurado para usar no combo
+            int useWWhen = menu.Item("useWWhen").GetValue<StringList>().SelectedIndex;
+            if (menu.Item("useW").GetValue<bool>() && useWWhen == 0)
             {
-                useW(target, comboMenu, usePacket);
+                int useWOn = menu.Item("useWon").GetValue<Slider>().Value;
+                useW(useWOn, usePacket);
             }
 
             // Se o R está configurado para usar
-            if (comboMenu.Item("useR").GetValue<bool>())
+            if (menu.Item("useR").GetValue<bool>())
             {
                 useR(target, usePacket);
             }
@@ -131,7 +143,7 @@ namespace MasterYi
             _Q.Cast(target, packet);
         }
 
-        private void useW(Obj_AI_Hero target, Menu comboMenu, bool usePacket)
+        public void useW(int useWOn, bool usePacket)
         {
             // Se o W não está disponível
             if (!_W.IsReady())
@@ -140,26 +152,9 @@ namespace MasterYi
             }
 
             // Verifica se HP está abaixo do configurado para usar o W
-
-            if (myHPPercent() < comboMenu.Item("useWon").GetValue<Slider>().Value)
+            if (myHPPercent() < useWOn)
             {
                 _W.Cast(_player, usePacket);
-
-                if (comboMenu.Item("shortW").GetValue<bool>())
-                {
-                    float trueAARange = _player.AttackRange + target.BoundingRadius;
-
-                    if (_Q.IsReady() && target.IsValidTarget() && comboMenu.Item("useQ").GetValue<bool>())
-                    {
-                        // Mover para garantir que vai parar o cast do W.
-                        _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
-                        _Q.Cast(target, usePacket);
-                    }
-                    else if (_player.Distance(target) <= trueAARange)
-                    {
-                        _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
-                    }
-                }
             }
         }
 
@@ -218,13 +213,26 @@ namespace MasterYi
             return target;
         }
 
+        private void interruptW(bool useQ, bool usePacket, float range)
+        {
+            if (_Q.IsReady() && target.IsValidTarget() && useQ)
+            {
+                // Mover para garantir que vai parar o cast do W.
+                _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                _Q.Cast(target, usePacket);
+            }
+            else if (_player.Distance(target) <= range)
+            {
+                _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+            }
+        }
+        
         private int myHPPercent()
         {
             return (int)((_player.Health / _player.MaxHealth) * 100);
         }
 
-        /* Order-> 0 = QEW(2W)  1 = QWE(2E)
-         */
+        /* Order-> 0 = QEW(2W)  1 = QWE(2E)*/
         public void autoUpSkill(int order, int newLevel)
         {
             List<int> firstOrderLevels = new List<int>() { 1, 3, 5, 7, 9 };
