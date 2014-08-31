@@ -14,7 +14,7 @@ namespace MasterYi
     internal class Script
     {
 
-        private const string CharName = "MasterYi";
+        private const string charName = "MasterYi";
 
         private Menu Config;
 
@@ -31,7 +31,15 @@ namespace MasterYi
         {
             masterYi = new Master();
             jg = new Jungle();
-            Game.PrintChat("MasterYi - by Crisdmc");
+
+            // Se não for o Master Yi
+            if (masterYi.player.BaseSkinName != charName)
+            {
+                return;
+            }
+
+            // Boas vindas
+            Game.PrintChat(string.Format("<font color='#3BB9FF'>{0} - by Crisdmc - </font>Loaded", charName));
 
             try
             {
@@ -100,7 +108,6 @@ namespace MasterYi
 
             if (Config.Item("activeSlack").GetValue<KeyBind>().Active)
             {
-                //Game.PrintChat("<font color='#F7A100'>Slack on development phase!</font>");
                 masterYi.orbwalker.SetMovement(true);
                 //jg.teste();
             }
