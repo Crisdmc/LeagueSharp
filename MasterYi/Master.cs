@@ -207,7 +207,7 @@ namespace MasterYi
             // Pega target para ataque básico
             else
             {
-                target = SimpleTs.GetTarget(285, SimpleTs.DamageType.Physical); //125 range básico
+                target = SimpleTs.GetTarget(300, SimpleTs.DamageType.Physical); //125 range básico
             }
 
             return target;

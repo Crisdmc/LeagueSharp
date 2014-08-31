@@ -66,7 +66,7 @@ namespace MasterYi
 
                 // Jungle Slack
                 Config.AddSubMenu(new Menu("Jungle Slack", "slack"));
-                Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(false);
+                Config.SubMenu("slack").AddItem(new MenuItem("activeSlack", "Active(IMPLEMENTING)")).SetValue(new KeyBind("F1".ToCharArray()[0], KeyBindType.Toggle,false));
 
                 Config.AddToMainMenu();
                 Drawing.OnDraw += onDraw;
@@ -98,11 +98,11 @@ namespace MasterYi
                 masterYi.laneClear(Config.Item("useQLC").GetValue<bool>());
             }
 
-            if (Config.Item("activeSlack").GetValue<bool>())
+            if (Config.Item("activeSlack").GetValue<KeyBind>().Active)
             {
                 //Game.PrintChat("<font color='#F7A100'>Slack on development phase!</font>");
                 masterYi.orbwalker.SetMovement(true);
-                jg.teste();
+                //jg.teste();
             }
         }
 
@@ -112,6 +112,7 @@ namespace MasterYi
             {
                 Drawing.DrawCircle(masterYi.player.Position, masterYi.Q.Range, Color.Blue);
             }
+            Drawing.DrawCircle(masterYi.player.Position, 300, Color.Blue);
         }
     }
 }
