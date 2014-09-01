@@ -20,7 +20,6 @@ namespace MasterYi
 
         private Master masterYi;
         private Jungle jg;
-        private Activator activator;
 
         public Script()
         {
@@ -35,7 +34,6 @@ namespace MasterYi
             {
                 masterYi = new Master();
                 jg = new Jungle();
-                activator = new Activator();
 
                 // Boas vindas
                 Game.PrintChat(string.Format("<font color='#3BB9FF'>{0} - by Crisdmc - </font>Loaded", charName));
@@ -104,10 +102,6 @@ namespace MasterYi
                     int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
                     masterYi.autoUpSkill(order, masterYi.player.Level);
                 }
-            }
-            else
-            {
-                activator = new Activator();
             }
         }
 

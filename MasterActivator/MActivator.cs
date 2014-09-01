@@ -11,9 +11,9 @@ using LeagueSharp.Common;
 using System.Drawing;
 using SharpDX;
 
-namespace MasterYi
+namespace MasterActivator
 {
-    class Activator
+    internal class MActivator
     {
         private Menu Config;
         private Obj_AI_Hero _player = ObjectManager.Player;
@@ -44,14 +44,14 @@ namespace MasterYi
         Item manaPot = new Item("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
         Item biscuit = new Item("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
 
-        public Activator()
+        public MActivator()
         {
             // Boas vindas
-            Game.PrintChat("<font color='#3BB9FF'>YiActivator - by Crisdmc - </font>Loaded");
+            Game.PrintChat("<font color='#3BB9FF'>MasterActivator - by Crisdmc - </font>Loaded");
 
             try
             {
-                Config = new Menu("YiActivator", "YiActivator", true);
+                Config = new Menu("MActivator", "masterActivator", true);
 
                 Config.AddSubMenu(new Menu("Def. Itens", "defItens"));
                 Config.SubMenu("defItens").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
@@ -220,7 +220,7 @@ namespace MasterYi
             }
             catch
             {
-                Game.PrintChat("YiActivator presented a problem, and has been disabled!");
+                Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
                 Config.Item("enabled").SetValue<bool>(false);
             }
         }
