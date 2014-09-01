@@ -9,28 +9,33 @@ MasterYi
 The idea is to do something like YiSlack, but I'm starting and I'm lazy.
 
 
-* Combo->Use Q
-* Combo->Use W
-* Combo->Use E
-* Combo->Use R
-* Combo->Orbwalk Lock: When close to a target, the orbwalker stop walking in circles and tries to attack.
-* Combo->Use Packet: Cast skills with packets.
+* Combo
+  *  Use Q
+  *  Use W
+  *  Use E
+  *  Use R
+  *  Orbwalk Lock: When close to a target, the orbwalker stop walking in circles and tries to attack.
+  *  Use Packet: Cast skills with packets.
 
-* W Options->Combo, After Attack, Combo(AA): If "Combo" just use W on combo, "After attack" just after attack, Combo(AA) after attack on combo mode.
-* W Options->Use W on %: Percentage of master life to use W.
-* W Options->Interrupt W: Interrupt use of meditation to attack.
-* W Options->AA Range, 300: Range to get target per basic attack, to stop W.
+* W Options
+  *  Combo, After Attack, Combo(AA): If "Combo" just use W on combo, "After attack" just after attack, Combo(AA) after attack on combo mode.
+  *  Use W on %: Percentage of yi life.
+  *  Interrupt W: Interrupt use of meditation to attack.
+  *  AA Range, 300: Range to get target per basic attack, to stop W.
 
-* Lane Clear->Use Q
+* Lane Clear
+  *  Use Q
 
-* Draw->Q
+* Draw
+  *  Q
 
 * Jungle Slack: IMPLEMENTING
 
-* Additionals->Auto Up Skills
-* Additionals->Q>E>W(2W) or Q>W>E(2E)
+* Additionals
+  *  Auto Up Skills
+  *  Q>E>W(2W) or Q>W>E(2E)
 
-YiActivator
+MasterActivator
 ===========
 
 * Def. Itens
