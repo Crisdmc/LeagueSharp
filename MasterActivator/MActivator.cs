@@ -39,7 +39,7 @@ namespace MasterActivator
         //Item mikael = new Item("Mikael's Crucible", "Mikael's", "mikael", 3222); // falta range
         //Item talisman = new Item("Talisman of Ascension", "Talisman", "talisman", 3069, 600);
         //Item shadows = new Item("Twin Shadows", "Shadows", "shadows", 3023, 750); //2700
-        //Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range
+        //Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range Utility.UnderTurret
         Item hpPot = new Item("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
         Item manaPot = new Item("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
         Item biscuit = new Item("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
@@ -53,21 +53,22 @@ namespace MasterActivator
             {
                 Config = new Menu("MActivator", "masterActivator", true);
 
-                Config.AddSubMenu(new Menu("Def. Itens", "defItens"));
-                Config.SubMenu("defItens").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
-                Config.SubMenu("defItens").AddItem(new MenuItem("mercurial", "Mercurial")).SetValue(true);
-                Config.SubMenu("defItens").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
+                Config.AddSubMenu(new Menu("Purifiers", "purifiers"));
+                Config.SubMenu("purifiers").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
+                Config.SubMenu("purifiers").AddItem(new MenuItem("mercurial", "Mercurial")).SetValue(true);
+                Config.SubMenu("purifiers").AddItem(new MenuItem("cleanse", "Cleanse")).SetValue(true);
+                Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
                 
-                Config.AddSubMenu(new Menu("Clear", "clear"));
-                Config.SubMenu("clear").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("flee", "Flee")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("snare", "Snare")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("taunt", "Taunt")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
-                Config.SubMenu("clear").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
+                Config.AddSubMenu(new Menu("Purify", "purify"));
+                Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("flee", "Flee")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("snare", "Snare")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("taunt", "Taunt")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
+                Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
 
                 Config.AddSubMenu(new Menu("Off. Itens", "offItens"));
                 createMenuItem(youmus, 100, "offItens");
@@ -109,11 +110,12 @@ namespace MasterActivator
         {
             if (Config.Item("enabled").GetValue<bool>())
             {
+                var cleanseSlot = Utility.GetSpellSlot(_player, "summonerboost"); //w
                 if (((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) || 
                      (!Config.Item("defJustOnCombo").GetValue<bool>())) &&
-                    (Items.HasItem(qss.id) || Items.HasItem(mercurial.id)))
+                    ((Items.HasItem(qss.id) || Items.HasItem(mercurial.id)) || ( cleanseSlot != SpellSlot.Unknown)))
                 {
-                    if (Items.CanUseItem(qss.id) || Items.CanUseItem(mercurial.id))
+                    if (Items.CanUseItem(qss.id) || Items.CanUseItem(mercurial.id) || _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
                     {
                         if (checkCC())
                         {
@@ -124,6 +126,10 @@ namespace MasterActivator
                             if (Config.Item(mercurial.menuVariable).GetValue<bool>())
                             {
                                 useItem(mercurial.id);
+                            }
+                            if (Config.Item("cleanse").GetValue<bool>())
+                            {
+                                _player.SummonerSpellbook.CastSpell(cleanseSlot);
                             }
                         }
                     }
@@ -167,8 +173,8 @@ namespace MasterActivator
         private bool checkBuff(String name)
         {
             var searchedBuff = from buff in _player.Buffs
-                                           where buff.Name == name
-                                           select buff;
+                              where buff.Name == name
+                             select buff;
 
             return searchedBuff.Count() <= 0 ? false : true;
         }
