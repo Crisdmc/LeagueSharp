@@ -30,7 +30,7 @@ The idea is to do something like YiSlack, but I'm starting and I'm lazy.
 * Additionals->Auto Up Skills
 * Additionals->Q>E>W(2W) or Q>W>E(2E)
 
-YiActivator
+MasterActivator
 ===========
 
 * Def. Itens
