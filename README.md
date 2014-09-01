@@ -1,7 +1,7 @@
 LeagueSharp
 ===========
 
-Suggestions are welcome.
+> Suggestions are welcome. <br/>
 
 
 MasterYi
@@ -33,42 +33,42 @@ The idea is to do something like YiSlack, but I'm starting and I'm lazy.
 YiActivator
 ===========
 
-** Def. Itens
-* QSS
-* Mercurial
-* Just on combo
+* Def. Itens
+  *  QSS
+  *  Mercurial
+  *  Just on combo
                 
-** Clear
-* Blind
-* Charm
-* Fear
-* Flee
-* Snare
-* Taunt
-* Suppression
-* Stun
-* Polymorph
+* Clear
+  * Blind
+  * Charm
+  * Fear
+  * Flee
+  * Snare
+  * Taunt
+  * Suppression
+  * Stun
+  * Polymorph
 
-** Off. Itens
-* Youmuu's
-* Use on %HP
-* Bilgewater
-* Use on %HP
-* BoRKing
-* Use on %HP
-* Tiamat
-* Use on %HP
-* Hydra
-* Use on %HP
-* DFG
-* Use on %HP
-* SoDivine
-* Use on %HP
+* Off. Itens
+  * Youmuu's
+  * Use on %HP
+  * Bilgewater
+  * Use on %HP
+  * BoRKing
+  * Use on %HP
+  * Tiamat
+  * Use on %HP
+  * Hydra
+  * Use on %HP
+  * DFG
+  * Use on %HP
+  * SoDivine
+  * Use on %HP
 
-** Combo Mode
-* Active: Auto active with space bar
+* Combo Mode
+  * Active: Auto active with space bar
 
-** Target Selector
-* LowHP, MostAD, MostAP, Closest, NearMouse, AutoPriority, LessAttack, LessCast
+* Target Selector
+  * LowHP, MostAD, MostAP, Closest, NearMouse, AutoPriority, LessAttack, LessCast
                 
-** Enabled
+* Enabled
