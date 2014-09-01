@@ -116,6 +116,7 @@ namespace MasterYi
 
             if (masterYi.orbwalker.ActiveMode.ToString() == "Combo")
             {
+                masterYi.orbwalker.SetMovement(true);
                 masterYi.combo(Config); 
             }
 

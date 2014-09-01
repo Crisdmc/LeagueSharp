@@ -83,12 +83,16 @@ namespace MasterYi
             
             obtainTarget(comboUseQ);
             
-            // verifica se target é válido
-            if (!target.IsValidTarget())
+            if ( target.Distance(Game.CursorPos) > 600 )
             {
                 orbwalker.SetMovement(true);
-                return;
             }
+            // verifica se target é válido
+            //if (!target.IsValidTarget())
+            //{
+             //   orbwalker.SetMovement(true);
+             //   return;
+            //}
 
             // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
             if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
