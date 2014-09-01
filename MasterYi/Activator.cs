@@ -15,15 +15,17 @@ namespace MasterYi
     {
         private Menu Config;
         private Obj_AI_Hero _player = ObjectManager.Player;
+        TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         int qss = 3140;
         int king = 3151;
         int mercurial = 3139;
+        int youmus = 3142;
 
         public Activator()
         {
             // Boas vindas
-            Game.PrintChat("<font color='#3BB9FF'>LazyActivator - by Crisdmc - </font>Loaded");
+            Game.PrintChat("<font color='#3BB9FF'>YiActivator - by Crisdmc - </font>Loaded");
 
             try
             {
@@ -32,6 +34,7 @@ namespace MasterYi
                 Config.AddSubMenu(new Menu("Def. Itens", "defItens"));
                 Config.SubMenu("defItens").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
                 Config.SubMenu("defItens").AddItem(new MenuItem("mercurial", "Mercurial")).SetValue(true);
+                Config.SubMenu("defItens").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
                 
                 Config.AddSubMenu(new Menu("Clear", "clear"));
                 Config.SubMenu("clear").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
@@ -44,13 +47,24 @@ namespace MasterYi
                 Config.SubMenu("clear").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
                 Config.SubMenu("clear").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
 
+                Config.AddSubMenu(new Menu("Off. Itens", "offItens"));
+                Config.SubMenu("offItens").AddItem(new MenuItem("youmus", "Youmus")).SetValue(true);
+
+                // Combo mode
+                Config.AddSubMenu(new Menu("Combo Mode", "combo"));
+                Config.SubMenu("combo").AddItem(new MenuItem("comboModeActive", "Active")).SetValue(new KeyBind(32, KeyBindType.Press, true));
+
+                // Target selector
+                Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
+                Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
+                
                 Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
 
                 Config.AddToMainMenu();
             }
             catch
             {
-                Game.PrintChat("LazyActivator error creating menu!");
+                Game.PrintChat("YiActivator error creating menu!");
             }
 
             Game.OnGameUpdate += OnGameUpdate;
@@ -60,15 +74,32 @@ namespace MasterYi
         {
             if (Config.Item("enabled").GetValue<bool>())
             {
-                if (checkCC())
+                if (((Config.Item("defJustOnCombo").GetValue<bool>() && 
+                     Config.Item("comboModeActive").GetValue<KeyBind>().Active) || 
+                    (!Config.Item("defJustOnCombo").GetValue<bool>())) &&
+                    (Items.HasItem(qss) || Items.HasItem(mercurial)))
                 {
-                    if (Config.Item("qss").GetValue<bool>())
+                    if (checkCC())
                     {
-                        useItem(qss);
+                        if (Config.Item("qss").GetValue<bool>())
+                        {
+                            useItem(qss);
+                        }
+                        if (Config.Item("mercurial").GetValue<bool>())
+                        {
+                            useItem(mercurial);
+                        }
                     }
-                    if (Config.Item("mercurial").GetValue<bool>())
+                }
+
+                if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
+                {
+                    if (Config.Item("youmus").GetValue<bool>() && Items.HasItem(youmus) && Items.CanUseItem(youmus))
                     {
-                        useItem(mercurial);
+                        if(checkOff(_player.AttackRange + 125))
+                        {
+                            useItem(youmus);
+                        }
                     }
                 }
             }
@@ -80,6 +111,26 @@ namespace MasterYi
             {
                 Items.UseItem(id);
             }
+        }
+
+        private bool checkOff(float range)
+        {
+            int targetModeSelectedIndex = Config.Item("targetMode").GetValue<StringList>().SelectedIndex;
+            TargetSelector.TargetingMode targetModeSelected = new TargetSelector.TargetingMode();
+
+            foreach (TargetSelector.TargetingMode targetMode in Enum.GetValues(typeof(TargetSelector.TargetingMode)))
+            {
+                int index = (int)targetMode;
+                if (index == targetModeSelectedIndex)
+                {
+                    targetModeSelected = targetMode;
+                }
+            }
+
+            ts.SetRange(range);
+            ts.SetTargetingMode(targetModeSelected);
+
+            return ts.Target != null ? true : false;
         }
 
         private bool checkCC()
