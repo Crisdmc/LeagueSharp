@@ -39,31 +39,43 @@ YiActivator
   *  Just on combo
                 
 * Clear
-  * Blind
-  * Charm
-  * Fear
-  * Flee
-  * Snare
-  * Taunt
-  * Suppression
-  * Stun
-  * Polymorph
+  *  Blind
+  *  Charm
+  *  Fear
+  *  Flee
+  *  Snare
+  *  Taunt
+  *  Suppression
+  *  Stun
+  *  Polymorph
 
 * Off. Itens
-  * Youmuu's
-  * Use on %HP
-  * Bilgewater
-  * Use on %HP
-  * BoRKing
-  * Use on %HP
-  * Tiamat
-  * Use on %HP
-  * Hydra
-  * Use on %HP
-  * DFG
-  * Use on %HP
-  * SoDivine
-  * Use on %HP
+  *  Youmuu's
+  *  Use on %HP
+  *  Bilgewater
+  *  Use on %HP
+  *  BoRKing
+  *  Use on %HP
+  *  Tiamat
+  *  Use on %HP
+  *  Hydra
+  *  Use on %HP
+  *  DFG
+  *  Use on %HP
+  *  SoDivine
+  *  Use on %HP
+  *  Hextech
+  *  Use on %HP
+  *  Muramana
+  *  Use on %HP
+
+* Consumables
+  *  HP Pot
+  *  Use on %HP
+  *  Mana Pot
+  *  Use on %Mana
+  *  Biscuit
+  *  Use on %HP
 
 * Combo Mode
   * Active: Auto active with space bar

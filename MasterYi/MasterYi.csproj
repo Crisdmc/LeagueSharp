@@ -69,6 +69,7 @@
     <Compile Include="entity\Item.cs" />
     <Compile Include="entity\JungleCamp.cs" />
     <Compile Include="entity\JungleMinion.cs" />
+    <Compile Include="enumerator\ItemTypeId.cs" />
     <Compile Include="Jungle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

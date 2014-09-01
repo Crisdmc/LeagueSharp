@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MasterYi.entity;
+using MasterYi.enumerator;
 
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -19,27 +20,29 @@ namespace MasterYi
         TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         // leagueoflegends.wikia.com/
-        Item qss = new Item("Quicksilver Sash", "QSS", "qss", 3140);
-        Item mercurial = new Item("Mercurial Scimitar", "Mercurial", "mercurial", 3139);
-        Item bilgewater = new Item("Bilgewater Cutlass", "Bilgewater", "bilgewater", 3144, 450);
-        Item king = new Item("Blade of the Ruined King", "BoRKing", "king", 3153, 450);
-        Item youmus = new Item("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142);
-        Item tiamat = new Item("Tiamat", "Tiamat", "tiamat", 3077, 400);
-        Item hydra = new Item("Ravenous Hydra", "Hydra", "hydra", 3074, 400);
-        Item dfg = new Item("Deathfire Grasp", "DFG", "dfg", 3128, 750);
-        Item divine = new Item("Sword of the Divine", "SoDivine", "divine", 3131);
-        Item hextech = new Item("Hextech Gunblade", "Hextech", "hextech", 3146, 700);
-        Item muramana = new Item("Muramana", "Muramana", "muramana", 3042);
-        Item seraph = new Item("Seraph's Embrace", "Seraph's", "seraph", 3040);
-        Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
-        Item reaver = new Item("Essence Reaver", "Reaver", "reaver", 3508);
-        Item mountain = new Item("Face of the Mountain", "FoMountain", "mountain", 3401); // falta range
-        Item frost = new Item("Frost Queen's Claim", "Frost Queen's", "frost", 3092, 850);
-        Item solari = new Item("Locket of the Iron Solari", "Solari", "solari", 3190, 600);
-        Item mikael = new Item("Mikael's Crucible", "Mikael's", "mikael", 3222); // falta range
-        Item talisman = new Item("Talisman of Ascension", "Talisman", "talisman", 3069, 600);
-        Item shadows = new Item("Twin Shadows", "Shadows", "shadows", 3023, 750); //2700
-        Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range
+        Item qss = new Item("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
+        Item mercurial = new Item("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
+        Item bilgewater = new Item("Bilgewater Cutlass", "Bilgewater", "bilgewater", 3144, ItemTypeId.Offensive, 450);
+        Item king = new Item("Blade of the Ruined King", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
+        Item youmus = new Item("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
+        Item tiamat = new Item("Tiamat", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
+        Item hydra = new Item("Ravenous Hydra", "Hydra", "hydra", 3074, ItemTypeId.Offensive, 400);
+        Item dfg = new Item("Deathfire Grasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
+        Item divine = new Item("Sword of the Divine", "SoDivine", "divine", 3131, ItemTypeId.Offensive);
+        Item hextech = new Item("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
+        Item muramana = new Item("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Offensive);
+        //Item seraph = new Item("Seraph's Embrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
+        //Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
+        //Item mountain = new Item("Face of the Mountain", "FoMountain", "mountain", 3401); // falta range
+        //Item frost = new Item("Frost Queen's Claim", "Frost Queen's", "frost", 3092, 850);
+        //Item solari = new Item("Locket of the Iron Solari", "Solari", "solari", 3190, 600);
+        //Item mikael = new Item("Mikael's Crucible", "Mikael's", "mikael", 3222); // falta range
+        //Item talisman = new Item("Talisman of Ascension", "Talisman", "talisman", 3069, 600);
+        //Item shadows = new Item("Twin Shadows", "Shadows", "shadows", 3023, 750); //2700
+        //Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range
+        Item hpPot = new Item("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
+        Item manaPot = new Item("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
+        Item biscuit = new Item("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
 
         public Activator()
         {
@@ -67,13 +70,20 @@ namespace MasterYi
                 Config.SubMenu("clear").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
 
                 Config.AddSubMenu(new Menu("Off. Itens", "offItens"));
-                createMenuOffItem(youmus, 100);
-                createMenuOffItem(bilgewater, 60);
-                createMenuOffItem(king, 60);
-                createMenuOffItem(tiamat, 90);
-                createMenuOffItem(hydra, 90);
-                createMenuOffItem(dfg, 80);
-                createMenuOffItem(divine, 80);
+                createMenuItem(youmus, 100, "offItens");
+                createMenuItem(bilgewater, 60, "offItens");
+                createMenuItem(king, 60, "offItens");
+                createMenuItem(tiamat, 90, "offItens");
+                createMenuItem(hydra, 90, "offItens");
+                createMenuItem(dfg, 80, "offItens");
+                createMenuItem(divine, 80, "offItens");
+                createMenuItem(hextech, 80, "offItens");
+                createMenuItem(muramana, 80, "offItens");
+
+                Config.AddSubMenu(new Menu("Consumables", "consumables"));
+                createMenuItem(hpPot, 55, "consumables");
+                createMenuItem(manaPot, 55, "consumables", true);
+                createMenuItem(biscuit, 55, "consumables");
 
                 // Combo mode
                 Config.AddSubMenu(new Menu("Combo Mode", "combo"));
@@ -92,10 +102,10 @@ namespace MasterYi
                 Game.PrintChat("YiActivator error creating menu!");
             }
 
-            Game.OnGameUpdate += OnGameUpdate;
+            Game.OnGameUpdate += onGameUpdate;
         }
-
-        private void OnGameUpdate(EventArgs args)
+        
+        private void onGameUpdate(EventArgs args)
         {
             if (Config.Item("enabled").GetValue<bool>())
             {
@@ -128,14 +138,45 @@ namespace MasterYi
                     checkAndUse(hydra);
                     checkAndUse(dfg);
                     checkAndUse(divine);
+                    checkAndUse(hextech);
+
+                    if (Config.Item(muramana.menuVariable).GetValue<bool>() && Items.HasItem(muramana.id))
+                    {
+                        if (!checkBuff("Muramana"))
+                        {
+                            checkAndUse(muramana);
+                        }
+                    }
+                }
+
+                if (!checkBuff("FlaskOfCrystalWater"))
+                {
+                    checkAndUse(manaPot);
+                }
+                if (!checkBuff("RegenerationPotion"))
+                {
+                    checkAndUse(hpPot);
+                }
+                if (!checkBuff("ItemMiniRegenPotion"))
+                {
+                    checkAndUse(biscuit);
                 }
             }
         }
 
-        private void createMenuOffItem(Item item, int defaultHP)
+        private bool checkBuff(String name)
         {
-            Config.SubMenu("offItens").AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
-            Config.SubMenu("offItens").AddItem(new MenuItem(item.menuVariable + "UseOnHp", "Use on %HP")).SetValue(new Slider(defaultHP, 0, 100));
+            var searchedBuff = from buff in _player.Buffs
+                                           where buff.Name == name
+                                           select buff;
+
+            return searchedBuff.Count() <= 0 ? false : true;
+        }
+
+        private void createMenuItem(Item item, int defaultValue, String parent, bool mana = false)
+        {
+            Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
+            Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
         }
 
         private void checkAndUse(Item item)
@@ -146,12 +187,32 @@ namespace MasterYi
                 {
                     if (Items.CanUseItem(item.id))
                     {
-                        if (checkTarget(item.range))
+                        int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
+                        int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+
+                        if(item.type == ItemTypeId.Offensive)
                         {
-                            int hpPercent = Config.Item(item.menuVariable + "UseOnHp").GetValue<Slider>().Value;
-                            if (((int)((ts.Target.Health / ts.Target.MaxHealth) * 100)) <= hpPercent)
+                            if (checkTarget(item.range))
                             {
-                                useItem(item.id, item.range == 0 ? null : ts.Target);
+                                int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
+                                if (checkUsePercent(item, actualTargetHpPercent))
+                                {
+                                    useItem(item.id, item.range == 0 ? null : ts.Target);
+                                }
+                            }
+                        }
+                        else if (item.type == ItemTypeId.HPRegenerator)
+                        {
+                            if (checkUsePercent(item, actualHeroHpPercent))
+                            {
+                                useItem(item.id);
+                            }
+                        }
+                        else if (item.type == ItemTypeId.ManaRegenerator)
+                        {
+                            if (checkUsePercent(item, actualHeroManaPercent))
+                            {
+                                useItem(item.id);
                             }
                         }
                     }
@@ -170,6 +231,12 @@ namespace MasterYi
             {
                 Items.UseItem(id, target);
             }
+        }
+
+        private bool checkUsePercent(Item item, int actualPercent)
+        {
+            int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+            return actualPercent <= usePercent ? true : false;
         }
 
         private bool checkTarget(float range)
