@@ -87,8 +87,6 @@ namespace MasterYi
 
             if (target.IsValidTarget())
             {
-                Console.WriteLine(target.Distance(Game.CursorPos));
-
                 // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
                 if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
                 {

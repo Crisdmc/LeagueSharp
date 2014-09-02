@@ -43,6 +43,7 @@ namespace MasterActivator
         Item hpPot = new Item("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
         Item manaPot = new Item("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
         Item biscuit = new Item("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
+        //1 = SummonerBoost 2 = SummonerClairvoyance 3 = SummonerExhaust 4 = SummonerFlash 6 = SummonerHaste 7 = SummonerHeal 10 = SummonerRevive 11 = SummonerSmite 12 = SummonerTeleport 13 = SummonerMana 14 = SummonerDot 17
 
         public MActivator()
         {
@@ -70,16 +71,21 @@ namespace MasterActivator
                 Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
                 Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
 
-                Config.AddSubMenu(new Menu("Off. Itens", "offItens"));
-                createMenuItem(youmus, 100, "offItens");
-                createMenuItem(bilgewater, 60, "offItens");
-                createMenuItem(king, 60, "offItens");
-                createMenuItem(tiamat, 90, "offItens");
-                createMenuItem(hydra, 90, "offItens");
-                createMenuItem(dfg, 80, "offItens");
-                createMenuItem(divine, 80, "offItens");
-                createMenuItem(hextech, 80, "offItens");
-                createMenuItem(muramana, 80, "offItens");
+                Config.AddSubMenu(new Menu("Offensive", "offensive"));
+                createMenuItem(youmus, 100, "offensive");
+                createMenuItem(bilgewater, 60, "offensive");
+                createMenuItem(king, 60, "offensive");
+                createMenuItem(tiamat, 90, "offensive");
+                createMenuItem(hydra, 90, "offensive");
+                createMenuItem(dfg, 80, "offensive");
+                createMenuItem(divine, 80, "offensive");
+                createMenuItem(hextech, 80, "offensive");
+                createMenuItem(muramana, 80, "offensive");
+
+                Config.AddSubMenu(new Menu("Defensive", "defensive"));
+                Config.SubMenu("defensive").AddItem(new MenuItem("heal", "Heal")).SetValue(true);
+                Config.SubMenu("defensive").AddItem(new MenuItem("healUseOnPercent", "Use on %HP")).SetValue(new Slider(35, 0, 100));
+                //Config.SubMenu("defensive").AddItem(new MenuItem("healTeam", "Heal Team")).SetValue(true);
 
                 Config.AddSubMenu(new Menu("Consumables", "consumables"));
                 createMenuItem(hpPot, 55, "consumables");
@@ -110,33 +116,22 @@ namespace MasterActivator
         {
             if (Config.Item("enabled").GetValue<bool>())
             {
-                var cleanseSlot = Utility.GetSpellSlot(_player, "summonerboost"); //w
-                if (((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) || 
-                     (!Config.Item("defJustOnCombo").GetValue<bool>())) &&
-                    ((Items.HasItem(qss.id) || Items.HasItem(mercurial.id)) || ( cleanseSlot != SpellSlot.Unknown)))
+                var healSlot = Utility.GetSpellSlot(_player, "SummonerHeal");
+                if (healSlot != SpellSlot.Unknown)
                 {
-                    if (Items.CanUseItem(qss.id) || Items.CanUseItem(mercurial.id) || _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
+                    if (_player.SummonerSpellbook.CanUseSpell(healSlot) == SpellState.Ready)
                     {
-                        if (checkCC())
+                        int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
+                        int usePercent = Config.Item("healUseOnPercent").GetValue<Slider>().Value;
+
+                        if (Config.Item("heal").GetValue<bool>() && actualHeroHpPercent <= usePercent)
                         {
-                            // TODO : If have more than one, just use one
-                            if (Config.Item(qss.menuVariable).GetValue<bool>())
-                            {
-                                useItem(qss.id);
-                            }
-                            if (Config.Item(mercurial.menuVariable).GetValue<bool>())
-                            {
-                                useItem(mercurial.id);
-                            }
-                            if (Config.Item("cleanse").GetValue<bool>() &&
-                                cleanseSlot != SpellSlot.Unknown &&
-                                _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
-                            {
-                                _player.SummonerSpellbook.CastSpell(cleanseSlot);
-                            }
+                            _player.SummonerSpellbook.CastSpell(healSlot);
                         }
                     }
                 }
+
+                checkAndUsePurifiers();
 
                 if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                 {
@@ -169,6 +164,37 @@ namespace MasterActivator
                 if (!checkBuff("ItemMiniRegenPotion"))
                 {
                     checkAndUse(biscuit);
+                }
+            }
+        }
+        
+        private void checkAndUsePurifiers()
+        {
+            var cleanseSlot = Utility.GetSpellSlot(_player, "SummonerBoost"); //q,w
+            if (((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                 (!Config.Item("defJustOnCombo").GetValue<bool>())) &&
+                ((Items.HasItem(qss.id) || Items.HasItem(mercurial.id)) || (cleanseSlot != SpellSlot.Unknown)))
+            {
+                if (Items.CanUseItem(qss.id) || Items.CanUseItem(mercurial.id) || _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
+                {
+                    if (checkCC())
+                    {
+                        // TODO : If have more than one, just use one
+                        if (Config.Item(qss.menuVariable).GetValue<bool>())
+                        {
+                            useItem(qss.id);
+                        }
+                        if (Config.Item(mercurial.menuVariable).GetValue<bool>())
+                        {
+                            useItem(mercurial.id);
+                        }
+                        if (Config.Item("cleanse").GetValue<bool>() &&
+                            cleanseSlot != SpellSlot.Unknown &&
+                            _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
+                        {
+                            _player.SummonerSpellbook.CastSpell(cleanseSlot);
+                        }
+                    }
                 }
             }
         }
