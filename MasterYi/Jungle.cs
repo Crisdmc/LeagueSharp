@@ -46,8 +46,6 @@ namespace MasterYi
         {
             if (camp.Team == GameObjectTeam.Neutral)
             {
-                //Console.WriteLine("Create");
-                //Console.WriteLine(camp.Name);
             }
         }
 
@@ -55,8 +53,6 @@ namespace MasterYi
         {
             if (camp.Team == GameObjectTeam.Neutral && camp.IsDead)
             {
-                //Console.WriteLine("Delete");
-                //Console.WriteLine(camp.Name);
                 jungleMinionDied(camp.Name);
             }
         }
@@ -73,21 +69,14 @@ namespace MasterYi
 
             _player.IssueOrder(GameObjectOrder.MoveTo, blueCamp.position);
 
-            //Console.WriteLine("Meu Time");
-            //Console.WriteLine(_player.Team);
             
             var testando = ObjectManager.Get<Obj_AI_Minion>().Where(minion => minion.Team == GameObjectTeam.Neutral);
             List<Obj_AI_Minion> minions = testando.ToList();
 
-            //Console.WriteLine(gameTime);
-            
             if (minions.Count() > 0)
             {
                 foreach (Obj_AI_Minion minion in minions)
                 {
-                    //Console.WriteLine(minion.Name);
-                    //Console.WriteLine(minion.ToString());
-                    //Console.WriteLine(minion.Position);
                 }
             }
             
