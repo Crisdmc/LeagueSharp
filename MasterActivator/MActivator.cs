@@ -119,6 +119,7 @@ namespace MasterActivator
                     {
                         if (checkCC())
                         {
+                            // TODO : If have more than one, just use one
                             if (Config.Item(qss.menuVariable).GetValue<bool>())
                             {
                                 useItem(qss.id);

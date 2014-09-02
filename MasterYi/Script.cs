@@ -110,24 +110,26 @@ namespace MasterYi
 
             if (masterYi.orbwalker.ActiveMode.ToString() == "Combo")
             {
-                masterYi.orbwalker.SetMovement(true);
                 masterYi.combo(Config); 
             }
 
             if (masterYi.orbwalker.ActiveMode.ToString() == "Mixed")
             {
-                masterYi.orbwalker.SetMovement(true);
+                masterYi.mixedMode();
             }
 
             if (masterYi.orbwalker.ActiveMode.ToString() == "LaneClear")
             {
-                masterYi.orbwalker.SetMovement(true);
                 masterYi.laneClear(Config.Item("useQLC").GetValue<bool>());
+            }
+
+            if (masterYi.orbwalker.ActiveMode.ToString() == "LastHit")
+            {
+                masterYi.lastHit();
             }
 
             if (Config.Item("activeSlack").GetValue<KeyBind>().Active)
             {
-                masterYi.orbwalker.SetMovement(true);
                 //jg.teste();
             }
         }

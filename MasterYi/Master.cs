@@ -43,6 +43,8 @@ namespace MasterYi
 
         public void laneClear(bool useQLC)
         {
+            setOrbwalkToCursorPos();
+
             // Verifica se o Q está pronto e está configurado para usar
             if (_Q.IsReady() && useQLC)
             {
@@ -82,57 +84,78 @@ namespace MasterYi
             bool usePacket = menu.Item("usePacket").GetValue<bool>();
             
             obtainTarget(comboUseQ);
-            
-            if ( target.Distance(Game.CursorPos) > 600 )
-            {
-                orbwalker.SetMovement(true);
-            }
-            // verifica se target é válido
-            //if (!target.IsValidTarget())
-            //{
-             //   orbwalker.SetMovement(true);
-             //   return;
-            //}
 
-            // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
-            if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
+            if (target.IsValidTarget())
             {
-                int shortWRangeOpt = menu.Item("shortWRange").GetValue<StringList>().SelectedIndex;
-                float trueAARange = _player.AttackRange + target.BoundingRadius;
-                interruptW(comboUseQ, usePacket, shortWRangeOpt == 0 ? trueAARange : 300);
-            }
+                Console.WriteLine(target.Distance(Game.CursorPos));
 
-            // Se o orbwalker lock está ativado
-            if (menu.Item("orbLock").GetValue<bool>())
-            {
-                orbwalker.SetMovement(false);
-            }
+                // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
+                if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
+                {
+                    int shortWRangeOpt = menu.Item("shortWRange").GetValue<StringList>().SelectedIndex;
+                    float trueAARange = _player.AttackRange + target.BoundingRadius;
+                    interruptW(comboUseQ, usePacket, shortWRangeOpt == 0 ? trueAARange : 300);
+                }
 
-            // Se o Q está configurado para usar
-            if (comboUseQ)
-            {
-                useQ(target, usePacket);
-            }
+                // Se o orbwalker lock está ativado
+                if (menu.Item("orbLock").GetValue<bool>() && target.Distance(Game.CursorPos) < 600)
+                {
+                    setOrbwalkingToTargetPos();
+                }
+                else
+                {
+                    setOrbwalkToCursorPos();
+                }
 
-            // Se o E está configurado para usar
-            if (menu.Item("useE").GetValue<bool>())
-            {
-                useE(target, usePacket);
-            }
+                // Se o Q está configurado para usar
+                if (comboUseQ)
+                {
+                    useQ(target, usePacket);
+                }
 
-            // Se o W está configurado para usar e está configurado para usar no combo
-            int useWWhen = menu.Item("useWWhen").GetValue<StringList>().SelectedIndex;
-            if (menu.Item("useW").GetValue<bool>() && useWWhen == 0)
-            {
-                int useWOn = menu.Item("useWon").GetValue<Slider>().Value;
-                useW(useWOn, usePacket);
-            }
+                // Se o E está configurado para usar
+                if (menu.Item("useE").GetValue<bool>())
+                {
+                    useE(target, usePacket);
+                }
 
-            // Se o R está configurado para usar
-            if (menu.Item("useR").GetValue<bool>())
-            {
-                useR(target, usePacket);
+                // Se o W está configurado para usar e está configurado para usar no combo
+                int useWWhen = menu.Item("useWWhen").GetValue<StringList>().SelectedIndex;
+                if (menu.Item("useW").GetValue<bool>() && useWWhen == 0)
+                {
+                    int useWOn = menu.Item("useWon").GetValue<Slider>().Value;
+                    useW(useWOn, usePacket);
+                }
+
+                // Se o R está configurado para usar
+                if (menu.Item("useR").GetValue<bool>())
+                {
+                    useR(target, usePacket);
+                }
             }
+            else
+            {
+                setOrbwalkToCursorPos();
+            }
+        }
+
+        public void mixedMode()
+        {
+            setOrbwalkToCursorPos();
+        }
+
+        public void lastHit()
+        {
+            setOrbwalkToCursorPos();
+        }
+
+        public void setOrbwalkToCursorPos()
+        {
+            orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+        }
+        public void setOrbwalkingToTargetPos()
+        {
+            orbwalker.SetOrbwalkingPoint(target.Position);
         }
 
         private void useQ(Obj_AI_Hero target, bool packet)
