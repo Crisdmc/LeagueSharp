@@ -38,9 +38,10 @@ The idea is to do something like YiSlack, but I'm starting and I'm lazy.
 MasterActivator
 ===========
 
-* Def. Itens
+* Purifiers
   *  QSS
   *  Mercurial
+  *  Cleanse
   *  Just on combo
                 
 * Clear

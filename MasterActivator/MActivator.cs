@@ -127,7 +127,9 @@ namespace MasterActivator
                             {
                                 useItem(mercurial.id);
                             }
-                            if (Config.Item("cleanse").GetValue<bool>())
+                            if (Config.Item("cleanse").GetValue<bool>() &&
+                                cleanseSlot != SpellSlot.Unknown &&
+                                _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
                             {
                                 _player.SummonerSpellbook.CastSpell(cleanseSlot);
                             }
@@ -196,7 +198,7 @@ namespace MasterActivator
                         int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
                         int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
 
-                        if(item.type == ItemTypeId.Offensive)
+                        if (item.type == ItemTypeId.Offensive)
                         {
                             if (checkTarget(item.range))
                             {
