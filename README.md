@@ -42,6 +42,7 @@ MasterActivator
   *  QSS
   *  Mercurial
   *  Cleanse
+  *  Mikael's
   *  Just on combo
                 
 * Clear
@@ -54,6 +55,7 @@ MasterActivator
   *  Suppression
   *  Stun
   *  Polymorph
+  *  Silence
 
 * Off. Itens
   *  Youmuu's
@@ -75,13 +77,36 @@ MasterActivator
   *  Muramana
   *  Use on %HP
 
-* Consumables
+* Deffensive
+  *  Barrier
+  *  Use on %HP
+  *  Seraph's
+  *  Use on %Mana
+  *  Zhonya's
+  *  Use on %HP
+  *  Solari
+  *  Use on %HP
+  *  FOMountain
+  *  Use on %HP
+
+* Regenerators
+  *  Heal
+  *  Use on %HP
+  *  Clarity
+  *  Use on %HP
   *  HP Pot
   *  Use on %HP
   *  Mana Pot
   *  Use on %Mana
   *  Biscuit
   *  Use on %HP
+
+* Team Use (Heal, Mikael's, Solari, Mountain)
+  *  Champion 1
+  *  Champion 2
+  *  Champion 3
+  *  Champion 4
+  *  Champion 5
 
 * Combo Mode
   * Active: Auto active with space bar

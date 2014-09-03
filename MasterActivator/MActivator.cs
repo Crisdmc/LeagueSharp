@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MasterYi.entity;
-using MasterYi.enumerator;
+using MasterActivator.entity;
+using MasterActivator.enumerator;
 
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -20,32 +20,47 @@ namespace MasterActivator
         TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         // leagueoflegends.wikia.com/
-        Item qss = new Item("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
-        Item mercurial = new Item("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
-        Item bilgewater = new Item("Bilgewater Cutlass", "Bilgewater", "bilgewater", 3144, ItemTypeId.Offensive, 450);
-        Item king = new Item("Blade of the Ruined King", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
-        Item youmus = new Item("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
-        Item tiamat = new Item("Tiamat", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
-        Item hydra = new Item("Ravenous Hydra", "Hydra", "hydra", 3074, ItemTypeId.Offensive, 400);
-        Item dfg = new Item("Deathfire Grasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
-        Item divine = new Item("Sword of the Divine", "SoDivine", "divine", 3131, ItemTypeId.Offensive);
-        Item hextech = new Item("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
-        Item muramana = new Item("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Offensive);
-        //Item seraph = new Item("Seraph's Embrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
+        MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
+        MItem mercurial = new MItem("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
+        MItem bilgewater = new MItem("Bilgewater Cutlass", "Bilgewater", "bilgewater", 3144, ItemTypeId.Offensive, 450);
+        MItem king = new MItem("Blade of the Ruined King", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
+        MItem youmus = new MItem("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
+        MItem tiamat = new MItem("Tiamat", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
+        MItem hydra = new MItem("Ravenous Hydra", "Hydra", "hydra", 3074, ItemTypeId.Offensive, 400);
+        MItem dfg = new MItem("Deathfire Grasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
+        MItem divine = new MItem("Sword of the Divine", "SoDivine", "divine", 3131, ItemTypeId.Offensive);
+        MItem hextech = new MItem("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
+        MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
+        MItem seraph = new MItem("Seraph's Embrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
+        MItem zhonya = new MItem("Zhonya's Hourglass", "Zhonya's", "zhonya", 3157, ItemTypeId.Deffensive);
+        //Item banner = new Item("Randuin's Omen", "Randuin's", "randuin", 3143, 500);
         //Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
-        //Item mountain = new Item("Face of the Mountain", "FoMountain", "mountain", 3401); // falta range
+        MItem mountain = new MItem("Face of the Mountain", "FoMountain", "mountain", 3401, ItemTypeId.Deffensive, 700); // falta range
         //Item frost = new Item("Frost Queen's Claim", "Frost Queen's", "frost", 3092, 850);
-        //Item solari = new Item("Locket of the Iron Solari", "Solari", "solari", 3190, 600);
-        //Item mikael = new Item("Mikael's Crucible", "Mikael's", "mikael", 3222); // falta range
+        MItem solari = new MItem("Locket of the Iron Solari", "Solari", "solari", 3190, ItemTypeId.Deffensive, 600);
+        MItem mikael = new MItem("Mikael's Crucible", "Mikael's", "mikael", 3222, ItemTypeId.Purifier, 750);
         //Item talisman = new Item("Talisman of Ascension", "Talisman", "talisman", 3069, 600);
         //Item shadows = new Item("Twin Shadows", "Shadows", "shadows", 3023, 750); //2700
         //Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range Utility.UnderTurret
-        Item hpPot = new Item("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
-        Item manaPot = new Item("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
-        Item biscuit = new Item("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
-        //1 = SummonerBoost 2 = SummonerClairvoyance 3 = SummonerExhaust 4 = SummonerFlash 6 = SummonerHaste 7 = SummonerHeal 10 = SummonerRevive 11 = SummonerSmite 12 = SummonerTeleport 13 = SummonerMana 14 = SummonerDot 17
+        MItem hpPot = new MItem("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
+        MItem manaPot = new MItem("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
+        MItem biscuit = new MItem("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
+
+        // Heal prioritizes the allied champion closest to the cursor at the time the ability is cast.
+        // If no allied champions are near the cursor, Heal will target the most wounded allied champion in range.
+        MItem heal = new MItem("Heal", "Heal", "SummonerHeal", 0, ItemTypeId.DeffensiveSpell, 700); // 300? www.gamefaqs.com/pc/954437-league-of-legends/wiki/3-1-summoner-spells
+        MItem barrier = new MItem("Barrier", "Barrier", "SummonerBarrier", 0, ItemTypeId.DeffensiveSpell);
+        MItem cleanse = new MItem("Cleanse", "cleanse", "SummonerBoost", 0, ItemTypeId.PurifierSpell);
+        MItem clarity = new MItem("Clarity", "clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
+        //SummonerExhaust SummonerSmite SummonerDot
 
         public MActivator()
+        {
+            CustomEvents.Game.OnGameLoad += onLoad;
+            Game.OnGameUpdate += onGameUpdate;
+        }
+
+        private void onLoad(EventArgs args)
         {
             // Boas vindas
             Game.PrintChat("<font color='#3BB9FF'>MasterActivator - by Crisdmc - </font>Loaded");
@@ -55,11 +70,12 @@ namespace MasterActivator
                 Config = new Menu("MActivator", "masterActivator", true);
 
                 Config.AddSubMenu(new Menu("Purifiers", "purifiers"));
-                Config.SubMenu("purifiers").AddItem(new MenuItem("qss", "QSS")).SetValue(true);
-                Config.SubMenu("purifiers").AddItem(new MenuItem("mercurial", "Mercurial")).SetValue(true);
-                Config.SubMenu("purifiers").AddItem(new MenuItem("cleanse", "Cleanse")).SetValue(true);
+                createMenuItem(qss, 100, "purifiers", false, false);
+                createMenuItem(mercurial, 100, "purifiers", false, false);
+                createMenuItem(cleanse, 100, "purifiers", false, false);
+                createMenuItem(mikael, 100, "purifiers", false, false);
                 Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
-                
+
                 Config.AddSubMenu(new Menu("Purify", "purify"));
                 Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
                 Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
@@ -70,6 +86,7 @@ namespace MasterActivator
                 Config.SubMenu("purify").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
                 Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
                 Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
+                Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
 
                 Config.AddSubMenu(new Menu("Offensive", "offensive"));
                 createMenuItem(youmus, 100, "offensive");
@@ -82,15 +99,31 @@ namespace MasterActivator
                 createMenuItem(hextech, 80, "offensive");
                 createMenuItem(muramana, 80, "offensive");
 
-                Config.AddSubMenu(new Menu("Defensive", "defensive"));
-                Config.SubMenu("defensive").AddItem(new MenuItem("heal", "Heal")).SetValue(true);
-                Config.SubMenu("defensive").AddItem(new MenuItem("healUseOnPercent", "Use on %HP")).SetValue(new Slider(35, 0, 100));
-                //Config.SubMenu("defensive").AddItem(new MenuItem("healTeam", "Heal Team")).SetValue(true);
+                Config.AddSubMenu(new Menu("Deffensive", "deffensive"));
+                createMenuItem(barrier, 35, "deffensive");
+                createMenuItem(seraph, 45, "deffensive");
+                createMenuItem(zhonya, 35, "deffensive");
+                createMenuItem(solari, 45, "deffensive");
+                createMenuItem(mountain, 45, "deffensive");
 
-                Config.AddSubMenu(new Menu("Consumables", "consumables"));
-                createMenuItem(hpPot, 55, "consumables");
-                createMenuItem(manaPot, 55, "consumables", true);
-                createMenuItem(biscuit, 55, "consumables");
+                Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
+                createMenuItem(heal, 35, "regenerators");
+                //Config.SubMenu("regenerators").AddItem(new MenuItem("useWithHealDebuff", "With debuff")).SetValue(true);
+                createMenuItem(clarity, 25, "regenerators", true);
+                createMenuItem(hpPot, 55, "regenerators");
+                createMenuItem(manaPot, 55, "regenerators", true);
+                createMenuItem(biscuit, 55, "regenerators");
+
+                Config.AddSubMenu(new Menu("Team Use", "teamUseOn"));
+                
+                var allyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
+                               where hero.IsAlly == true
+                              select hero.SkinName;
+
+                foreach (String allyHero in allyHeros)
+                {
+                    Config.SubMenu("teamUseOn").AddItem(new MenuItem(allyHero, allyHero)).SetValue(true);
+                }
 
                 // Combo mode
                 Config.AddSubMenu(new Menu("Combo Mode", "combo"));
@@ -99,104 +132,60 @@ namespace MasterActivator
                 // Target selector
                 Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
                 Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
-                
+
                 Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
 
                 Config.AddToMainMenu();
             }
             catch
             {
-                Game.PrintChat("YiActivator error creating menu!");
+                Game.PrintChat("MasterActivator error creating menu!");
             }
-
-            Game.OnGameUpdate += onGameUpdate;
+           
         }
         
         private void onGameUpdate(EventArgs args)
         {
             if (Config.Item("enabled").GetValue<bool>())
             {
-                var healSlot = Utility.GetSpellSlot(_player, "SummonerHeal");
-                if (healSlot != SpellSlot.Unknown)
-                {
-                    if (_player.SummonerSpellbook.CanUseSpell(healSlot) == SpellState.Ready)
-                    {
-                        int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
-                        int usePercent = Config.Item("healUseOnPercent").GetValue<Slider>().Value;
+                checkAndUse(barrier);
+                checkAndUse(clarity);
+                checkAndUse(seraph);
+                // TODO: better use of zhonya
+                checkAndUse(zhonya);
 
-                        if (Config.Item("heal").GetValue<bool>() && actualHeroHpPercent <= usePercent)
-                        {
-                            _player.SummonerSpellbook.CastSpell(healSlot);
-                        }
-                    }
-                }
+                checkAndUse(cleanse);
+                checkAndUse(qss);
+                checkAndUse(mercurial);
 
-                checkAndUsePurifiers();
+                checkAndUse(manaPot, "FlaskOfCrystalWater");
+                checkAndUse(hpPot, "RegenerationPotion");
+                checkAndUse(biscuit, "ItemMiniRegenPotion");
+
+                // TODO: get heal debuff name, ME
+                teamCheckAndUse(heal);
+                teamCheckAndUse(solari, "", true);
+                teamCheckAndUse(mikael);
+                teamCheckAndUse(mountain);
 
                 if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                 {
-                    checkAndUse(youmus);
-                    checkAndUse(bilgewater);
-                    checkAndUse(king);
-                    checkAndUse(tiamat);
-                    checkAndUse(hydra);
-                    checkAndUse(dfg);
-                    checkAndUse(divine);
-                    checkAndUse(hextech);
-
-                    if (Config.Item(muramana.menuVariable).GetValue<bool>() && Items.HasItem(muramana.id))
-                    {
-                        if (!checkBuff("Muramana"))
-                        {
-                            checkAndUse(muramana);
-                        }
-                    }
-                }
-
-                if (!checkBuff("FlaskOfCrystalWater"))
-                {
-                    checkAndUse(manaPot);
-                }
-                if (!checkBuff("RegenerationPotion"))
-                {
-                    checkAndUse(hpPot);
-                }
-                if (!checkBuff("ItemMiniRegenPotion"))
-                {
-                    checkAndUse(biscuit);
+                    combo();
                 }
             }
         }
-        
-        private void checkAndUsePurifiers()
+
+        private void combo()
         {
-            var cleanseSlot = Utility.GetSpellSlot(_player, "SummonerBoost"); //q,w
-            if (((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
-                 (!Config.Item("defJustOnCombo").GetValue<bool>())) &&
-                ((Items.HasItem(qss.id) || Items.HasItem(mercurial.id)) || (cleanseSlot != SpellSlot.Unknown)))
-            {
-                if (Items.CanUseItem(qss.id) || Items.CanUseItem(mercurial.id) || _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
-                {
-                    if (checkCC())
-                    {
-                        // TODO : If have more than one, just use one
-                        if (Config.Item(qss.menuVariable).GetValue<bool>())
-                        {
-                            useItem(qss.id);
-                        }
-                        if (Config.Item(mercurial.menuVariable).GetValue<bool>())
-                        {
-                            useItem(mercurial.id);
-                        }
-                        if (Config.Item("cleanse").GetValue<bool>() &&
-                            cleanseSlot != SpellSlot.Unknown &&
-                            _player.SummonerSpellbook.CanUseSpell(cleanseSlot) == SpellState.Ready)
-                        {
-                            _player.SummonerSpellbook.CastSpell(cleanseSlot);
-                        }
-                    }
-                }
-            }
+            checkAndUse(youmus);
+            checkAndUse(bilgewater);
+            checkAndUse(king);
+            checkAndUse(tiamat);
+            checkAndUse(hydra);
+            checkAndUse(dfg);
+            checkAndUse(divine);
+            checkAndUse(hextech);
+            checkAndUse(muramana);      
         }
 
         private bool checkBuff(String name)
@@ -208,46 +197,199 @@ namespace MasterActivator
             return searchedBuff.Count() <= 0 ? false : true;
         }
 
-        private void createMenuItem(Item item, int defaultValue, String parent, bool mana = false)
+        private void createMenuItem(MItem item, int defaultValue, String parent, bool mana = false, bool useOn = true)
         {
             Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
-            Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
+            if (useOn)
+            {
+                Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
+            }
         }
 
-        private void checkAndUse(Item item)
+        private void teamCheckAndUse(MItem item, String buff = "", bool self = false)
         {
-            try
+            if (Config.Item(item.menuVariable).GetValue<bool>())
             {
-                if (Config.Item(item.menuVariable).GetValue<bool>() && Items.HasItem(item.id))
-                {
-                    if (Items.CanUseItem(item.id))
-                    {
-                        int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
-                        int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+                int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
 
-                        if (item.type == ItemTypeId.Offensive)
+                if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
+                {
+                    var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
+                    if (spellSlot != SpellSlot.Unknown)
+                    {
+                        var activeAllyHeros = getActiveAllyHeros(item);
+                        if (activeAllyHeros.Count() > 0)
                         {
-                            if (checkTarget(item.range))
+                            foreach (Obj_AI_Hero hero in activeAllyHeros)
                             {
-                                int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
-                                if (checkUsePercent(item, actualTargetHpPercent))
+                                int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
+                                int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+
+                                if ( (item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent) ||
+                                     (item.type == ItemTypeId.ManaRegeneratorSpell && actualHeroManaPercent <= usePercent))
                                 {
-                                    useItem(item.id, item.range == 0 ? null : ts.Target);
+                                    _player.SummonerSpellbook.CastSpell(spellSlot);
                                 }
                             }
                         }
-                        else if (item.type == ItemTypeId.HPRegenerator)
+                    }
+                }
+                else
+                {
+                    if (Items.HasItem(item.id))
+                    {
+                        if (Items.CanUseItem(item.id))
                         {
-                            if (checkUsePercent(item, actualHeroHpPercent))
+                            var activeAllyHeros = getActiveAllyHeros(item);
+                            if (activeAllyHeros.Count() > 0)
                             {
-                                useItem(item.id);
+                                foreach (Obj_AI_Hero hero in activeAllyHeros)
+                                {
+                                    if (item.type == ItemTypeId.Purifier)
+                                    {
+                                        if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                        (!Config.Item("defJustOnCombo").GetValue<bool>()))
+                                        {
+                                            if (checkCC(hero))
+                                            {
+                                                useItem(item.id, hero);
+                                            }
+                                        }
+                                    }
+                                    else if(item.type == ItemTypeId.Deffensive)
+                                    {
+                                        int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
+                                        if (actualHeroHpPercent <= usePercent)
+                                        {
+                                            if (self)
+                                            {
+                                                useItem(item.id);
+                                            }
+                                            else
+                                            {
+                                                useItem(item.id, hero);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
-                        else if (item.type == ItemTypeId.ManaRegenerator)
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<Obj_AI_Hero> getActiveAllyHeros(MItem item)
+        {
+            var activeAllyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
+                                 where hero.IsAlly == true &&
+                                       Config.Item(hero.SkinName).GetValue<bool>() &&
+                                       hero.Distance(_player) <= item.range &&
+                                       !hero.IsDead
+                                select hero;
+
+            return activeAllyHeros;
+        }
+
+        private void checkAndUse(MItem item, String buff = "")
+        {
+            try
+            {
+                if (Config.Item(item.menuVariable).GetValue<bool>())
+                {
+                    int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
+                    int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+
+                    if ( item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
+                    {
+                        var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
+                        if (spellSlot != SpellSlot.Unknown)
                         {
-                            if (checkUsePercent(item, actualHeroManaPercent))
+                            if (_player.SummonerSpellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                             {
-                                useItem(item.id);
+                                if (item.type == ItemTypeId.DeffensiveSpell)
+                                {
+                                    int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                    if (actualHeroHpPercent <= usePercent)
+                                    {
+                                    
+                                        _player.SummonerSpellbook.CastSpell(spellSlot);
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.ManaRegeneratorSpell)
+                                {
+                                    int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                    if (actualHeroManaPercent <= usePercent);
+                                }
+                                else if (item.type == ItemTypeId.PurifierSpell)
+                                {
+                                    if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                        (!Config.Item("defJustOnCombo").GetValue<bool>()))
+                                    {
+                                        if (checkCC(_player))
+                                        {
+                                            _player.SummonerSpellbook.CastSpell(spellSlot);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (Items.HasItem(item.id))
+                        {
+                            if (Items.CanUseItem(item.id))
+                            {
+                                if (item.type == ItemTypeId.Offensive)
+                                {
+                                    if (checkTarget(item.range))
+                                    {
+                                        int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
+                                        if (checkUsePercent(item, actualTargetHpPercent))
+                                        {
+                                            useItem(item.id, item.range == 0 ? null : ts.Target);
+                                        }
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.HPRegenerator || item.type == ItemTypeId.Deffensive)
+                                {
+                                    if (checkUsePercent(item, actualHeroHpPercent))
+                                    {
+                                        if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.ManaRegenerator)
+                                {
+                                    if (checkUsePercent(item, actualHeroManaPercent))
+                                    {
+                                        if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.Buff)
+                                {
+                                    if (!checkBuff(item.name))
+                                    {
+                                        useItem(item.id);
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.Purifier)
+                                {
+                                    if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                        (!Config.Item("defJustOnCombo").GetValue<bool>()))
+                                    {
+                                        if (checkCC(_player))
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -268,7 +410,7 @@ namespace MasterActivator
             }
         }
 
-        private bool checkUsePercent(Item item, int actualPercent)
+        private bool checkUsePercent(MItem item, int actualPercent)
         {
             int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
             return actualPercent <= usePercent ? true : false;
@@ -299,13 +441,13 @@ namespace MasterActivator
             return ts.Target != null ? true : false;
         }
 
-        private bool checkCC()
+        private bool checkCC(Obj_AI_Hero hero)
         {
             bool cc = false;
 
             if (Config.Item("blind").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Blind))
+                if (hero.HasBuffOfType(BuffType.Blind))
                 {
                     cc = true;
                 }
@@ -313,7 +455,7 @@ namespace MasterActivator
 
             if (Config.Item("charm").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Charm))
+                if (hero.HasBuffOfType(BuffType.Charm))
                 {
                     cc = true;
                 }
@@ -321,7 +463,7 @@ namespace MasterActivator
 
             if (Config.Item("fear").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Fear))
+                if (hero.HasBuffOfType(BuffType.Fear))
                 {
                     cc = true;
                 }
@@ -329,7 +471,7 @@ namespace MasterActivator
 
             if (Config.Item("flee").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Flee))
+                if (hero.HasBuffOfType(BuffType.Flee))
                 {
                     cc = true;
                 }
@@ -337,7 +479,7 @@ namespace MasterActivator
 
             if (Config.Item("snare").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Snare))
+                if (hero.HasBuffOfType(BuffType.Snare))
                 {
                     cc = true;
                 }
@@ -345,7 +487,7 @@ namespace MasterActivator
 
             if (Config.Item("taunt").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Taunt))
+                if (hero.HasBuffOfType(BuffType.Taunt))
                 {
                     cc = true;
                 }
@@ -353,7 +495,7 @@ namespace MasterActivator
 
             if (Config.Item("suppression").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Suppression))
+                if (hero.HasBuffOfType(BuffType.Suppression))
                 {
                     cc = true;
                 }
@@ -361,7 +503,7 @@ namespace MasterActivator
 
             if (Config.Item("stun").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Stun))
+                if (hero.HasBuffOfType(BuffType.Stun))
                 {
                     cc = true;
                 }
@@ -369,7 +511,15 @@ namespace MasterActivator
 
             if (Config.Item("polymorph").GetValue<bool>())
             {
-                if (_player.HasBuffOfType(BuffType.Polymorph))
+                if (hero.HasBuffOfType(BuffType.Polymorph))
+                {
+                    cc = true;
+                }
+            }
+
+            if (Config.Item("silence").GetValue<bool>())
+            {
+                if (hero.HasBuffOfType(BuffType.Silence))
                 {
                     cc = true;
                 }

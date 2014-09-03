@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MasterYi.enumerator
+namespace MasterActivator.enumerator
 {
     public enum ItemTypeId
     {
@@ -8,6 +8,10 @@ namespace MasterYi.enumerator
         Purifier = 1,
         HPRegenerator = 2,
         ManaRegenerator = 3,
-        Deffensive = 4
+        Deffensive = 4,
+        Buff = 5,
+        DeffensiveSpell = 6,
+        PurifierSpell = 7,
+        ManaRegeneratorSpell = 8
     }
 }

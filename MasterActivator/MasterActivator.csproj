@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MActivator.cs" />
-    <Compile Include="entity\Item.cs" />
+    <Compile Include="entity\MItem.cs" />
     <Compile Include="enumerator\ItemTypeId.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

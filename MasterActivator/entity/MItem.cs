@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MasterYi.enumerator;
+using MasterActivator.enumerator;
 
-namespace MasterYi.entity
+namespace MasterActivator.entity
 {
-    class Item
+    class MItem
     {
         public String name { get; set; }
         public String menuName { get; set; }
@@ -16,7 +16,7 @@ namespace MasterYi.entity
         public float range { get; set; }
         public ItemTypeId type { get; set; }
 
-        public Item(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0)
+        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0)
         {
             this.name = name;
             this.menuVariable = menuVariable;
