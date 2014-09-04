@@ -16,7 +16,7 @@ namespace MasterActivator
     internal class MActivator
     {
         private Menu Config;
-        private Obj_AI_Hero _player = ObjectManager.Player;
+        private Obj_AI_Hero _player;
         TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         // leagueoflegends.wikia.com/
@@ -67,6 +67,8 @@ namespace MasterActivator
 
             try
             {
+                _player = ObjectManager.Player;
+
                 Config = new Menu("MActivator", "masterActivator", true);
 
                 Config.AddSubMenu(new Menu("Purifiers", "purifiers"));
@@ -210,8 +212,6 @@ namespace MasterActivator
         {
             if (Config.Item(item.menuVariable).GetValue<bool>())
             {
-                int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-
                 if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
                 {
                     var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
@@ -220,6 +220,8 @@ namespace MasterActivator
                         var activeAllyHeros = getActiveAllyHeros(item);
                         if (activeAllyHeros.Count() > 0)
                         {
+                            int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+
                             foreach (Obj_AI_Hero hero in activeAllyHeros)
                             {
                                 int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
@@ -256,8 +258,9 @@ namespace MasterActivator
                                             }
                                         }
                                     }
-                                    else if(item.type == ItemTypeId.Deffensive)
+                                    else if (item.type == ItemTypeId.Deffensive)
                                     {
+                                        int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                         int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
                                         if (actualHeroHpPercent <= usePercent)
                                         {
@@ -312,14 +315,16 @@ namespace MasterActivator
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                     if (actualHeroHpPercent <= usePercent)
                                     {
-                                    
                                         _player.SummonerSpellbook.CastSpell(spellSlot);
                                     }
                                 }
                                 else if (item.type == ItemTypeId.ManaRegeneratorSpell)
                                 {
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-                                    if (actualHeroManaPercent <= usePercent);
+                                    if (actualHeroManaPercent <= usePercent)
+                                    {
+                                        _player.SummonerSpellbook.CastSpell(spellSlot);
+                                    }
                                 }
                                 else if (item.type == ItemTypeId.PurifierSpell)
                                 {
