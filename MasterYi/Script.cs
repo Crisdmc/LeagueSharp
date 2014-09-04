@@ -56,7 +56,7 @@ namespace MasterYi
                     Config.SubMenu("combo").AddItem(new MenuItem("useW", "Use W")).SetValue(true);
                     Config.SubMenu("combo").AddItem(new MenuItem("useE", "Use E")).SetValue(true);
                     Config.SubMenu("combo").AddItem(new MenuItem("useR", "Use R")).SetValue(true);
-                    Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(true);
+                    Config.SubMenu("combo").AddItem(new MenuItem("orbLock", "Orbwalk Lock")).SetValue(false);
                     Config.SubMenu("combo").AddItem(new MenuItem("usePacket", "Use Packet")).SetValue(false);
 
                     // W options

@@ -85,7 +85,7 @@ namespace MasterYi
             
             obtainTarget(comboUseQ);
 
-            if (target.IsValidTarget())
+            if (target != null)
             {
                 // Se está "castando" e o último "castado" é o W, e a opção shortW está ativada
                 if (sBook.IsCastingSpell && (_player.LastCastedSpellName() == wData.Name) && menu.Item("shortW").GetValue<bool>())
@@ -96,7 +96,7 @@ namespace MasterYi
                 }
 
                 // Se o orbwalker lock está ativado
-                if (menu.Item("orbLock").GetValue<bool>() && target.Distance(Game.CursorPos) < 600)
+                if (menu.Item("orbLock").GetValue<bool>() && target.Distance(Game.CursorPos) < 200)
                 {
                     setOrbwalkingToTargetPos();
                 }
