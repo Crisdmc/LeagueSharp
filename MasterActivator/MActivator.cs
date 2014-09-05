@@ -22,7 +22,7 @@ namespace MasterActivator
         // leagueoflegends.wikia.com/
         MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
         MItem mercurial = new MItem("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
-        MItem bilgewater = new MItem("Bilgewater Cutlass", "Bilgewater", "bilgewater", 3144, ItemTypeId.Offensive, 450);
+        MItem bilgewater = new MItem("Bilgewater Cutlass", "Bilgewater", "bilge", 3144, ItemTypeId.Offensive, 450);
         MItem king = new MItem("Blade of the Ruined King", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
         MItem youmus = new MItem("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
         MItem tiamat = new MItem("Tiamat", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
