@@ -12,6 +12,7 @@ namespace MasterActivator.enumerator
         Buff = 5,
         DeffensiveSpell = 6,
         PurifierSpell = 7,
-        ManaRegeneratorSpell = 8
+        ManaRegeneratorSpell = 8,
+        OffensiveSpell = 9
     }
 }

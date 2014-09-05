@@ -50,9 +50,11 @@ namespace MasterActivator
         // If no allied champions are near the cursor, Heal will target the most wounded allied champion in range.
         MItem heal = new MItem("Heal", "Heal", "SummonerHeal", 0, ItemTypeId.DeffensiveSpell, 700); // 300? www.gamefaqs.com/pc/954437-league-of-legends/wiki/3-1-summoner-spells
         MItem barrier = new MItem("Barrier", "Barrier", "SummonerBarrier", 0, ItemTypeId.DeffensiveSpell);
-        MItem cleanse = new MItem("Cleanse", "cleanse", "SummonerBoost", 0, ItemTypeId.PurifierSpell);
-        MItem clarity = new MItem("Clarity", "clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
-        //SummonerExhaust SummonerSmite SummonerDot
+        MItem cleanse = new MItem("Cleanse", "Cleanse", "SummonerBoost", 0, ItemTypeId.PurifierSpell);
+        MItem clarity = new MItem("Clarity", "Clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
+        MItem ignite = new MItem("Ignite", "Ignite", "SummonerDot", 0, ItemTypeId.OffensiveSpell, 600);
+        MItem smite = new MItem("Smite", "Active", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 750);
+        //SummonerExhaust  
 
         public MActivator()
         {
@@ -90,7 +92,19 @@ namespace MasterActivator
                 Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
                 Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
 
+                Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
+                createMenuItem(smite, 100, "smiteCfg", false, false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
+                
                 Config.AddSubMenu(new Menu("Offensive", "offensive"));
+                createMenuItem(ignite, 100, "offensive", false, false);
+                Config.SubMenu("offensive").AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
                 createMenuItem(youmus, 100, "offensive");
                 createMenuItem(bilgewater, 60, "offensive");
                 createMenuItem(king, 60, "offensive");
@@ -175,7 +189,8 @@ namespace MasterActivator
                     teamCheckAndUse(solari, "", true);
                     teamCheckAndUse(mountain);
                     teamCheckAndUse(mikael);
-                    
+
+                    checkAndUse(smite);
 
                     if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                     {
@@ -192,6 +207,7 @@ namespace MasterActivator
 
         private void combo()
         {
+            checkAndUse(ignite);
             checkAndUse(youmus);
             checkAndUse(bilgewater);
             checkAndUse(king);
@@ -200,7 +216,7 @@ namespace MasterActivator
             checkAndUse(dfg);
             checkAndUse(divine);
             checkAndUse(hextech);
-            checkAndUse(muramana);      
+            checkAndUse(muramana);
         }
 
         private bool checkBuff(String name)
@@ -322,7 +338,7 @@ namespace MasterActivator
                 int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
                 int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
 
-                if ( item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
+                if ( item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell)
                 {
                     var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
                     if (spellSlot != SpellSlot.Unknown)
@@ -353,6 +369,54 @@ namespace MasterActivator
                                     if (checkCC(_player))
                                     {
                                         _player.SummonerSpellbook.CastSpell(spellSlot);
+                                    }
+                                }
+                            }
+                            else if (item.type == ItemTypeId.OffensiveSpell)
+                            {
+                                if (item == ignite)
+                                {
+                                    ts.SetRange(item.range);
+                                    ts.SetTargetingMode(TargetSelector.TargetingMode.LowHP);
+                                    Obj_AI_Hero target = ts.Target;
+                                    if (target != null)
+                                    {
+                                        bool overIgnite = Config.Item("overIgnite").GetValue<bool>();
+                                        bool isKillable = (DamageLib.getDmg(target, DamageLib.SpellType.IGNITE) >= target.Health);
+                                        if (isKillable && target.Distance(_player.Position) <= item.range)
+                                        {
+                                            if ((!overIgnite && !target.HasBuff("summonerdot")) || overIgnite)
+                                            {
+                                                _player.SummonerSpellbook.CastSpell(spellSlot, target);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        int level = _player.Level;
+                                        int index = _player.Level / 5;
+                                        float[] dmgs = {370 + 20 * level, 330 + 30 * level, 240 + 40 * level, 100 + 50 * level};
+
+                                        string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon" };
+
+                                        var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
+                                        if (minions.Count() > 0)
+                                        {
+                                            foreach (Obj_AI_Base minion in minions)
+                                            {
+                                                if (minion.Health <= dmgs[index] && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>()))
+                                                {
+                                                    _player.SummonerSpellbook.CastSpell(spellSlot, minion);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Game.PrintChat("Problem with MasterActivator(Smite).");
                                     }
                                 }
                             }

@@ -57,7 +57,19 @@ MasterActivator
   *  Polymorph
   *  Silence
 
-* Off. Itens
+* Smite
+  *  Active
+  *  Blue
+  *  Red
+  *  Dragon
+  *  Baron
+  *  GreatWraith
+  *  Wraith
+  *  Golem
+
+* Offensive
+  *  Ignite
+  *  Over Ignite (false = dont use ignite if the target already has)
   *  Youmuu's
   *  Use on %HP
   *  Bilgewater
