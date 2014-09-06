@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -381,15 +381,41 @@ namespace MasterActivator
                                     Obj_AI_Hero target = ts.Target;
                                     if (target != null)
                                     {
-                                        bool overIgnite = Config.Item("overIgnite").GetValue<bool>();
-                                        bool isKillable = (DamageLib.getDmg(target, DamageLib.SpellType.IGNITE) >= target.Health);
-                                        if (isKillable && target.Distance(_player.Position) <= item.range)
+                                        
+                                        var aaspeed = _player.AttackSpeedMod;
+                                        float aadmg = 0;
+
+                                        // attack speed checks
+                                        if (aaspeed < 0.8f)
+                                            aadmg = _player.FlatPhysicalDamageMod * 3;
+                                        else if (aaspeed > 1f && aaspeed < 1.3f)
+                                            aadmg = _player.FlatPhysicalDamageMod * 5;
+                                        else if (aaspeed > 1.3f && aaspeed < 1.5f)
+                                            aadmg = _player.FlatPhysicalDamageMod * 7;
+                                        else if (aaspeed > 1.5f && aaspeed < 1.7f)
+                                            aadmg = _player.FlatPhysicalDamageMod * 9;
+                                        else if (aaspeed > 2.0f)
+                                            aadmg = _player.FlatPhysicalDamageMod * 11;
+
+                                        // Will calculate for base hp regen, currenthp, etc
+                                        float dmg = (_player.Level * 20) + 50;
+                                        float regenpersec = (target.FlatHPRegenMod + (target.HPRegenRate * target.Level));
+                                        float dmgafter = (dmg - ((regenpersec * 5) / 2));
+
+                                        float aaleft = (dmgafter + target.Health / _player.FlatPhysicalDamageMod);
+                                        //var pScreen = Drawing.WorldToScreen(target.Position);
+
+                                        if (target.Health < (dmgafter + aadmg) && _player.Distance(target) <= item.range)
                                         {
+                                            bool overIgnite = Config.Item("overIgnite").GetValue<bool>();
                                             if ((!overIgnite && !target.HasBuff("summonerdot")) || overIgnite)
                                             {
                                                 _player.SummonerSpellbook.CastSpell(spellSlot, target);
+                                                //Drawing.DrawText(pScreen[0], pScreen[1], System.Drawing.Color.Crimson, "Kill in " + aaleft);
                                             }
+                                        
                                         }
+
                                     }
                                 }
                                 else
