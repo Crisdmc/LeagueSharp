@@ -84,7 +84,8 @@ namespace MasterActivator
 
         private void onProcessSpellCast(Obj_AI_Base attacker, GameObjectProcessSpellCastEventArgs args)
         {
-            if ((attacker.Type == GameObjectType.obj_AI_Hero || attacker.Type == GameObjectType.obj_AI_Turret) && attacker.IsEnemy && args.Target.IsAlly && args.Target.Type == GameObjectType.obj_AI_Hero)
+            if ((attacker.Type == GameObjectType.obj_AI_Hero || attacker.Type == GameObjectType.obj_AI_Turret) && 
+                 attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
             {
                 gotHit = true;
                 checkAndUse(barrier);
