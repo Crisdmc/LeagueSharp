@@ -174,13 +174,10 @@ namespace MasterActivator
                 Packet.S2C.Damage.Struct damage = Packet.S2C.Damage.Decoded(args.PacketData);
                 var source = damage.SourceNetworkId;
                 var target = damage.TargetNetworkId;
-                var dmgamount = damage.DamageAmount;
 
-                bool _gothit = packet[0] == Packet.S2C.Damage.Header;
-                if (_gothit) 
-                { 
-                    playerHit = target;
-                    gotHit = true;
+                playerHit = target;
+                gotHit = true;
+                
                 }
             }
 
