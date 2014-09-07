@@ -17,6 +17,8 @@ namespace MasterActivator
     {
         private Menu Config;
         private Obj_AI_Hero _player;
+        private int playerHit;
+        private bool gotHit  = false;
         TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         // leagueoflegends.wikia.com/
@@ -60,6 +62,7 @@ namespace MasterActivator
         {
             CustomEvents.Game.OnGameLoad += onLoad;
             Game.OnGameUpdate += onGameUpdate;
+            Game.OnGameProcessPacket += onGameProcessPacket;
         }
 
         private void onLoad(EventArgs args)
@@ -158,6 +161,29 @@ namespace MasterActivator
                 Game.PrintChat("MasterActivator error creating menu!");
             }
            
+        }
+        
+        private void onGameProcessPacket(GamePacketEventArgs args)
+        {
+            byte[] packet = args.PacketData;
+
+            // Added hit detection usesing packets yay
+            // Added the checks in checkAndUse && teamCheckAndUse 
+            if (packet[0] == Packet.S2C.Damage.Header)
+            {
+                Packet.S2C.Damage.Struct damage = Packet.S2C.Damage.Decoded(args.PacketData);
+                var source = damage.SourceNetworkId;
+                var target = damage.TargetNetworkId;
+                var dmgamount = damage.DamageAmount;
+
+                bool _gothit = packet[0] == Packet.S2C.Damage.Header;
+                if (_gothit) 
+                { 
+                    playerHit = target;
+                    gotHit = true;
+                }
+            }
+
         }
         
         private void onGameUpdate(EventArgs args)
@@ -259,10 +285,11 @@ namespace MasterActivator
                                     int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
                                     int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
 
-                                    if ((item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent) ||
+                                    if ((item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent && playerHit == hero.NetworkId && gotHit) ||
                                          (item.type == ItemTypeId.ManaRegeneratorSpell && actualHeroManaPercent <= usePercent))
                                     {
                                         _player.SummonerSpellbook.CastSpell(spellSlot);
+                                        gotHit = false;
                                     }
                                 }
                             }
@@ -298,15 +325,17 @@ namespace MasterActivator
                                         {
                                             int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                             int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
-                                            if (actualHeroHpPercent <= usePercent)
+                                            if (actualHeroHpPercent <= usePercent && gotHit)
                                             {
-                                                if (self)
+                                                if (self && playerHit == _player.NetworkId)
                                                 {
                                                     useItem(item.id);
+                                                    gotHit = false;
                                                 }
-                                                else
+                                                else if ( playerHit == hero.NetworkId)
                                                 {
                                                     useItem(item.id, hero);
+                                                    gotHit = false;
                                                 }
                                             }
                                         }
@@ -348,9 +377,10 @@ namespace MasterActivator
                             if (item.type == ItemTypeId.DeffensiveSpell)
                             {
                                 int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-                                if (actualHeroHpPercent <= usePercent)
+                                if (actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
                                 {
                                     _player.SummonerSpellbook.CastSpell(spellSlot);
+                                    gotHit = false;
                                 }
                             }
                             else if (item.type == ItemTypeId.ManaRegeneratorSpell)
