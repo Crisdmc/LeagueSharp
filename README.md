@@ -99,6 +99,7 @@ MasterActivator
   *  Use on %Mana
   *  Zhonya's
   *  Use on %HP
+  *  Just Predicted (just use Barrier, Seraph and Zhonya's when predict incoming dmg, and this dmg can made you life cross use HP%).
   *  Solari
   *  Use on %HP
   *  FOMountain
@@ -129,4 +130,5 @@ MasterActivator
 * Target Selector
   * LowHP, MostAD, MostAP, Closest, NearMouse, AutoPriority, LessAttack, LessCast
                 
+* Predict DMG
 * Enabled

@@ -84,13 +84,83 @@ namespace MasterActivator
 
         private void onProcessSpellCast(Obj_AI_Base attacker, GameObjectProcessSpellCastEventArgs args)
         {
-            if ((attacker.Type == GameObjectType.obj_AI_Hero || attacker.Type == GameObjectType.obj_AI_Turret) && 
-                 attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
+            try
             {
-                gotHit = true;
-                checkAndUse(barrier);
-                checkAndUse(seraph);
-                checkAndUse(zhonya);
+                double incDmg = 0;
+                if (Config.Item("enabled").GetValue<KeyBind>().Active)
+                {
+                    if (Config.Item("predict").GetValue<KeyBind>().Active)
+                    {
+                        if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
+                        {
+                            Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
+
+                            if (attackerHero != null)
+                            {
+                                SpellSlot spellSlot = Utility.GetSpellSlot(attackerHero, args.SData.Name);
+                                SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
+
+                                if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.IGNITE);
+                                }
+                                else if (spellSlot == SpellSlot.Q)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.Q);
+                                }
+                                else if (spellSlot == SpellSlot.W)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.W);
+                                }
+                                else if (spellSlot == SpellSlot.E)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.E);
+                                }
+                                else if (spellSlot == SpellSlot.R)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.R);
+                                }
+                                else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
+                                {
+                                    if (args.SData.Name == king.name)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BOTRK);
+                                    }
+                                    else if (args.SData.Name == bilgewater.name)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BILGEWATER);
+                                    }
+                                    else if (args.SData.Name == dfg.name)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.DFG);
+                                    }
+                                }
+                                else if (spellSlot == SpellSlot.Unknown)
+                                {
+                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.AD);
+                                }
+                                //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w
+                            }
+                        }
+                        else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
+                        {
+                            //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
+                            // TODO: Get multiplier/real dmg
+                            incDmg = attacker.BaseAttackDamage;
+                        }
+                    }
+                    if ((Config.Item("justPred").GetValue<KeyBind>().Active && incDmg > 0) || !Config.Item("justPred").GetValue<KeyBind>().Active)
+                    {
+                        gotHit = true;
+                        checkAndUse(zhonya, "", incDmg);
+                        checkAndUse(barrier, "", incDmg);
+                        checkAndUse(seraph, "", incDmg);
+                    }
+                }
+            }
+            catch
+            {
+                Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
             }
         }
 
@@ -163,15 +233,6 @@ namespace MasterActivator
                     checkAndUse(manaPot, "FlaskOfCrystalWater");
                     checkAndUse(hpPot, "RegenerationPotion");
                     checkAndUse(biscuit, "ItemMiniRegenPotion");
-
-                    // TODO: get heal debuff name, verify a way to use when receiving damage.
-                    int enemysInRange = Utility.CountEnemysInRange(700);
-                    if (enemysInRange >= 1)
-                    {
-                        checkAndUse(barrier);
-                        checkAndUse(seraph);
-                        checkAndUse(zhonya);
-                    }
 
                     teamCheckAndUse(heal);
                     teamCheckAndUse(solari, "", true);
@@ -322,11 +383,11 @@ namespace MasterActivator
             return activeAllyHeros;
         }
 
-        private void checkAndUse(MItem item, String buff = "")
+        private void checkAndUse(MItem item, String buff = "", double incDamage = 0)
         {
             if (Config.Item(item.menuVariable).GetValue<bool>())
             {
-                int actualHeroHpPercent = (int)((_player.Health / _player.MaxHealth) * 100);
+                int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100);
                 int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
 
                 if ( item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell)
@@ -600,6 +661,7 @@ namespace MasterActivator
             createMenuItem(barrier, 35, "deffensive");
             createMenuItem(seraph, 45, "deffensive");
             createMenuItem(zhonya, 35, "deffensive");
+            Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             createMenuItem(solari, 45, "deffensive");
             createMenuItem(mountain, 45, "deffensive");
 
@@ -630,6 +692,7 @@ namespace MasterActivator
             Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
             Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
 
+            Config.AddItem(new MenuItem("predict", "Predict DMG")).SetValue(true);
             Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
 
             Config.AddToMainMenu();
