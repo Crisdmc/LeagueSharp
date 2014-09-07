@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -74,10 +74,22 @@ namespace MasterActivator
                 LeagueSharp.Drawing.OnDraw += onDraw;
                 Game.OnGameUpdate += onGameUpdate;
                 Game.OnGameProcessPacket += onGameProcessPacket;
+                Obj_AI_Base.OnProcessSpellCast += onProcessSpellCast;
             }
             catch
             {
                 Game.PrintChat("MasterActivator error creating menu!");
+            }
+        }
+
+        private void onProcessSpellCast(Obj_AI_Base attacker, GameObjectProcessSpellCastEventArgs args)
+        {
+            if ((attacker.Type == GameObjectType.obj_AI_Hero || attacker.Type == GameObjectType.obj_AI_Turret) && attacker.IsEnemy && args.Target.IsAlly && args.Target.Type == GameObjectType.obj_AI_Hero)
+            {
+                gotHit = true;
+                checkAndUse(barrier);
+                checkAndUse(seraph);
+                checkAndUse(zhonya);
             }
         }
 
