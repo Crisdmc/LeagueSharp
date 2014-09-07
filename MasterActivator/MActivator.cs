@@ -87,9 +87,9 @@ namespace MasterActivator
             try
             {
                 double incDmg = 0;
-                if (Config.Item("enabled").GetValue<KeyBind>().Active)
+                if (Config.Item("enabled").GetValue<bool>())
                 {
-                    if (Config.Item("predict").GetValue<KeyBind>().Active)
+                    if (Config.Item("predict").GetValue<bool>())
                     {
                         if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
                         {
@@ -149,7 +149,7 @@ namespace MasterActivator
                             incDmg = attacker.BaseAttackDamage;
                         }
                     }
-                    if ((Config.Item("justPred").GetValue<KeyBind>().Active && incDmg > 0) || !Config.Item("justPred").GetValue<KeyBind>().Active)
+                    if ((Config.Item("justPred").GetValue<bool>() && incDmg > 0) || !Config.Item("justPred").GetValue<bool>())
                     {
                         gotHit = true;
                         checkAndUse(zhonya, "", incDmg);
