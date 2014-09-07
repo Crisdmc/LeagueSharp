@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MasterActivator.entity;
-using MasterActivator.enumerator;
-
+using System.Reflection;
 using LeagueSharp;
 using LeagueSharp.Common;
-using System.Drawing;
+using MasterActivator.entity;
+using MasterActivator.enumerator;
 using SharpDX;
 
 namespace MasterActivator
@@ -59,6 +57,7 @@ namespace MasterActivator
         public MActivator()
         {
             CustomEvents.Game.OnGameLoad += onLoad;
+            LeagueSharp.Drawing.OnDraw += onDraw;
             Game.OnGameUpdate += onGameUpdate;
         }
 
@@ -70,94 +69,48 @@ namespace MasterActivator
             try
             {
                 _player = ObjectManager.Player;
-
-                Config = new Menu("MActivator", "masterActivator", true);
-
-                Config.AddSubMenu(new Menu("Purifiers", "purifiers"));
-                createMenuItem(qss, 100, "purifiers", false, false);
-                createMenuItem(mercurial, 100, "purifiers", false, false);
-                createMenuItem(cleanse, 100, "purifiers", false, false);
-                createMenuItem(mikael, 100, "purifiers", false, false);
-                Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
-
-                Config.AddSubMenu(new Menu("Purify", "purify"));
-                Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("flee", "Flee")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("snare", "Snare")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("taunt", "Taunt")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
-                Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
-                Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
-
-                Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
-                createMenuItem(smite, 100, "smiteCfg", false, false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
-                
-                Config.AddSubMenu(new Menu("Offensive", "offensive"));
-                createMenuItem(ignite, 100, "offensive", false, false);
-                Config.SubMenu("offensive").AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
-                createMenuItem(youmus, 100, "offensive");
-                createMenuItem(bilgewater, 60, "offensive");
-                createMenuItem(king, 60, "offensive");
-                createMenuItem(tiamat, 90, "offensive");
-                createMenuItem(hydra, 90, "offensive");
-                createMenuItem(dfg, 80, "offensive");
-                createMenuItem(divine, 80, "offensive");
-                createMenuItem(hextech, 80, "offensive");
-                createMenuItem(muramana, 80, "offensive");
-
-                Config.AddSubMenu(new Menu("Deffensive", "deffensive"));
-                createMenuItem(barrier, 35, "deffensive");
-                createMenuItem(seraph, 45, "deffensive");
-                createMenuItem(zhonya, 35, "deffensive");
-                createMenuItem(solari, 45, "deffensive");
-                createMenuItem(mountain, 45, "deffensive");
-
-                Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
-                createMenuItem(heal, 35, "regenerators");
-                //Config.SubMenu("regenerators").AddItem(new MenuItem("useWithHealDebuff", "With debuff")).SetValue(true);
-                createMenuItem(clarity, 25, "regenerators", true);
-                createMenuItem(hpPot, 55, "regenerators");
-                createMenuItem(manaPot, 55, "regenerators", true);
-                createMenuItem(biscuit, 55, "regenerators");
-
-                Config.AddSubMenu(new Menu("Team Use", "teamUseOn"));
-                
-                var allyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
-                               where hero.IsAlly == true
-                              select hero.SkinName;
-
-                foreach (String allyHero in allyHeros)
-                {
-                    Config.SubMenu("teamUseOn").AddItem(new MenuItem(allyHero, allyHero)).SetValue(true);
-                }
-
-                // Combo mode
-                Config.AddSubMenu(new Menu("Combo Mode", "combo"));
-                Config.SubMenu("combo").AddItem(new MenuItem("comboModeActive", "Active")).SetValue(new KeyBind(32, KeyBindType.Press, true));
-
-                // Target selector
-                Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
-                Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
-
-                Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
-
-                Config.AddToMainMenu();
+                createMenu();
             }
             catch
             {
                 Game.PrintChat("MasterActivator error creating menu!");
             }
-           
+        }
+
+        private void onDraw(EventArgs args)
+        {
+            try
+            {
+                if (Config.Item("dSmite").GetValue<bool>())
+                {
+                    string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf"};
+
+                    var minions = MinionManager.GetMinions(_player.Position, 1500, MinionTypes.All, MinionTeam.Neutral);
+                    if (minions.Count() > 0)
+                    {
+                        foreach (Obj_AI_Base minion in minions)
+                        {
+                            if (minion.IsHPBarRendered && minion.IsValidTarget(1500) &&
+                               (jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
+                                jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>())))
+                            {
+                                Vector2 hpBarPos = minion.HPBarPosition;
+                                hpBarPos.X += 45;
+                                hpBarPos.Y += 18;
+                                int smiteDmg = getSmiteDmg();
+                                var damagePercent = smiteDmg / minion.MaxHealth;
+                                float hpXPos = hpBarPos.X + (63 * damagePercent);
+
+                                Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg > minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Game.PrintChat("Problem with MasterActivator(Drawing).");
+            }
         }
         
         private void onGameUpdate(EventArgs args)
@@ -422,18 +375,15 @@ namespace MasterActivator
                                 {
                                     try
                                     {
-                                        int level = _player.Level;
-                                        int index = _player.Level / 5;
-                                        float[] dmgs = {370 + 20 * level, 330 + 30 * level, 240 + 40 * level, 100 + 50 * level};
-
-                                        string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon" };
+                                        string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
 
                                         var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
                                         if (minions.Count() > 0)
                                         {
+                                            int smiteDmg = getSmiteDmg();
                                             foreach (Obj_AI_Base minion in minions)
                                             {
-                                                if (minion.Health <= dmgs[index] && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>()))
+                                                if (minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>()))
                                                 {
                                                     _player.SummonerSpellbook.CastSpell(spellSlot, minion);
                                                 }
@@ -518,6 +468,15 @@ namespace MasterActivator
             }
         }
 
+        private int getSmiteDmg()
+        {
+            int level = _player.Level;
+            int index = _player.Level / 5;
+            float[] dmgs = { 370 + 20 * level, 330 + 30 * level, 240 + 40 * level, 100 + 50 * level };
+            return (int)dmgs[index];
+        }
+        
+
         private bool checkUsePercent(MItem item, int actualPercent)
         {
             int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
@@ -547,6 +506,94 @@ namespace MasterActivator
             ts.SetTargetingMode(targetModeSelected);
 
             return ts.Target != null ? true : false;
+        }
+
+        private void createMenu()
+        {
+            Config = new Menu("MActivator", "masterActivator", true);
+
+            Config.AddSubMenu(new Menu("Purifiers", "purifiers"));
+            createMenuItem(qss, 100, "purifiers", false, false);
+            createMenuItem(mercurial, 100, "purifiers", false, false);
+            createMenuItem(cleanse, 100, "purifiers", false, false);
+            createMenuItem(mikael, 100, "purifiers", false, false);
+            Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
+
+            Config.AddSubMenu(new Menu("Purify", "purify"));
+            Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("flee", "Flee")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("snare", "Snare")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("taunt", "Taunt")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("suppression", "Suppression")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
+            Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
+            Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
+
+            Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
+            createMenuItem(smite, 100, "smiteCfg", false, false);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("GiantWolf", "GiantWolf")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("dSmite", "Draw")).SetValue(true);
+            Config.SubMenu("smiteCfg").AddItem(new MenuItem("justAS", "Just ON")).SetValue(false);
+
+            Config.AddSubMenu(new Menu("Offensive", "offensive"));
+            createMenuItem(ignite, 100, "offensive", false, false);
+            Config.SubMenu("offensive").AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
+            createMenuItem(youmus, 100, "offensive");
+            createMenuItem(bilgewater, 60, "offensive");
+            createMenuItem(king, 60, "offensive");
+            createMenuItem(tiamat, 90, "offensive");
+            createMenuItem(hydra, 90, "offensive");
+            createMenuItem(dfg, 80, "offensive");
+            createMenuItem(divine, 80, "offensive");
+            createMenuItem(hextech, 80, "offensive");
+            createMenuItem(muramana, 80, "offensive");
+
+            Config.AddSubMenu(new Menu("Deffensive", "deffensive"));
+            createMenuItem(barrier, 35, "deffensive");
+            createMenuItem(seraph, 45, "deffensive");
+            createMenuItem(zhonya, 35, "deffensive");
+            createMenuItem(solari, 45, "deffensive");
+            createMenuItem(mountain, 45, "deffensive");
+
+            Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
+            createMenuItem(heal, 35, "regenerators");
+            //Config.SubMenu("regenerators").AddItem(new MenuItem("useWithHealDebuff", "With debuff")).SetValue(true);
+            createMenuItem(clarity, 25, "regenerators", true);
+            createMenuItem(hpPot, 55, "regenerators");
+            createMenuItem(manaPot, 55, "regenerators", true);
+            createMenuItem(biscuit, 55, "regenerators");
+
+            Config.AddSubMenu(new Menu("Team Use", "teamUseOn"));
+
+            var allyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
+                            where hero.IsAlly == true
+                            select hero.SkinName;
+
+            foreach (String allyHero in allyHeros)
+            {
+                Config.SubMenu("teamUseOn").AddItem(new MenuItem(allyHero, allyHero)).SetValue(true);
+            }
+
+            // Combo mode
+            Config.AddSubMenu(new Menu("Combo Mode", "combo"));
+            Config.SubMenu("combo").AddItem(new MenuItem("comboModeActive", "Active")).SetValue(new KeyBind(32, KeyBindType.Press, true));
+
+            // Target selector
+            Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
+            Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
+
+            Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
+
+            Config.AddToMainMenu();
         }
 
         private bool checkCC(Obj_AI_Hero hero)
