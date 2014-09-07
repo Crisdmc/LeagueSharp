@@ -66,6 +66,9 @@ MasterActivator
   *  GreatWraith
   *  Wraith
   *  Golem
+  *  Giant Wolf
+  *  Draw
+  *  Just ON
 
 * Offensive
   *  Ignite
