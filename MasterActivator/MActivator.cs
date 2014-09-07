@@ -57,6 +57,8 @@ namespace MasterActivator
         public MActivator()
         {
             CustomEvents.Game.OnGameLoad += onLoad;
+            LeagueSharp.Drawing.OnDraw += onDraw;
+            Game.OnGameUpdate += onGameUpdate;
         }
 
         private void onLoad(EventArgs args)
@@ -68,9 +70,6 @@ namespace MasterActivator
             {
                 _player = ObjectManager.Player;
                 createMenu();
-
-                LeagueSharp.Drawing.OnDraw += onDraw;
-                Game.OnGameUpdate += onGameUpdate;
             }
             catch
             {
@@ -91,7 +90,7 @@ namespace MasterActivator
                     {
                         foreach (Obj_AI_Base minion in minions)
                         {
-                            if (minion.IsHPBarRendered && !minion.IsDead &&
+                            if (minion.IsHPBarRendered && minion.IsValidTarget(1500) &&
                                (jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
                                 jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>())))
                             {
@@ -108,10 +107,9 @@ namespace MasterActivator
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Game.PrintChat("Problem with MasterActivator(Drawing).");
-                Console.WriteLine(e);
             }
         }
         
