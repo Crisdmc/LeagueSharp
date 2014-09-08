@@ -561,15 +561,12 @@ namespace MasterActivator
                         var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable, false);
                         if (spellSlot != SpellSlot.Unknown)
                         {
-                            Console.WriteLine("ABILITY: TYPE");
-                            Console.Write(spellSlot);
                             if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                             {
                                 int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                 int manaPercent = Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value;
                                 if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
                                 {
-                                    Console.Write("WE SHOULD CAST");
                                     _player.Spellbook.CastSpell(item.abilitySlot, _player);
                                     gotHit = false;
                                 }
