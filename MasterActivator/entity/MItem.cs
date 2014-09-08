@@ -1,4 +1,5 @@
-﻿using System;
+using LeagueSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +16,9 @@ namespace MasterActivator.entity
         public int id { get; set; }
         public float range { get; set; }
         public ItemTypeId type { get; set; }
+        public SpellSlot abilitySlot { get; set; }
 
-        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0)
+        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0, SpellSlot abilitySlot = SpellSlot.Unknown)
         {
             this.name = name;
             this.menuVariable = menuVariable;
@@ -24,6 +26,7 @@ namespace MasterActivator.entity
             this.id = id;
             this.range = range;
             this.type = type;
+            this.abilitySlot = abilitySlot;
         }
     }
 }
