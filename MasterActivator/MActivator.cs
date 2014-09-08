@@ -342,77 +342,81 @@ namespace MasterActivator
 
         private void teamCheckAndUse(MItem item, String buff = "", bool self = false)
         {
-            if (Config.Item(item.menuVariable).GetValue<bool>())
+            if (Config.Item(item.menuVariable) != null)
             {
-                if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
+                // check if is configured to use
+                if (Config.Item(item.menuVariable).GetValue<bool>())
                 {
-                    var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
-                    if (spellSlot != SpellSlot.Unknown)
+                    if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
                     {
-                        var activeAllyHeros = getActiveAllyHeros(item);
-                        if (activeAllyHeros.Count() > 0)
+                        var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
+                        if (spellSlot != SpellSlot.Unknown)
                         {
-                            int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-
-                            foreach (Obj_AI_Hero hero in activeAllyHeros)
+                            var activeAllyHeros = getActiveAllyHeros(item);
+                            if (activeAllyHeros.Count() > 0)
                             {
-                                int enemyInRange = Utility.CountEnemysInRange(700, hero);
-                                if (enemyInRange >= 1)
-                                {
-                                    int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
-                                    int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+                                int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
 
-                                    if ((item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent && playerHit == hero.NetworkId && gotHit) ||
-                                         (item.type == ItemTypeId.ManaRegeneratorSpell && actualHeroManaPercent <= usePercent))
+                                foreach (Obj_AI_Hero hero in activeAllyHeros)
+                                {
+                                    int enemyInRange = Utility.CountEnemysInRange(700, hero);
+                                    if (enemyInRange >= 1)
                                     {
-                                        _player.SummonerSpellbook.CastSpell(spellSlot);
-                                        gotHit = false;
+                                        int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
+                                        int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+
+                                        if ((item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent && playerHit == hero.NetworkId && gotHit) ||
+                                             (item.type == ItemTypeId.ManaRegeneratorSpell && actualHeroManaPercent <= usePercent))
+                                        {
+                                            _player.SummonerSpellbook.CastSpell(spellSlot);
+                                            gotHit = false;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
-                    if (Items.HasItem(item.id))
+                    else
                     {
-                        if (Items.CanUseItem(item.id))
+                        if (Items.HasItem(item.id))
                         {
-                            var activeAllyHeros = getActiveAllyHeros(item);
-                            if (activeAllyHeros.Count() > 0)
+                            if (Items.CanUseItem(item.id))
                             {
-                                foreach (Obj_AI_Hero hero in activeAllyHeros)
+                                var activeAllyHeros = getActiveAllyHeros(item);
+                                if (activeAllyHeros.Count() > 0)
                                 {
-                                    if (item.type == ItemTypeId.Purifier)
+                                    foreach (Obj_AI_Hero hero in activeAllyHeros)
                                     {
-                                        if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
-                                        (!Config.Item("defJustOnCombo").GetValue<bool>()))
+                                        if (item.type == ItemTypeId.Purifier)
                                         {
-                                            if (checkCC(hero))
+                                            if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                            (!Config.Item("defJustOnCombo").GetValue<bool>()))
                                             {
-                                                useItem(item.id, hero);
-                                            }
-                                        }
-                                    }
-                                    else if (item.type == ItemTypeId.Deffensive)
-                                    {
-                                        int enemyInRange = Utility.CountEnemysInRange(700, hero);
-                                        if (enemyInRange >= 1)
-                                        {
-                                            int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-                                            int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
-                                            if (actualHeroHpPercent <= usePercent && gotHit)
-                                            {
-                                                if (self && playerHit == _player.NetworkId)
-                                                {
-                                                    useItem(item.id);
-                                                    gotHit = false;
-                                                }
-                                                else if ( playerHit == hero.NetworkId)
+                                                if (checkCC(hero))
                                                 {
                                                     useItem(item.id, hero);
-                                                    gotHit = false;
+                                                }
+                                            }
+                                        }
+                                        else if (item.type == ItemTypeId.Deffensive)
+                                        {
+                                            int enemyInRange = Utility.CountEnemysInRange(700, hero);
+                                            if (enemyInRange >= 1)
+                                            {
+                                                int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                                int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
+                                                if (actualHeroHpPercent <= usePercent && gotHit)
+                                                {
+                                                    if (self && playerHit == _player.NetworkId)
+                                                    {
+                                                        useItem(item.id);
+                                                        gotHit = false;
+                                                    }
+                                                    else if (playerHit == hero.NetworkId)
+                                                    {
+                                                        useItem(item.id, hero);
+                                                        gotHit = false;
+                                                    }
                                                 }
                                             }
                                         }
