@@ -620,9 +620,19 @@ namespace MasterActivator
                                 }
                                 else if (item.type == ItemTypeId.Buff)
                                 {
-                                    if (!checkBuff(item.name))
+                                    if (checkTarget(item.range))
                                     {
-                                        useItem(item.id);
+                                        if (!checkBuff(item.name))
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (checkBuff(item.name))
+                                        {
+                                            useItem(item.id);
+                                        }
                                     }
                                 }
                                 else if (item.type == ItemTypeId.Purifier)
