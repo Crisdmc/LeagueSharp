@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace MasterActivator.enumerator
 {
@@ -13,6 +13,7 @@ namespace MasterActivator.enumerator
         DeffensiveSpell = 6,
         PurifierSpell = 7,
         ManaRegeneratorSpell = 8,
-        OffensiveSpell = 9
+        OffensiveSpell = 9,
+        Ability = 10
     }
 }
