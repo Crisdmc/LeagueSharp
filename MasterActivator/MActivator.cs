@@ -57,19 +57,19 @@ namespace MasterActivator
         //SummonerExhaust  
 
         // Auto shields 
-        MItem blackshield = new MItem("Morgana", "Black Shield", "BlackShield", 0, ItemTypeId.Ability, 750, SpellSlot.E); 
-        MItem unbreakable = new MItem("Bruam", "Unbreakable", "BraumE", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); 
-        MItem palecascade = new MItem("Diana", "Pale Cascade", "DianaOrbs", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); 
-        MItem bulwark = new MItem("Galio", "Bulwark", "GalioBulwark", 0, ItemTypeId.Ability, 800, SpellSlot.W); 
-        MItem courage = new MItem("Garen", "Courage", "GarenW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); 
-        MItem eyeofstorm = new MItem("Janna", "Eye of the Storm", "EyeOfTheStorm", 0, ItemTypeId.Ability, 800, SpellSlot.E); 
-        MItem inspire = new MItem("Karma", "Inspire", "KarmaSolKimShield", 0, ItemTypeId.Ability, 800, SpellSlot.E);
-        MItem helppix = new MItem("Lulu", "Help Pix!", "LuluE", 0, ItemTypeId.Ability, 650, SpellSlot.E);
-        MItem prismaticbarrier = new MItem("Lux", "Prismatic Barrier", "LuxPrismaticWave", 0, ItemTypeId.Ability, 1075, SpellSlot.W);
-        MItem titanswraith = new MItem("Nautilus", "Titans Wraith", "NautilusPiercingGaze", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem commandprotect = new MItem("Orianna", "Command Protect", "OrianaRedactCommand", 0, ItemTypeId.Ability, 1100, SpellSlot.E);
-        MItem feint = new MItem("Shen", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem spellshield = new MItem("Sivir", "SpellShield", "SivirE", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); 
+        MItem blackshield = new MItem("BlackShield", "Black Shield", "bShield", 0, ItemTypeId.Ability, 750, SpellSlot.E);
+        MItem unbreakable = new MItem("BraumE", "Unbreakable", "unbreak", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
+        MItem palecascade = new MItem("DianaOrbs", "Pale Cascade", "cascade", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem bulwark = new MItem("GalioBulwark", "Bulwark", "bulwark", 0, ItemTypeId.Ability, 800, SpellSlot.W);
+        MItem courage = new MItem("GarenW", "Courage", "courage", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem eyeofstorm = new MItem("EyeOfTheStorm", "Eye of the Storm", "storm", 0, ItemTypeId.Ability, 800, SpellSlot.E);
+        MItem inspire = new MItem("KarmaSolKimShield", "Inspire", "inspire", 0, ItemTypeId.Ability, 800, SpellSlot.E);
+        MItem helppix = new MItem("LuluE", "Help Pix!", "pix", 0, ItemTypeId.Ability, 650, SpellSlot.E);
+        MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.Ability, 1075, SpellSlot.W);
+        MItem titanswraith = new MItem("NautilusPiercingGaze", "Titans Wraith", "tWraith", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.Ability, 1100, SpellSlot.E);
+        MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); 
 
         public MActivator()
         {
@@ -106,7 +106,7 @@ namespace MasterActivator
                 {
                     if (Config.Item("predict").GetValue<bool>())
                     {
-                        if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
+                        if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsMe)
                         {
                             Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
 
@@ -157,7 +157,7 @@ namespace MasterActivator
                                 //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w
                             }
                         }
-                        else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsAlly && args.Target.IsMe && args.Target.Type == GameObjectType.obj_AI_Hero)
+                        else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsMe)
                         {
                             //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
                             // TODO: Get multiplier/real dmg
@@ -173,8 +173,9 @@ namespace MasterActivator
                     }
                 }
             }
-            catch
+            catch(Exception e)
             {
+                //Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
             }
         }
@@ -265,7 +266,7 @@ namespace MasterActivator
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    //Console.WriteLine(e);
                     Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
                     Config.Item("enabled").SetValue<bool>(false);
                 }
@@ -316,13 +317,14 @@ namespace MasterActivator
             Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
             if (useOn)
             {
+                
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
             }
         }
 
         private void createMenuSpell(MItem item, int defaultValue, String parent, int minManaPct, bool useMana, bool useOn = true)
         {
-            var abilitySlot = Utility.GetSpellSlot(_player, item.menuVariable, false);  
+            var abilitySlot = Utility.GetSpellSlot(_player, item.name, false);  
             if (abilitySlot != SpellSlot.Unknown && abilitySlot == item.abilitySlot)
             {
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
@@ -437,12 +439,15 @@ namespace MasterActivator
 
         private void checkAndUse(MItem item, String buff = "", double incDamage = 0)
         {
-            int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100);
-            int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
-
-                if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell)
+            if (Config.Item(item.menuVariable) != null)
+            {
+                // check if is configured to use
+                if (Config.Item(item.menuVariable).GetValue<bool>())
                 {
-                    if (Config.Item(item.menuVariable).GetValue<bool>())
+                    int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100);
+                    int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+
+                    if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell)
                     {
                         var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
                         if (spellSlot != SpellSlot.Unknown)
@@ -550,88 +555,86 @@ namespace MasterActivator
                                 }
                             }
                         }
-                    }                
-            }
-            else if (item.type == ItemTypeId.Ability)
-            {
-                try
-                {
-                    if (item.name == _player.BaseSkinName && Config.Item(item.menuVariable).GetValue<bool>())
+                    }
+                    else if (item.type == ItemTypeId.Ability)
                     {
-                        var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable, false);
-                        if (spellSlot != SpellSlot.Unknown)
+                        try
                         {
-                            if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
+                            var spellSlot = Utility.GetSpellSlot(_player, item.name, false);
+                            if (spellSlot != SpellSlot.Unknown)
                             {
-                                int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-                                int manaPercent = Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value;
-                                if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
+                                if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                 {
-                                    _player.Spellbook.CastSpell(item.abilitySlot, _player);
-                                    gotHit = false;
+                                    int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                    int manaPercent = Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value;
+                                    if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
+                                    {
+                                        _player.Spellbook.CastSpell(item.abilitySlot, _player);
+                                        gotHit = false;
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            //Console.WriteLine(e);
+                            Game.PrintChat("Problem with MasterActivator(AutoShield).");
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    Game.PrintChat("Problem with MasterActivator(AutoShield).");
-                }
-            }
-            else
-            {
-                if (Items.HasItem(item.id))
-                {
-                    if (Items.CanUseItem(item.id))
+                    else
                     {
-                        if (item.type == ItemTypeId.Offensive)
+                        if (Items.HasItem(item.id))
                         {
-                            if (checkTarget(item.range))
+                            if (Items.CanUseItem(item.id))
                             {
-                                int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
-                                if (checkUsePercent(item, actualTargetHpPercent))
+                                if (item.type == ItemTypeId.Offensive)
                                 {
-                                    useItem(item.id, item.range == 0 ? null : ts.Target);
+                                    if (checkTarget(item.range))
+                                    {
+                                        int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
+                                        if (checkUsePercent(item, actualTargetHpPercent))
+                                        {
+                                            useItem(item.id, item.range == 0 ? null : ts.Target);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        else if (item.type == ItemTypeId.HPRegenerator || item.type == ItemTypeId.Deffensive)
-                        {
-                            if (checkUsePercent(item, actualHeroHpPercent))
-                            {
-                                if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                else if (item.type == ItemTypeId.HPRegenerator || item.type == ItemTypeId.Deffensive)
                                 {
-                                    useItem(item.id);
+                                    if (checkUsePercent(item, actualHeroHpPercent))
+                                    {
+                                        if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        else if (item.type == ItemTypeId.ManaRegenerator)
-                        {
-                            if (checkUsePercent(item, actualHeroManaPercent))
-                            {
-                                if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                else if (item.type == ItemTypeId.ManaRegenerator)
                                 {
-                                    useItem(item.id);
+                                    if (checkUsePercent(item, actualHeroManaPercent))
+                                    {
+                                        if ((buff != "" && !checkBuff(buff)) || buff == "")
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        else if (item.type == ItemTypeId.Buff)
-                        {
-                            if (!checkBuff(item.name))
-                            {
-                                useItem(item.id);
-                            }
-                        }
-                        else if (item.type == ItemTypeId.Purifier)
-                        {
-                            if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
-                                (!Config.Item("defJustOnCombo").GetValue<bool>()))
-                            {
-                                if (checkCC(_player))
+                                else if (item.type == ItemTypeId.Buff)
                                 {
-                                    useItem(item.id);
+                                    if (!checkBuff(item.name))
+                                    {
+                                        useItem(item.id);
+                                    }
+                                }
+                                else if (item.type == ItemTypeId.Purifier)
+                                {
+                                    if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                        (!Config.Item("defJustOnCombo").GetValue<bool>()))
+                                    {
+                                        if (checkCC(_player))
+                                        {
+                                            useItem(item.id);
+                                        }
+                                    }
                                 }
                             }
                         }
