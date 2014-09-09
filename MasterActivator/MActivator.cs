@@ -329,7 +329,7 @@ namespace MasterActivator
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
                 if (useOn)
                 {
-                    Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "MinHpPct", "Min Damage %")).SetValue(new Slider(defaultValue, 0, 100));
+                    Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "MinHpPct", "Min Damage %")).SetValue(new Slider(10, 0, 100));
                     Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on HP%")).SetValue(new Slider(defaultValue, 0, 100));
                     if (useMana)
                     {
