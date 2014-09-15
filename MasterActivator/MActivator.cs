@@ -471,7 +471,7 @@ namespace MasterActivator
                                 else if (item.type == ItemTypeId.ManaRegeneratorSpell)
                                 {
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
-                                    if (actualHeroManaPercent <= usePercent)
+                                    if (actualHeroManaPercent <= usePercent && !Utility.InFountain())
                                     {
                                         _player.SummonerSpellbook.CastSpell(spellSlot);
                                     }
@@ -608,7 +608,7 @@ namespace MasterActivator
                                 }
                                 else if (item.type == ItemTypeId.HPRegenerator || item.type == ItemTypeId.Deffensive)
                                 {
-                                    if (checkUsePercent(item, actualHeroHpPercent))
+                                    if (checkUsePercent(item, actualHeroHpPercent) && !Utility.InFountain())
                                     {
                                         if ((buff != "" && !checkBuff(buff)) || buff == "")
                                         {
@@ -618,7 +618,7 @@ namespace MasterActivator
                                 }
                                 else if (item.type == ItemTypeId.ManaRegenerator)
                                 {
-                                    if (checkUsePercent(item, actualHeroManaPercent))
+                                    if (checkUsePercent(item, actualHeroManaPercent) && !Utility.InFountain())
                                     {
                                         if ((buff != "" && !checkBuff(buff)) || buff == "")
                                         {
