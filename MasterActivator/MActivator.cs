@@ -170,6 +170,7 @@ namespace MasterActivator
                         checkAndUse(zhonya, "", incDmg);
                         checkAndUse(barrier, "", incDmg);
                         checkAndUse(seraph, "", incDmg);
+                        autoshields(incDmg);
                     }
                 }
             }
@@ -240,8 +241,6 @@ namespace MasterActivator
             {
                 try
                 {
-                    autoshields();
-
                     checkAndUse(clarity);
 
                     checkAndUse(cleanse);
@@ -287,20 +286,20 @@ namespace MasterActivator
             checkAndUse(muramana);
         }
 
-        private void autoshields()
+        private void autoshields(double damage)
         {
-            checkAndUse(titanswraith);
-            checkAndUse(blackshield);
-            checkAndUse(unbreakable);
-            checkAndUse(palecascade);
-            checkAndUse(bulwark);
-            checkAndUse(courage);
-            checkAndUse(eyeofstorm);
-            checkAndUse(inspire);
-            checkAndUse(helppix);
-            checkAndUse(prismaticbarrier);
-            checkAndUse(commandprotect);
-            checkAndUse(spellshield);
+            checkAndUse(titanswraith, "", damage);
+            checkAndUse(blackshield, "", damage);
+            checkAndUse(unbreakable, "", damage);
+            checkAndUse(palecascade, "", damage);
+            checkAndUse(bulwark, "", damage);
+            checkAndUse(courage, "", damage);
+            checkAndUse(eyeofstorm, "", damage);
+            checkAndUse(inspire, "", damage);
+            checkAndUse(helppix, "", damage);
+            checkAndUse(prismaticbarrier, "", damage);
+            checkAndUse(commandprotect, "", damage);
+            checkAndUse(spellshield, "", damage);
         }
 
         private bool checkBuff(String name)
@@ -330,6 +329,7 @@ namespace MasterActivator
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
                 if (useOn)
                 {
+                    Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "MinHpPct", "Min Damage %")).SetValue(new Slider(10, 0, 100));
                     Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on HP%")).SetValue(new Slider(defaultValue, 0, 100));
                     if (useMana)
                     {
@@ -448,6 +448,7 @@ namespace MasterActivator
                 // check if is configured to use
                 if (Config.Item(item.menuVariable).GetValue<bool>())
                 {
+                    int incDamagePercent = (int)(_player.Health / incDamage * 100);
                     int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100);
                     int actualHeroManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
 
@@ -569,9 +570,12 @@ namespace MasterActivator
                             {
                                 if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                 {
+                                    
+                                    int minPercent = Config.Item(item.menuVariable + "MinHpPct").GetValue<Slider>().Value;
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                     int manaPercent = Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value;
-                                    if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
+                                    if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && 
+                                        incDamagePercent >= minPercent && playerHit == _player.NetworkId && gotHit)
                                     {
                                         _player.Spellbook.CastSpell(item.abilitySlot, _player);
                                         gotHit = false;
