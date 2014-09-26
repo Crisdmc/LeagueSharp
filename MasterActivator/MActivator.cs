@@ -16,7 +16,7 @@ namespace MasterActivator
         private Menu Config;
         private Obj_AI_Hero _player;
         private int playerHit;
-        private bool gotHit  = false;
+        private bool gotHit = false;
         TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
 
         // leagueoflegends.wikia.com/
@@ -69,7 +69,7 @@ namespace MasterActivator
         MItem titanswraith = new MItem("NautilusPiercingGaze", "Titans Wraith", "tWraith", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.Ability, 1100, SpellSlot.E);
         MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); 
+        MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
 
         public MActivator()
         {
@@ -174,7 +174,7 @@ namespace MasterActivator
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
@@ -187,16 +187,36 @@ namespace MasterActivator
             {
                 if (Config.Item("dSmite").GetValue<bool>())
                 {
-                    string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf"};
+                    string[] jungleMinions;
+                    if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                    {
+                        jungleMinions = new string[] { "TT_Spiderboss", "TT_NWraith", "TT_NGolem", "TT_NWolf" };
+                    }
+                    else
+                    {
+                        jungleMinions = new string[] { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
+                    }
+
 
                     var minions = MinionManager.GetMinions(_player.Position, 1500, MinionTypes.All, MinionTeam.Neutral);
                     if (minions.Count() > 0)
                     {
                         foreach (Obj_AI_Base minion in minions)
                         {
-                            if (minion.IsHPBarRendered && !minion.IsDead &&
+                            Boolean b;
+                            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                            {
+                                b = minion.IsHPBarRendered && !minion.IsDead &&
+                               (jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
+                                jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && !Config.Item("justAS").GetValue<bool>()));
+                            }
+                            else
+                            {
+                                b = minion.IsHPBarRendered && !minion.IsDead &&
                                (jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
-                                jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>())))
+                                jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>()));
+                            }
+                            if (b)
                             {
                                 Vector2 hpBarPos = minion.HPBarPosition;
                                 hpBarPos.X += 45;
@@ -216,7 +236,7 @@ namespace MasterActivator
                 Game.PrintChat("Problem with MasterActivator(Drawing).");
             }
         }
-        
+
         private void onGameProcessPacket(GamePacketEventArgs args)
         {
             byte[] packet = args.PacketData;
@@ -231,10 +251,10 @@ namespace MasterActivator
 
                 playerHit = target;
                 gotHit = true;
-                
+
             }
         }
-        
+
         private void onGameUpdate(EventArgs args)
         {
             if (Config.Item("enabled").GetValue<bool>())
@@ -305,8 +325,8 @@ namespace MasterActivator
         private bool checkBuff(String name)
         {
             var searchedBuff = from buff in _player.Buffs
-                              where buff.Name == name
-                             select buff;
+                               where buff.Name == name
+                               select buff;
 
             return searchedBuff.Count() <= 0 ? false : true;
         }
@@ -316,14 +336,14 @@ namespace MasterActivator
             Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
             if (useOn)
             {
-                
+
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
             }
         }
 
         private void createMenuSpell(MItem item, int defaultValue, String parent, int minManaPct, bool useMana, bool useOn = true)
         {
-            var abilitySlot = Utility.GetSpellSlot(_player, item.name, false);  
+            var abilitySlot = Utility.GetSpellSlot(_player, item.name, false);
             if (abilitySlot != SpellSlot.Unknown && abilitySlot == item.abilitySlot)
             {
                 Config.SubMenu(parent).AddItem(new MenuItem(item.menuVariable, item.menuName)).SetValue(true);
@@ -432,11 +452,11 @@ namespace MasterActivator
         private IEnumerable<Obj_AI_Hero> getActiveAllyHeros(MItem item)
         {
             var activeAllyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
-                                 where hero.IsAlly == true &&
-                                       Config.Item(hero.SkinName).GetValue<bool>() &&
-                                       hero.Distance(_player) <= item.range &&
-                                       !hero.IsDead
-                                select hero;
+                                  where hero.IsAlly == true &&
+                                        Config.Item(hero.SkinName).GetValue<bool>() &&
+                                        hero.Distance(_player) <= item.range &&
+                                        !hero.IsDead
+                                  select hero;
 
             return activeAllyHeros;
         }
@@ -537,7 +557,15 @@ namespace MasterActivator
                                     {
                                         try
                                         {
-                                            string[] jungleMinions = { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
+                                            string[] jungleMinions;
+                                            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                                            {
+                                                jungleMinions = new string[] { "TT_Spiderboss", "TT_NWraith", "TT_NGolem", "TT_NWolf" };
+                                            }
+                                            else
+                                            {
+                                                jungleMinions = new string[] { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
+                                            }
 
                                             var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
                                             if (minions.Count() > 0)
@@ -545,7 +573,18 @@ namespace MasterActivator
                                                 int smiteDmg = getSmiteDmg();
                                                 foreach (Obj_AI_Base minion in minions)
                                                 {
-                                                    if (minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>()))
+
+                                                    Boolean b;
+                                                    if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                                                    {
+                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>());
+                                                    }
+                                                    else
+                                                    {
+                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>());
+                                                    }
+
+                                                    if (b)
                                                     {
                                                         _player.SummonerSpellbook.CastSpell(spellSlot, minion);
                                                     }
@@ -570,11 +609,11 @@ namespace MasterActivator
                             {
                                 if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                 {
-                                    
+
                                     int minPercent = Config.Item(item.menuVariable + "MinHpPct").GetValue<Slider>().Value;
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                     int manaPercent = Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value;
-                                    if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent && 
+                                    if (actualHeroManaPercent > manaPercent && actualHeroHpPercent <= usePercent &&
                                         incDamagePercent >= minPercent && playerHit == _player.NetworkId && gotHit)
                                     {
                                         _player.Spellbook.CastSpell(item.abilitySlot, _player);
@@ -676,7 +715,7 @@ namespace MasterActivator
             float[] dmgs = { 370 + 20 * level, 330 + 30 * level, 240 + 40 * level, 100 + 50 * level };
             return (int)dmgs[index];
         }
-        
+
 
         private bool checkUsePercent(MItem item, int actualPercent)
         {
@@ -702,7 +741,7 @@ namespace MasterActivator
                     targetModeSelected = targetMode;
                 }
             }
-            
+
             ts.SetRange(range);
             ts.SetTargetingMode(targetModeSelected);
 
@@ -734,14 +773,26 @@ namespace MasterActivator
 
             Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
             createMenuItem(smite, 100, "smiteCfg", false, false);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("GiantWolf", "GiantWolf")).SetValue(false);
+
+            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+            {
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_Spiderboss", "Vilemaw")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NWraith", "Wraith")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NGolem", "Golem")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NWolf", "Wolf")).SetValue(true);
+            }
+            else
+            {
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GiantWolf", "GiantWolf")).SetValue(false);
+
+            }
             Config.SubMenu("smiteCfg").AddItem(new MenuItem("dSmite", "Draw")).SetValue(true);
             Config.SubMenu("smiteCfg").AddItem(new MenuItem("justAS", "Just ON")).SetValue(false);
 
@@ -777,7 +828,7 @@ namespace MasterActivator
             createMenuSpell(prismaticbarrier, 90, "autoshield", 40, true);
             createMenuSpell(titanswraith, 90, "autoshield", 40, true);
             createMenuSpell(commandprotect, 99, "autoshield", 40, true);
-            createMenuSpell(feint, 90, "autoshield", 0,false);
+            createMenuSpell(feint, 90, "autoshield", 0, false);
             createMenuSpell(spellshield, 90, "autoshield", 0, false);
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
@@ -901,3 +952,4 @@ namespace MasterActivator
         }
     }
 }
+
