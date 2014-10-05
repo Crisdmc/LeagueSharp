@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using LeagueSharp;
 using LeagueSharp.Common;
 using MasterActivator.entity;
@@ -203,20 +201,10 @@ namespace MasterActivator
                     {
                         foreach (Obj_AI_Base minion in minions)
                         {
-                            Boolean b;
-                            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
-                            {
-                                b = minion.IsHPBarRendered && !minion.IsDead &&
-                               (jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
-                                jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && !Config.Item("justAS").GetValue<bool>()));
-                            }
-                            else
-                            {
-                                b = minion.IsHPBarRendered && !minion.IsDead &&
-                               (jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
-                                jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>()));
-                            }
-                            if (b)
+
+                            if (minion.IsHPBarRendered && !minion.IsDead &&
+                               (jungleMinions.Any(name => minion.BaseSkinName.Equals(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
+                                jungleMinions.Any(name => minion.BaseSkinName.Equals(name) && !Config.Item("justAS").GetValue<bool>())))
                             {
                                 Vector2 hpBarPos = minion.HPBarPosition;
                                 hpBarPos.X += 45;
@@ -573,18 +561,7 @@ namespace MasterActivator
                                                 int smiteDmg = getSmiteDmg();
                                                 foreach (Obj_AI_Base minion in minions)
                                                 {
-
-                                                    Boolean b;
-                                                    if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
-                                                    {
-                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>());
-                                                    }
-                                                    else
-                                                    {
-                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>());
-                                                    }
-
-                                                    if (b)
+                                                    if (minion.Health <= smiteDmg && jungleMinions.Any(name => minion.BaseSkinName.Equals(name) && Config.Item(name).GetValue<bool>()))
                                                     {
                                                         _player.SummonerSpellbook.CastSpell(spellSlot, minion);
                                                     }
@@ -952,4 +929,3 @@ namespace MasterActivator
         }
     }
 }
-
