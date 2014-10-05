@@ -1,5 +1,3 @@
-using System;
-
 namespace MasterActivator.enumerator
 {
     public enum ItemTypeId
