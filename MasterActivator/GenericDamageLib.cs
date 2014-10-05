@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 /*
  Copyright 2014 - 2014 LeagueSharp
@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LeagueSharp.Common;
 using LeagueSharp;
 
 #endregion
@@ -946,7 +945,7 @@ namespace MasterActivator
                     }
                     return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1020,7 +1019,7 @@ namespace MasterActivator
                             attacker, (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy); // magic dmg when casted
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1048,7 +1047,7 @@ namespace MasterActivator
                                           (0.35 * attacker.FlatMagicDamageMod);
                             return waytoenemy + wayback; // both
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -1064,7 +1063,7 @@ namespace MasterActivator
                                     attacker, (40 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 25)) +
                                     (0.4 * attacker.FlatMagicDamageMod), enemy); // 1 w hitting
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -1085,10 +1084,10 @@ namespace MasterActivator
                                     attacker, (90 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 120)) +
                                     (0.9 * attacker.FlatMagicDamageMod), enemy); // max dmg to 1 unit
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1111,10 +1110,10 @@ namespace MasterActivator
                                     (0.5 * attacker.FlatMagicDamageMod), enemy);
                         // q throw + hitted with something
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(
@@ -1127,7 +1126,7 @@ namespace MasterActivator
                             attacker, (25 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 75)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1146,11 +1145,11 @@ namespace MasterActivator
                             attacker, (0 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 55)) +
                             (0.7 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1221,7 +1220,7 @@ namespace MasterActivator
                             attacker, (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.8 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1244,10 +1243,10 @@ namespace MasterActivator
                                     attacker, (30 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 30)) +
                                     (0.5 * attacker.FlatMagicDamageMod), enemy); // when going through
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     switch (stagetype)
                     {
@@ -1262,7 +1261,7 @@ namespace MasterActivator
                                     attacker, (25 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 30)) +
                                     (0.5 * attacker.FlatMagicDamageMod), enemy); // basic dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -1270,7 +1269,7 @@ namespace MasterActivator
                             attacker, (40 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 40)) +
                             (0.25 * attacker.FlatMagicDamageMod), enemy); // per tick
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1311,10 +1310,10 @@ namespace MasterActivator
                             return CalcMagicDmg(attacker, 35 + (0.2 * attacker.FlatMagicDamageMod), enemy);
                         // per tick of tibbers sunfire
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1323,14 +1322,14 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
                     return
                         CalcPhysicalDmg(
                             attacker, (30 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 10)) +
                             (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -1346,10 +1345,10 @@ namespace MasterActivator
                                     (0.5 * attacker.FlatMagicDamageMod), enemy);
                         // dmg around the explode radius
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1363,7 +1362,7 @@ namespace MasterActivator
                             attacker, (25 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 55)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(
@@ -1383,10 +1382,10 @@ namespace MasterActivator
                                     attacker, (0 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                                     (0.2 * attacker.FlatMagicDamageMod), enemy); // passive dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1413,7 +1412,7 @@ namespace MasterActivator
                                     attacker, (37.5 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 56.25)) +
                                     (0.75 * attacker.FlatMagicDamageMod), enemy); // blazed dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -1435,10 +1434,10 @@ namespace MasterActivator
                                     attacker, (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                                     (0.5 * attacker.FlatMagicDamageMod), enemy); // damage per bounce
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1452,16 +1451,16 @@ namespace MasterActivator
                             attacker, (15 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 45)) +
                             (0.25 * attacker.MaxHealth), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(
                             attacker, (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1487,7 +1486,7 @@ namespace MasterActivator
                                      (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)),
                                     enemy); // min damage
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -1505,7 +1504,7 @@ namespace MasterActivator
                             attacker, (25 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 225)) +
                             (2.0 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1537,7 +1536,7 @@ namespace MasterActivator
                                     attacker, (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40)) +
                                     (0.8 * attacker.FlatMagicDamageMod), enemy); // 3 hits -> all dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -1553,7 +1552,7 @@ namespace MasterActivator
                                     (15 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 10)) +
                                     (0.15 * attacker.FlatMagicDamageMod), enemy); // per second
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -1566,7 +1565,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1592,7 +1591,7 @@ namespace MasterActivator
                 case SpellType.R:
                     return (125 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 175));
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1620,7 +1619,7 @@ namespace MasterActivator
                                     (30 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 30)) +
                                     (0.4 * attacker.FlatMagicDamageMod), enemy); // per second dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     switch (stagetype)
@@ -1636,7 +1635,7 @@ namespace MasterActivator
                                     (8 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 12)) +
                                     (0.4 * attacker.FlatPhysicalDamageMod), enemy); // per sec
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     switch (stagetype)
@@ -1656,10 +1655,10 @@ namespace MasterActivator
                                     ((0.15 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 0.15)) *
                                      attacker.FlatPhysicalDamageMod), enemy); // every 4th
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1682,7 +1681,7 @@ namespace MasterActivator
                                     (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 35)) +
                                     (0.7 * attacker.FlatPhysicalDamageMod), enemy); // inner half
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     //double basicattack = CalcPhysicalDmg( attacker,ObjectManager.Unit.FlatPhysicalDamageMod + ObjectManager.Unit.BaseAttackDamage, enemy);
@@ -1691,7 +1690,7 @@ namespace MasterActivator
                     //return basicattack + bonusdmg;
                     return bonusdmg;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -1702,10 +1701,10 @@ namespace MasterActivator
                             return ((70 + (90 * attacker.Spellbook.GetSpell(SpellSlot.R).Level)) +
                                     (0.75 * attacker.FlatPhysicalDamageMod)); // foreach stack
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1732,17 +1731,17 @@ namespace MasterActivator
                                     (10 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 12)) +
                                     (0.2 * attacker.FlatMagicDamageMod), enemy); // single orb
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(attacker,
                             (40 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 60)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1768,11 +1767,11 @@ namespace MasterActivator
                             (20 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 15)) +
                             (0.2 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1789,7 +1788,7 @@ namespace MasterActivator
                     //return baseattack + bonusdmg;
                     return bonusdmg; // only the bonus dmg
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(attacker,
@@ -1825,10 +1824,10 @@ namespace MasterActivator
                                     (0.88 * attacker.FlatPhysicalDamageMod), enemy);
                         // minimum damage 2 hits
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1946,13 +1945,13 @@ namespace MasterActivator
                                 (25 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                                 (0.8 * attacker.FlatMagicDamageMod), enemy);
                     }
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException(); // switchting to spider / human
+                    return 0; // switchting to spider / human
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -1969,7 +1968,7 @@ namespace MasterActivator
                             ((0.45 + attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 0.05) *
                              attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(attacker,
@@ -2022,7 +2021,7 @@ namespace MasterActivator
                     var healthbase = enemy.MaxHealth / 100 * (percentage + additionalpercentper100ap);
                     return CalcMagicDmg(attacker, healthbase, enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2065,10 +2064,10 @@ namespace MasterActivator
                                     (0.27 * attacker.FlatMagicDamageMod), enemy);
                         // minimum damage after multiple targets were hitted
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2077,7 +2076,7 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
                     switch (stagetype)
                     {
@@ -2092,7 +2091,7 @@ namespace MasterActivator
                                     (30 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 30)) +
                                     (0.45 * (attacker.FlatMagicDamageMod)), enemy); // per second
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     switch (stagetype)
@@ -2109,7 +2108,7 @@ namespace MasterActivator
                                     (1.35 * (attacker.FlatMagicDamageMod)), enemy);
                         // max damage to the same target_
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     switch (stagetype)
@@ -2125,10 +2124,10 @@ namespace MasterActivator
                                     (125 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 500)) +
                                     (2.25 * (attacker.FlatMagicDamageMod)), enemy); // dmg complete
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2150,7 +2149,7 @@ namespace MasterActivator
                                     (15 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 25)) +
                                     (0.6 * attacker.FlatPhysicalDamageMod), enemy); // for 1 jump
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -2158,7 +2157,7 @@ namespace MasterActivator
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -2174,10 +2173,10 @@ namespace MasterActivator
                                     (-10 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 170)) +
                                     (1.2 * attacker.FlatPhysicalDamageMod), enemy); // 1 hit damage
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2210,7 +2209,7 @@ namespace MasterActivator
                             double percentage = 3 + attacker.Spellbook.GetSpell(SpellSlot.W).Level;
                             return basedmg + ((enemy.MaxHealth - enemy.Health) / 100) * percentage;
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -2223,7 +2222,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2237,7 +2236,7 @@ namespace MasterActivator
                             (25 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 55)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -2249,7 +2248,7 @@ namespace MasterActivator
                             (110 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 110)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2264,9 +2263,9 @@ namespace MasterActivator
                             (1.0 * (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)),
                             enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(attacker,
@@ -2274,7 +2273,7 @@ namespace MasterActivator
                             (0.2 * attacker.FlatMagicDamageMod), enemy);
                 // per canonball, 25 max but randomly
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2289,7 +2288,7 @@ namespace MasterActivator
                             (0.4 * (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)),
                             enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     switch (stagetype)
                     {
@@ -2308,7 +2307,7 @@ namespace MasterActivator
                                      (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)),
                                     enemy); // per sec
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     var basedmg = CalcMagicDmg(attacker,
@@ -2328,7 +2327,7 @@ namespace MasterActivator
                     }
                     return basedmg + CalcMagicDmg(attacker, hpbonus, enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2353,7 +2352,7 @@ namespace MasterActivator
                                     (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage),
                                     enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -2372,7 +2371,7 @@ namespace MasterActivator
                                     (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage),
                                     enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     switch (stagetype)
@@ -2388,7 +2387,7 @@ namespace MasterActivator
                                     -20 + attacker.Spellbook.GetSpell(SpellSlot.E).Level * 40 +
                                     attacker.MaxHealth * 0.06, enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     switch (stagetype)
@@ -2404,10 +2403,10 @@ namespace MasterActivator
                                     100 + attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100 +
                                     attacker.FlatPhysicalDamageMod * 0.2 + attacker.FlatMagicDamageMod * 0.5, enemy) * 1.5;
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2438,7 +2437,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.7 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2468,14 +2467,14 @@ namespace MasterActivator
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcPhysicalDmg(attacker,
                             (150 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.5 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2502,7 +2501,7 @@ namespace MasterActivator
                                     (10 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                                     (0.6 * attacker.FlatMagicDamageMod), enemy); // per sec
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     switch (stagetype)
@@ -2518,7 +2517,7 @@ namespace MasterActivator
                                     (5 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 35)) +
                                     (0.5 * attacker.FlatPhysicalDamageMod), enemy); // min e dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -2527,7 +2526,7 @@ namespace MasterActivator
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
 
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2549,7 +2548,7 @@ namespace MasterActivator
                                     (20 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 20)) +
                                     (0.55 * attacker.FlatMagicDamageMod), enemy); // energy blast dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -2565,7 +2564,7 @@ namespace MasterActivator
                                     (30 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 30)) +
                                     (0.45 * attacker.FlatMagicDamageMod), enemy); // foreach hitting missile
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -2573,9 +2572,9 @@ namespace MasterActivator
                             (20 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 40)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2615,7 +2614,7 @@ namespace MasterActivator
                             throw new InvalidCastException();
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2638,7 +2637,7 @@ namespace MasterActivator
                                     (0.35 * attacker.FlatMagicDamageMod), enemy);
                         // damage when directly casted
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -2646,11 +2645,11 @@ namespace MasterActivator
                             (5 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 55)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2676,7 +2675,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (1.5 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2706,7 +2705,7 @@ namespace MasterActivator
                             (40 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 60)) +
                             (0.7 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2735,7 +2734,7 @@ namespace MasterActivator
                                     (5 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 55)) +
                                     (1.2 * attacker.FlatPhysicalDamageMod), enemy); // q only
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     if (attacker.Spellbook.GetSpell(SpellSlot.Q).Name == "JayceStaticField")
@@ -2753,7 +2752,7 @@ namespace MasterActivator
                                         (7.5 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 17.5)) +
                                         (0.25 * attacker.FlatMagicDamageMod), enemy); // per sec
                             default:
-                                throw new InvalidSpellTypeException();
+                                return 0;
                         }
                     }
                     return 0;
@@ -2769,9 +2768,9 @@ namespace MasterActivator
                     }
                     return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2780,7 +2779,7 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
                     return
                         CalcPhysicalDmg(attacker,
@@ -2817,7 +2816,7 @@ namespace MasterActivator
                             throw new InvalidCastException();
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2845,7 +2844,7 @@ namespace MasterActivator
                                     (0.3 * attacker.FlatMagicDamageMod), enemy);
                             return baseqdmg + bonusqdmg;
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -2861,7 +2860,7 @@ namespace MasterActivator
                                     (0 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 75)) +
                                     (0.6 * attacker.FlatMagicDamageMod), enemy); // mantra w
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -2869,9 +2868,9 @@ namespace MasterActivator
                             (-20 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 80)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy); // mantra e (shield with dmg)
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2893,10 +2892,10 @@ namespace MasterActivator
                                     (20 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 20)) +
                                     (0.3 * attacker.FlatMagicDamageMod), enemy); // multi target_ dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -2908,7 +2907,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 150)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2937,7 +2936,7 @@ namespace MasterActivator
                             (60 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 20)) +
                             (0.02 * attacker.MaxMana), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -2960,7 +2959,7 @@ namespace MasterActivator
                                     (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 25)) +
                                     (0.45 * attacker.FlatMagicDamageMod), enemy); // mark damage
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -2989,10 +2988,10 @@ namespace MasterActivator
                                     (0.25 * attacker.FlatMagicDamageMod) +
                                     (0.375 * attacker.FlatPhysicalDamageMod), enemy); // for each blade
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3007,16 +3006,16 @@ namespace MasterActivator
                             (0.6 * attacker.FlatMagicDamageMod) +
                             (1.0 * attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 10)) +
                             (0.25 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3043,7 +3042,7 @@ namespace MasterActivator
                                     ((0.3 + (0.1 * attacker.Spellbook.GetSpell(SpellSlot.W).Level)) *
                                      attacker.FlatPhysicalDamageMod), enemy); // pasive dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -3064,10 +3063,10 @@ namespace MasterActivator
                                     (15 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 65)) +
                                     (0.4 * attacker.FlatMagicDamageMod), enemy); // dmg per bolt
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3089,7 +3088,7 @@ namespace MasterActivator
                                     ((30 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 25)) +
                                      (1.2 * attacker.FlatPhysicalDamageMod)) * 1.3, enemy); // isolated q
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -3102,9 +3101,9 @@ namespace MasterActivator
                             (30 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 35)) +
                             (0.2 * attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3174,7 +3173,7 @@ namespace MasterActivator
                             (0.3 * attacker.FlatMagicDamageMod) +
                             (0.5 * attacker.FlatPhysicalDamageMod), enemy); // 100% bonus dmg to champs
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3197,7 +3196,7 @@ namespace MasterActivator
                                     (0.4 * attacker.FlatMagicDamageMod), enemy);
                         // first q or detonation, same dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     return
@@ -3219,13 +3218,13 @@ namespace MasterActivator
                                     (0.5 * attacker.FlatMagicDamageMod), enemy);
                         // first e or detonation, same dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     switch (stagetype)
                     {
                         case StageType.Default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                         case StageType.FirstDamage:
                             return
                                 CalcMagicDmg(attacker,
@@ -3242,10 +3241,10 @@ namespace MasterActivator
                                     (0 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                                     (0.65 * attacker.FlatMagicDamageMod), enemy); // e as ulted version
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3268,10 +3267,10 @@ namespace MasterActivator
                                     20 + ((attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 30)) +
                                     (0.9 * attacker.FlatPhysicalDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3283,7 +3282,7 @@ namespace MasterActivator
                             (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 200) +
                             (2.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3312,7 +3311,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.80 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3341,7 +3340,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.70 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3362,7 +3361,7 @@ namespace MasterActivator
                             (0.3 * attacker.FlatPhysicalDamageMod) +
                             (0.9 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcPhysicalDmg(attacker,
@@ -3370,7 +3369,7 @@ namespace MasterActivator
                             (0.1 * attacker.FlatMagicDamageMod) +
                             (0.3 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3381,16 +3380,16 @@ namespace MasterActivator
                 case SpellType.Q:
                     return CalcMagicDmg(attacker, (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 45)), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 30)) +
                             (0.4 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3404,7 +3403,7 @@ namespace MasterActivator
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 50)) +
                             (0.7 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3416,7 +3415,7 @@ namespace MasterActivator
                             (200 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.75 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3430,7 +3429,7 @@ namespace MasterActivator
                             (20 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 50)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3442,7 +3441,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.3 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3472,7 +3471,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.3 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3503,7 +3502,7 @@ namespace MasterActivator
                                     (20 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 20)) +
                                     (0.4 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -3511,7 +3510,7 @@ namespace MasterActivator
                             (200 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3526,13 +3525,13 @@ namespace MasterActivator
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 35)) +
                             (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3557,10 +3556,10 @@ namespace MasterActivator
                                     (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage) +
                                     (0.5 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3580,10 +3579,10 @@ namespace MasterActivator
                                     (25 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 25)) +
                                     (0.2 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3607,7 +3606,7 @@ namespace MasterActivator
                                     (0.40 * attacker.FlatMagicDamageMod) +
                                     (1.0 * attacker.FlatPhysicalDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     switch (stagetype)
@@ -3623,7 +3622,7 @@ namespace MasterActivator
                                     (10 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 14)) +
                                     (0.20 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -3636,7 +3635,7 @@ namespace MasterActivator
                             ((19 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 5)) +
                              (0.4 * attacker.FlatMagicDamageMod)) * (1 - (enemy.MaxHealth / 100)), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3663,10 +3662,10 @@ namespace MasterActivator
                                     (50 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 70)) +
                                     (1.10 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -3681,10 +3680,10 @@ namespace MasterActivator
                                     (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 75)) +
                                     (0.7 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3713,7 +3712,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.60 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3729,7 +3728,7 @@ namespace MasterActivator
                              select buff.Count).FirstOrDefault() +
                             (10 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 20)), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     switch (stagetype)
                     {
@@ -3744,7 +3743,7 @@ namespace MasterActivator
                                     (3 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 8)) +
                                     (0.12 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     switch (stagetype)
@@ -3761,10 +3760,10 @@ namespace MasterActivator
                                     ((attacker.Spellbook.GetSpell(SpellSlot.R).Level + 2) +
                                      (0.01 * attacker.FlatMagicDamageMod)) * (enemy.MaxHealth / 100), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3796,7 +3795,7 @@ namespace MasterActivator
                                     (20 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 40)) +
                                     (0.50 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -3804,7 +3803,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (0.80 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3828,7 +3827,7 @@ namespace MasterActivator
                                         (15 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40)) +
                                         (0.65 * attacker.FlatMagicDamageMod), enemy); // min dmg
                             default:
-                                throw new InvalidSpellTypeException();
+                                return 0;
                         }
                     }
                     switch (stagetype)
@@ -3844,7 +3843,7 @@ namespace MasterActivator
                                     (10 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 30)) +
                                     (1.0 * attacker.FlatPhysicalDamageMod), enemy); // base dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
                     if (attacker.Spellbook.GetSpell(SpellSlot.W).Name == "Bushwhack")
@@ -3868,9 +3867,9 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 75)) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3884,7 +3883,7 @@ namespace MasterActivator
                             (15 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 45)) +
                             (0.75 * attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3896,7 +3895,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.2 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3907,7 +3906,7 @@ namespace MasterActivator
                 case SpellType.Q:
                     return (250 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 150));
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -3927,10 +3926,10 @@ namespace MasterActivator
                                     (46.875 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 31.25)) +
                                     (0.3125 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3944,14 +3943,14 @@ namespace MasterActivator
                             (25 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 45)) +
                             (1.0 * attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return (25 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 45) +
                             (0.4 * (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)));
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -3980,7 +3979,7 @@ namespace MasterActivator
                             (150.0 + (75.0 * attacker.Spellbook.GetSpell(SpellSlot.R).Level) +
                              (0.7 * attacker.FlatMagicDamageMod)), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4013,7 +4012,7 @@ namespace MasterActivator
                                     (6 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 20)) +
                                     (1.2 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -4021,7 +4020,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 300)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4036,7 +4035,7 @@ namespace MasterActivator
                             (1.0 * (attacker.FlatPhysicalDamageMod + attacker.BaseAttackDamage)) +
                             (0.6 * attacker.FlatMagicDamageMod) + (0.08 * enemy.MaxHealth), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     switch (stagetype)
                     {
@@ -4051,12 +4050,12 @@ namespace MasterActivator
                                     (50 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 75)) +
                                     (0.8 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4071,7 +4070,7 @@ namespace MasterActivator
                             (0.65 * attacker.FlatPhysicalDamageMod) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4084,7 +4083,7 @@ namespace MasterActivator
                              (0.50 * attacker.FlatPhysicalDamageMod)) * (2 - enemy.Health / enemy.MaxHealth),
                             enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4103,7 +4102,7 @@ namespace MasterActivator
                             (5 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 10)) +
                             (0.1 * attacker.Armor), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -4118,10 +4117,10 @@ namespace MasterActivator
                                     (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 65) +
                                     (0.3 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4195,10 +4194,10 @@ namespace MasterActivator
                                     (30 * attacker.Spellbook.GetSpell(SpellSlot.R).Level) +
                                     (0.1 * attacker.FlatMagicDamageMod), enemy); // per sec
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4258,9 +4257,9 @@ namespace MasterActivator
                             throw new InvalidCastException();
                     }
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4294,7 +4293,7 @@ namespace MasterActivator
                             20 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 30) +
                             (1.0 * attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     if ((enemy.Health / enemy.MaxHealth) * 100 > 25)
                     {
@@ -4308,7 +4307,7 @@ namespace MasterActivator
                             120 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 120) +
                             (1.8 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4330,10 +4329,10 @@ namespace MasterActivator
                                     5 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 20) +
                                     (0.33 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4353,10 +4352,10 @@ namespace MasterActivator
                                     75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 55) +
                                     (0.30 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4392,12 +4391,12 @@ namespace MasterActivator
                                     (0.35 * attacker.FlatMagicDamageMod) +
                                     (0.01 * attacker.MaxMana), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4427,7 +4426,7 @@ namespace MasterActivator
                                     (0.15 * attacker.FlatMagicDamageMod) +
                                     ((attacker.ScriptHealthBonus / 100) * 0.25), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -4440,7 +4439,7 @@ namespace MasterActivator
                             50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100) +
                             (0.8 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4468,7 +4467,7 @@ namespace MasterActivator
                                     200 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 135) +
                                     (1.8 * attacker.FlatMagicDamageMod), enemy);
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -4482,7 +4481,7 @@ namespace MasterActivator
                             150 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 150) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4496,16 +4495,16 @@ namespace MasterActivator
                             20 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40) +
                             (0.6 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
                             15 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 35) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4546,7 +4545,7 @@ namespace MasterActivator
                             50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125) +
                             (0.7 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4568,19 +4567,19 @@ namespace MasterActivator
                                     (30 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 36)) +
                                     (0.9 * attacker.FlatMagicDamageMod), enemy); // complete dmg
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
                             (35 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 45)) +
                             (0.75 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4599,11 +4598,11 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                             (0.9 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4625,11 +4624,11 @@ namespace MasterActivator
                             (0.45 + (0.05 * attacker.Spellbook.GetSpell(SpellSlot.W).Level)), enemy);
                 // for each of 3
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4643,7 +4642,7 @@ namespace MasterActivator
                             (8 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 10)) +
                             (0.4 * attacker.FlatPhysicalDamageMod), enemy); // basic bonus dmg
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4655,7 +4654,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4669,16 +4668,16 @@ namespace MasterActivator
                             (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(attacker,
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4692,7 +4691,7 @@ namespace MasterActivator
                             (15 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 25)) +
                             (0.4 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4700,9 +4699,9 @@ namespace MasterActivator
                             (0.4 * attacker.FlatMagicDamageMod) + (0.5 * attacker.MaxMana),
                             enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4732,7 +4731,7 @@ namespace MasterActivator
                             (30 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 20)) +
                             (0.2 * attacker.FlatMagicDamageMod), enemy); //x sec
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4774,10 +4773,10 @@ namespace MasterActivator
                                     (285 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 345)) +
                                     (1.4 * attacker.FlatMagicDamageMod), enemy); // max. dmg (7 balls)
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4796,14 +4795,14 @@ namespace MasterActivator
                             (5 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 25)) +
                             (0.60 * (attacker.FlatPhysicalDamageMod)), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcPhysicalDmg(attacker,
                             (70 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 50)) +
                             (0.75 * (attacker.FlatPhysicalDamageMod)), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4812,7 +4811,7 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
                     return
                         CalcMagicDmg(attacker,
@@ -4829,7 +4828,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4843,7 +4842,7 @@ namespace MasterActivator
                             (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 45)) +
                             (0.80 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4855,7 +4854,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4869,7 +4868,7 @@ namespace MasterActivator
                             (40 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40)) +
                             (0.50 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -4881,7 +4880,7 @@ namespace MasterActivator
                             (100 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 150)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4890,7 +4889,7 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
                     return
                         CalcMagicDmg(attacker,
@@ -4910,7 +4909,7 @@ namespace MasterActivator
                                     (25 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 25)) +
                                     (0.25 * attacker.FlatMagicDamageMod), enemy); // passive
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -4918,7 +4917,7 @@ namespace MasterActivator
                             (200 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.5 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4933,9 +4932,9 @@ namespace MasterActivator
                             ((0.95 + (0.05 * attacker.Spellbook.GetSpell(SpellSlot.Q).Level)) *
                              attacker.FlatPhysicalDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     double basepercent = 16 + (4 * attacker.Spellbook.GetSpell(SpellSlot.R).Level);
                     double additionalpercentper100ap = 0;
@@ -4982,7 +4981,7 @@ namespace MasterActivator
                     var healthbase = enemy.MaxHealth / 100 * (basepercent + additionalpercentper100ap);
                     return CalcMagicDmg(attacker, healthbase, enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -4991,9 +4990,9 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(attacker,
@@ -5001,9 +5000,9 @@ namespace MasterActivator
                             (1.2 * (attacker.FlatPhysicalDamageMod)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5020,7 +5019,7 @@ namespace MasterActivator
                     switch (stagetype)
                     {
                         case StageType.Default:
-                            throw new InvalidSpellTypeException(); // W itself deals no dmg, card must be specified
+                            return 0; // W itself deals no dmg, card must be specified
                         case StageType.FirstDamage:
                             return
                                 CalcMagicDmg(attacker,
@@ -5043,7 +5042,7 @@ namespace MasterActivator
                                     (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod),
                                     enemy); // Gold Card
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -5051,9 +5050,9 @@ namespace MasterActivator
                             (30 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 25)) +
                             (0.5 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5062,9 +5061,9 @@ namespace MasterActivator
             switch (type)
             {
                 case SpellType.Q:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     var basedmg = CalcPhysicalDmg(attacker,
                         5 + (15 * attacker.Spellbook.GetSpell(SpellSlot.E).Level), enemy);
@@ -5080,12 +5079,12 @@ namespace MasterActivator
                         case StageType.FirstDamage:
                             return basedmg + perstack; // foreach stack
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5102,16 +5101,16 @@ namespace MasterActivator
                              (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod)),
                             enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(attacker,
                             (25 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 50)) +
                             (1.25 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5126,16 +5125,16 @@ namespace MasterActivator
                             (0.85 * (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod)),
                             enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(attacker,
                             (20 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 55)) +
                             (0.60 * (attacker.FlatPhysicalDamageMod)), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5165,7 +5164,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5200,12 +5199,12 @@ namespace MasterActivator
                                     (0.5 * attacker.FlatPhysicalDamageMod), enemy);
                         // Damage when knock starts
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5224,14 +5223,14 @@ namespace MasterActivator
                             (70 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 50)) +
                             (1.0 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     return
                         CalcMagicDmg(attacker,
                             (125 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (1.2 * attacker.FlatMagicDamageMod) + (0.8 * enemy.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5263,7 +5262,7 @@ namespace MasterActivator
                                     (15 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 30)) +
                                     (0.375 * attacker.FlatMagicDamageMod), enemy); // detonation
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     return
@@ -5276,7 +5275,7 @@ namespace MasterActivator
                             (30 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 20)) +
                             (0.06 * attacker.FlatMagicDamageMod), enemy); //x 0,25sec
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5305,7 +5304,7 @@ namespace MasterActivator
                             (75 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (1.4 * attacker.FlatPhysicalDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5319,7 +5318,7 @@ namespace MasterActivator
                             (55 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 35) +
                              (0.60 * attacker.FlatMagicDamageMod)), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -5345,10 +5344,10 @@ namespace MasterActivator
                                     (20 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 20)) +
                                     (0.24 * attacker.FlatMagicDamageMod), enemy); // Damage per Tick
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5375,7 +5374,7 @@ namespace MasterActivator
                                     (6.25 + (attacker.Spellbook.GetSpell(SpellSlot.W).Level * 13.75) +
                                      (3.75 * attacker.ScriptHealthBonus)), enemy); // per 0.5 sec
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.E:
                     var edmg =
@@ -5395,7 +5394,7 @@ namespace MasterActivator
                         case StageType.FourthDamage: // 4 stacks
                             return edmg * 2.0;
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 case SpellType.R:
                     return
@@ -5403,7 +5402,7 @@ namespace MasterActivator
                             (50 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (0.70 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5431,7 +5430,7 @@ namespace MasterActivator
                             (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 80) - 5 +
                             (0.30 * attacker.FlatMagicDamageMod), enemy); //RÃœBERGUCKEN
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5455,9 +5454,9 @@ namespace MasterActivator
                     }
                     return flatdmg;
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
                     switch (stagetype)
                     {
@@ -5473,10 +5472,10 @@ namespace MasterActivator
                                     (33 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 17)) +
                                     (0.4 * attacker.FlatPhysicalDamageMod), enemy); // per hit
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5518,10 +5517,10 @@ namespace MasterActivator
                                      (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod)),
                                     enemy); // per second
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5558,10 +5557,10 @@ namespace MasterActivator
                                     (135 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 55)) +
                                     (0.43 * attacker.FlatMagicDamageMod), enemy); // per hit
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5576,7 +5575,7 @@ namespace MasterActivator
                             (1.0 * (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod)),
                             enemy); // per hit
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -5588,7 +5587,7 @@ namespace MasterActivator
                             (-25 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100)) +
                             (1.0 * attacker.FlatPhysicalDamageMod) + ((enemy.Health / 100) * 15), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5603,7 +5602,7 @@ namespace MasterActivator
                             (1.0 * (attacker.BaseAttackDamage + attacker.FlatPhysicalDamageMod)),
                             enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -5615,7 +5614,7 @@ namespace MasterActivator
                             (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 100) +
                             (1.5 * (attacker.FlatPhysicalDamageMod)), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5640,9 +5639,9 @@ namespace MasterActivator
                             (25 + (attacker.Spellbook.GetSpell(SpellSlot.E).Level * 30)) +
                             (1.0 * (attacker.FlatPhysicalDamageMod)), enemy);
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5723,10 +5722,10 @@ namespace MasterActivator
                                     (175 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 175)) +
                                     (1.0 * attacker.FlatMagicDamageMod), enemy); // all jumps on enemy
                         default:
-                            throw new InvalidSpellTypeException();
+                            return 0;
                     }
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5740,7 +5739,7 @@ namespace MasterActivator
                             (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 40)) +
                             (1.0 * attacker.FlatPhysicalDamageMod), enemy); // 1 hit
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcPhysicalDmg(attacker,
@@ -5753,7 +5752,7 @@ namespace MasterActivator
                             enemy);
                 // base dmg
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5782,7 +5781,7 @@ namespace MasterActivator
                             (125 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 125)) +
                             (0.35 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5796,7 +5795,7 @@ namespace MasterActivator
                             (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 35)) +
                             (0.65 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
                     return
                         CalcMagicDmg(attacker,
@@ -5808,7 +5807,7 @@ namespace MasterActivator
                             (95 + (attacker.Spellbook.GetSpell(SpellSlot.R).Level * 85)) +
                             (0.70 * attacker.FlatMagicDamageMod), enemy);
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
@@ -5822,13 +5821,13 @@ namespace MasterActivator
                             (35 + (attacker.Spellbook.GetSpell(SpellSlot.Q).Level * 55)) +
                             (0.9 * attacker.FlatMagicDamageMod), enemy);
                 case SpellType.W:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.E:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 case SpellType.R:
-                    throw new InvalidSpellTypeException();
+                    return 0;
                 default:
-                    throw new InvalidSpellTypeException();
+                    return 0;
             }
         }
 
