@@ -1,4 +1,3 @@
-
 namespace MasterActivator
 {
     class Program
