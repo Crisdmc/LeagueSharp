@@ -33,25 +33,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clipper_library">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\clipper_library.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\LeagueSharp.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp.Common">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\LeagueSharp.Common.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Toolkit">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\SharpDX.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\SharpDX.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Toolkit.Graphics">
-      <HintPath>..\..\..\..\Desktop\L#\Assemblies\System\SharpDX.Toolkit.Graphics.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\LeagueSharp\System\SharpDX.Toolkit.Graphics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

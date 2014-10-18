@@ -5846,4 +5846,17 @@ namespace MasterActivator
         public bool arcaneblade;
         public bool butcher;
     }
+
+    public class InvalidSpellTypeException : Exception
+    {
+        private const String _errorMessage = "<font color='#33FFFF'>DamageLib: InvalidSpellTypeException: Tried to get the damage of an invalid spell, a spell without damage, a wrong stagetype of a spell or a not supported spell</font>";
+
+        public InvalidSpellTypeException()
+            : base(_errorMessage)
+        { }
+
+        public InvalidSpellTypeException(String message)
+            : base(message)
+        { }
+    }
 }
