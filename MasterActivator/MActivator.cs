@@ -106,62 +106,65 @@ namespace MasterActivator
                 {
                     if (Config.Item("predict").GetValue<bool>())
                     {
-                        if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsMe)
+                        if (args.Target != null) // Check (spell w/o target). ??
                         {
-                            Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
-
-                            if (attackerHero != null)
+                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsMe)
                             {
-                                SpellSlot spellSlot = Utility.GetSpellSlot(attackerHero, args.SData.Name);
-                                SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
+                                Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
 
-                                if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
+                                if (attackerHero != null)
                                 {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.IGNITE);
-                                }
-                                else if (spellSlot == SpellSlot.Q)
-                                {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.Q);
-                                }
-                                else if (spellSlot == SpellSlot.W)
-                                {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.W);
-                                }
-                                else if (spellSlot == SpellSlot.E)
-                                {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.E);
-                                }
-                                else if (spellSlot == SpellSlot.R)
-                                {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.R);
-                                }
-                                else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
-                                {
-                                    if (args.SData.Name == king.name)
+                                    SpellSlot spellSlot = Utility.GetSpellSlot(attackerHero, args.SData.Name);
+                                    SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
+
+                                    if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
                                     {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BOTRK);
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.IGNITE);
                                     }
-                                    else if (args.SData.Name == bilgewater.name)
+                                    else if (spellSlot == SpellSlot.Q)
                                     {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BILGEWATER);
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.Q);
                                     }
-                                    else if (args.SData.Name == dfg.name)
+                                    else if (spellSlot == SpellSlot.W)
                                     {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.DFG);
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.W);
                                     }
+                                    else if (spellSlot == SpellSlot.E)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.E);
+                                    }
+                                    else if (spellSlot == SpellSlot.R)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.R);
+                                    }
+                                    else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
+                                    {
+                                        if (args.SData.Name == king.name)
+                                        {
+                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BOTRK);
+                                        }
+                                        else if (args.SData.Name == bilgewater.name)
+                                        {
+                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BILGEWATER);
+                                        }
+                                        else if (args.SData.Name == dfg.name)
+                                        {
+                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.DFG);
+                                        }
+                                    }
+                                    else if (spellSlot == SpellSlot.Unknown)
+                                    {
+                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.AD);
+                                    }
+                                    //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w
                                 }
-                                else if (spellSlot == SpellSlot.Unknown)
-                                {
-                                    incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.AD);
-                                }
-                                //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w
                             }
-                        }
-                        else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsMe)
-                        {
-                            //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
-                            // TODO: Get multiplier/real dmg
-                            incDmg = attacker.BaseAttackDamage;
+                            else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsMe)
+                            {
+                                //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
+                                // TODO: Get multiplier/real dmg
+                                incDmg = attacker.BaseAttackDamage;
+                            }
                         }
                     }
                     if ((Config.Item("justPred").GetValue<bool>() && incDmg > 0) || !Config.Item("justPred").GetValue<bool>())
@@ -176,7 +179,6 @@ namespace MasterActivator
             }
             catch
             {
-                //Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
             }
         }
@@ -285,7 +287,6 @@ namespace MasterActivator
                 }
                 catch
                 {
-                    //Console.WriteLine(e);
                     Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
                     Config.Item("enabled").SetValue<bool>(false);
                 }
@@ -455,7 +456,7 @@ namespace MasterActivator
             var activeAllyHeros = from hero in ObjectManager.Get<Obj_AI_Hero>()
                                   where hero.IsAlly == true &&
                                         Config.Item(hero.SkinName).GetValue<bool>() &&
-                                        hero.Distance(_player) <= item.range &&
+                                        hero.Distance(_player, false) <= item.range &&
                                         !hero.IsDead
                                   select hero;
 
@@ -624,7 +625,6 @@ namespace MasterActivator
                         }
                         catch (Exception e)
                         {
-                            //Console.WriteLine(e);
                             Game.PrintChat("Problem with MasterActivator(AutoShield).");
                         }
                     }
