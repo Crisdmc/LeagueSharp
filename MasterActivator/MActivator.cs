@@ -196,7 +196,8 @@ namespace MasterActivator
                     }
                     else
                     {
-                        jungleMinions = new string[] { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
+                        // Gromp -> Ghost, Crab -> Add2x, Razorbeak -> Ghosts, Krug -> Golem, Murkworl -> Wolves
+                        jungleMinions = new string[] { "SRU_Blue", "SRU_Red", "SRU_Razorbeak", "SRU_Baron", "SRU_Krug", "SRU_Murkworl", "SRU_Dragon", "SRU_Gromp", "Sru_Crab" };
                     }
 
 
@@ -205,7 +206,7 @@ namespace MasterActivator
                     {
                         foreach (Obj_AI_Base minion in minions)
                         {
-                            Boolean b;
+                            Boolean b = false;
                             if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
                             {
                                 b = minion.IsHPBarRendered && !minion.IsDead &&
@@ -565,7 +566,7 @@ namespace MasterActivator
                                             }
                                             else
                                             {
-                                                jungleMinions = new string[] { "AncientGolem", "GreatWraith", "Wraith", "LizardElder", "Golem", "Worm", "Dragon", "GiantWolf" };
+                                                jungleMinions = new string[] { "SRU_Blue", "SRU_Red", "SRU_Razorbeak", "SRU_Baron", "SRU_Krug", "SRU_Murkworl", "SRU_Dragon", "SRU_Gromp", "Sru_Crab" };
                                             }
 
                                             var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
@@ -785,14 +786,15 @@ namespace MasterActivator
             }
             else
             {
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("AncientGolem", "Blue")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("LizardElder", "Red")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Dragon", "Dragon")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Worm", "Baron")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GreatWraith", "GreatWraith")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Wraith", "Wraith")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Golem", "Golem")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("GiantWolf", "GiantWolf")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Blue", "Blue")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Red", "Red")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Dragon", "Dragon")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Baron", "Baron")).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Razorbeak", "Razorbeak")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Krug", "Krug")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Murkworl", "Murkworl")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Gromp", "Gromp")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Sru_Crab", "Crab")).SetValue(false);
 
             }
             Config.SubMenu("smiteCfg").AddItem(new MenuItem("dSmite", "Draw")).SetValue(true);
