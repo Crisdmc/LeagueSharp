@@ -54,6 +54,11 @@ namespace MasterActivator
         MItem clarity = new MItem("Clarity", "Clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
         MItem ignite = new MItem("Ignite", "Ignite", "SummonerDot", 0, ItemTypeId.OffensiveSpell, 600);
         MItem smite = new MItem("Smite", "Active", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smiteAOE = new MItem("SmiteAOE", "smite AOE", "itemsmiteaoe", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smiteDuel = new MItem("SmiteDuel", "smite Duel", "s5_summonersmiteduel", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smiteQuick = new MItem("SmiteQuick", "smite Quick", "s5_summonersmitequick", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smiteGanker = new MItem("SmiteGanker", "smite Ganker", "s5_summonersmiteplayerganker", 0, ItemTypeId.OffensiveSpell, 750);
+
         //SummonerExhaust  
 
         // Auto shields 
@@ -222,7 +227,6 @@ namespace MasterActivator
                         {
                             if (minion.IsHPBarRendered && !minion.IsDead)
                             {
-                                Console.WriteLine(minion.Name);
                                 foreach (MMinion jMinion in jungleMinions)
                                 {
                                     if (minion.Name.StartsWith(jMinion.name) && ((minion.Name.Length - jMinion.name.Length) <= 6) && Config.Item(jMinion.name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>() ||
@@ -243,9 +247,8 @@ namespace MasterActivator
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Drawing).");
             }
         }
@@ -290,6 +293,11 @@ namespace MasterActivator
                     teamCheckAndUse(mikael);
 
                     checkAndUse(smite);
+                    checkAndUse(smiteAOE);
+                    checkAndUse(smiteDuel);
+                    checkAndUse(smiteGanker);
+                    checkAndUse(smiteQuick);
+
 
                     if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                     {
@@ -775,6 +783,10 @@ namespace MasterActivator
 
             Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
             createMenuItem(smite, 100, "smiteCfg", false, false);
+            createMenuItem(smiteAOE, 100, "smiteCfg", false, false);
+            createMenuItem(smiteDuel, 100, "smiteCfg", false, false);
+            createMenuItem(smiteGanker, 100, "smiteCfg", false, false);
+            createMenuItem(smiteQuick, 100, "smiteCfg", false, false);
 
             if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
             {
