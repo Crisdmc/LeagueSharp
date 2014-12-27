@@ -71,6 +71,22 @@ namespace MasterActivator
         MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
 
+        // Jungle Minions
+        MMinion blue = new MMinion("SRU_Blue", "Blue", 6, 143);
+        MMinion red = new MMinion("SRU_Red", "Red", 6, 143);
+        MMinion dragon = new MMinion("SRU_Dragon", "Dragon", 6, 143);
+        MMinion baron = new MMinion("SRU_Baron", "Baron", -18, 192);
+        MMinion wolf = new MMinion("SRU_Murkwolf", "Murkwolf", 41, 74);
+        MMinion razor = new MMinion("SRU_Razorbeak", "Razor", 39, 74); // Ghosts
+        MMinion krug = new MMinion("SRU_Krug", "Krug", 38, 80);
+        MMinion crab = new MMinion("Sru_Crab", "Crab", 43, 62);
+        MMinion gromp = new MMinion("SRU_Gromp", "Gromp", 32, 87); // Ghost
+
+        MMinion tVilemaw = new MMinion("TT_Spiderboss", "Vilemaw", 45, 67);
+        MMinion tWraith = new MMinion("TT_NWraith", "Wraith", 45, 67);
+        MMinion tGolem = new MMinion("TT_NGolem", "Golem", 45, 67);
+        MMinion tWolf = new MMinion("TT_NWolf", "Wolf", 45, 67);
+
         public MActivator()
         {
             CustomEvents.Game.OnGameLoad += onLoad;
@@ -189,53 +205,47 @@ namespace MasterActivator
             {
                 if (Config.Item("dSmite").GetValue<bool>())
                 {
-                    string[] jungleMinions;
+                    MMinion[] jungleMinions;
                     if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
                     {
-                        jungleMinions = new string[] { "TT_Spiderboss", "TT_NWraith", "TT_NGolem", "TT_NWolf" };
+                        jungleMinions = new MMinion[] { tVilemaw, tWraith, tWolf, tGolem };
                     }
                     else
                     {
-                        // Gromp -> Ghost, Crab -> Add2x, Razorbeak -> Ghosts, Krug -> Golem, Murkworl -> Wolves
-                        jungleMinions = new string[] { "SRU_Blue", "SRU_Red", "SRU_Razorbeak", "SRU_Baron", "SRU_Krug", "SRU_Murkworl", "SRU_Dragon", "SRU_Gromp", "Sru_Crab" };
+                        jungleMinions = new MMinion[] { blue, red, razor, baron, krug, wolf, dragon, gromp, crab };
                     }
-
 
                     var minions = MinionManager.GetMinions(_player.Position, 1500, MinionTypes.All, MinionTeam.Neutral);
                     if (minions.Count() > 0)
                     {
                         foreach (Obj_AI_Base minion in minions)
                         {
-                            Boolean b = false;
-                            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                            if (minion.IsHPBarRendered && !minion.IsDead)
                             {
-                                b = minion.IsHPBarRendered && !minion.IsDead &&
-                               (jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
-                                jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && !Config.Item("justAS").GetValue<bool>()));
-                            }
-                            else
-                            {
-                                b = minion.IsHPBarRendered && !minion.IsDead &&
-                               (jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>()) ||
-                                jungleMinions.Any(name => minion.Name.StartsWith(name) && !Config.Item("justAS").GetValue<bool>()));
-                            }
-                            if (b)
-                            {
-                                Vector2 hpBarPos = minion.HPBarPosition;
-                                hpBarPos.X += 45;
-                                hpBarPos.Y += 18;
-                                int smiteDmg = getSmiteDmg();
-                                var damagePercent = smiteDmg / minion.MaxHealth;
-                                float hpXPos = hpBarPos.X + (63 * damagePercent);
+                                Console.WriteLine(minion.Name);
+                                foreach (MMinion jMinion in jungleMinions)
+                                {
+                                    if (minion.Name.StartsWith(jMinion.name) && ((minion.Name.Length - jMinion.name.Length) <= 6) && Config.Item(jMinion.name).GetValue<bool>() && Config.Item("justAS").GetValue<bool>() ||
+                                    minion.Name.StartsWith(jMinion.name) && ((minion.Name.Length - jMinion.name.Length) <= 6) && !Config.Item("justAS").GetValue<bool>())
+                                    {
+                                        Vector2 hpBarPos = minion.HPBarPosition;
+                                        hpBarPos.X += jMinion.preX;
+                                        hpBarPos.Y += 18;
+                                        int smiteDmg = getSmiteDmg();
+                                        var damagePercent = smiteDmg / minion.MaxHealth;
+                                        float hpXPos = hpBarPos.X + (jMinion.width * damagePercent);
 
-                                Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg > minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                                        Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg > minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Drawing).");
             }
         }
@@ -562,11 +572,11 @@ namespace MasterActivator
                                             string[] jungleMinions;
                                             if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
                                             {
-                                                jungleMinions = new string[] { "TT_Spiderboss", "TT_NWraith", "TT_NGolem", "TT_NWolf" };
+                                                jungleMinions = new string[] { tVilemaw.name, tWraith.name, tGolem.name, tWolf.name };
                                             }
                                             else
                                             {
-                                                jungleMinions = new string[] { "SRU_Blue", "SRU_Red", "SRU_Razorbeak", "SRU_Baron", "SRU_Krug", "SRU_Murkworl", "SRU_Dragon", "SRU_Gromp", "Sru_Crab" };
+                                                jungleMinions = new string[] { blue.name, red.name, razor.name, baron.name, krug.name, wolf.name, dragon.name, gromp.name, crab.name };
                                             }
 
                                             var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
@@ -575,18 +585,7 @@ namespace MasterActivator
                                                 int smiteDmg = getSmiteDmg();
                                                 foreach (Obj_AI_Base minion in minions)
                                                 {
-
-                                                    Boolean b;
-                                                    if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
-                                                    {
-                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.Substring(0, minion.Name.Length - 5).Equals(name) && Config.Item(name).GetValue<bool>());
-                                                    }
-                                                    else
-                                                    {
-                                                        b = minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && Config.Item(name).GetValue<bool>());
-                                                    }
-
-                                                    if (b)
+                                                    if (minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
                                                     {
                                                         _player.Spellbook.CastSpell(spellSlot, minion);
                                                     }
@@ -786,15 +785,15 @@ namespace MasterActivator
             }
             else
             {
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Blue", "Blue")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Red", "Red")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Dragon", "Dragon")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Baron", "Baron")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Razorbeak", "Razorbeak")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Krug", "Krug")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Murkworl", "Murkworl")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("SRU_Gromp", "Gromp")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("Sru_Crab", "Crab")).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(blue.name, blue.menuName)).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(red.name, red.menuName)).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(dragon.name, dragon.menuName)).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(baron.name, baron.menuName)).SetValue(true);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(razor.name, razor.menuName)).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(krug.name, krug.menuName)).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(wolf.name, wolf.menuName)).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(gromp.name, gromp.menuName)).SetValue(false);
+                Config.SubMenu("smiteCfg").AddItem(new MenuItem(crab.name, crab.menuName)).SetValue(false);
 
             }
             Config.SubMenu("smiteCfg").AddItem(new MenuItem("dSmite", "Draw")).SetValue(true);

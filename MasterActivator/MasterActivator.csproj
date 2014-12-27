@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="entity\MMinion.cs" />
     <Compile Include="GenericDamageLib.cs" />
     <Compile Include="MActivator.cs" />
     <Compile Include="entity\MItem.cs" />
