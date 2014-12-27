@@ -17,8 +17,8 @@ namespace MasterActivator
         private Obj_AI_Hero _player;
         private int playerHit;
         private bool gotHit = false;
-        TargetSelector ts = new TargetSelector(600, TargetSelector.TargetingMode.AutoPriority);
-
+        private Obj_AI_Hero target;
+        
         // leagueoflegends.wikia.com/
         MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
         MItem mercurial = new MItem("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
@@ -174,7 +174,7 @@ namespace MasterActivator
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
                 //Console.WriteLine(e);
                 Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
@@ -283,7 +283,7 @@ namespace MasterActivator
                         combo();
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     //Console.WriteLine(e);
                     Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
@@ -379,7 +379,7 @@ namespace MasterActivator
 
                                 foreach (Obj_AI_Hero hero in activeAllyHeros)
                                 {
-                                    int enemyInRange = Utility.CountEnemysInRange(700, hero);
+                                    int enemyInRange = Utility.CountEnemysInRange(hero, 700);
                                     if (enemyInRange >= 1)
                                     {
                                         int actualHeroHpPercent = (int)((hero.Health / hero.MaxHealth) * 100);
@@ -388,7 +388,8 @@ namespace MasterActivator
                                         if ((item.type == ItemTypeId.DeffensiveSpell && actualHeroHpPercent <= usePercent && playerHit == hero.NetworkId && gotHit) ||
                                              (item.type == ItemTypeId.ManaRegeneratorSpell && actualHeroManaPercent <= usePercent))
                                         {
-                                            _player.SummonerSpellbook.CastSpell(spellSlot);
+                                            //_player.SummonerSpellbook.CastSpell(spellSlot);
+                                            _player.Spellbook.CastSpell(spellSlot);
                                             gotHit = false;
                                         }
                                     }
@@ -420,7 +421,7 @@ namespace MasterActivator
                                         }
                                         else if (item.type == ItemTypeId.Deffensive)
                                         {
-                                            int enemyInRange = Utility.CountEnemysInRange(700, hero);
+                                            int enemyInRange = Utility.CountEnemysInRange(hero, 700);
                                             if (enemyInRange >= 1)
                                             {
                                                 int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
@@ -477,14 +478,14 @@ namespace MasterActivator
                         var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
                         if (spellSlot != SpellSlot.Unknown)
                         {
-                            if (_player.SummonerSpellbook.CanUseSpell(spellSlot) == SpellState.Ready)
+                            if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                             {
                                 if (item.type == ItemTypeId.DeffensiveSpell)
                                 {
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                     if (actualHeroHpPercent <= usePercent && playerHit == _player.NetworkId && gotHit)
                                     {
-                                        _player.SummonerSpellbook.CastSpell(spellSlot);
+                                        _player.Spellbook.CastSpell(spellSlot);
                                         gotHit = false;
                                     }
                                 }
@@ -493,7 +494,7 @@ namespace MasterActivator
                                     int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
                                     if (actualHeroManaPercent <= usePercent && !Utility.InFountain())
                                     {
-                                        _player.SummonerSpellbook.CastSpell(spellSlot);
+                                        _player.Spellbook.CastSpell(spellSlot);
                                     }
                                 }
                                 else if (item.type == ItemTypeId.PurifierSpell)
@@ -503,7 +504,7 @@ namespace MasterActivator
                                     {
                                         if (checkCC(_player))
                                         {
-                                            _player.SummonerSpellbook.CastSpell(spellSlot);
+                                            _player.Spellbook.CastSpell(spellSlot);
                                         }
                                     }
                                 }
@@ -511,9 +512,8 @@ namespace MasterActivator
                                 {
                                     if (item == ignite)
                                     {
-                                        ts.SetRange(item.range);
-                                        ts.SetTargetingMode(TargetSelector.TargetingMode.LowHP);
-                                        Obj_AI_Hero target = ts.Target;
+                                        // TargetSelector.TargetingMode.LowHP FIX/Check
+                                        Obj_AI_Hero target = TargetSelector.GetTarget(item.range, TargetSelector.DamageType.Physical); // Check about DamageType
                                         if (target != null)
                                         {
 
@@ -540,12 +540,12 @@ namespace MasterActivator
                                             float aaleft = (dmgafter + target.Health / _player.FlatPhysicalDamageMod);
                                             //var pScreen = Drawing.WorldToScreen(target.Position);
 
-                                            if (target.Health < (dmgafter + aadmg) && _player.Distance(target) <= item.range)
+                                            if (target.Health < (dmgafter + aadmg) && _player.Distance(target, false) <= item.range)
                                             {
                                                 bool overIgnite = Config.Item("overIgnite").GetValue<bool>();
                                                 if ((!overIgnite && !target.HasBuff("summonerdot")) || overIgnite)
                                                 {
-                                                    _player.SummonerSpellbook.CastSpell(spellSlot, target);
+                                                    _player.Spellbook.CastSpell(spellSlot, target);
                                                     //Drawing.DrawText(pScreen[0], pScreen[1], System.Drawing.Color.Crimson, "Kill in " + aaleft);
                                                 }
 
@@ -586,7 +586,7 @@ namespace MasterActivator
 
                                                     if (b)
                                                     {
-                                                        _player.SummonerSpellbook.CastSpell(spellSlot, minion);
+                                                        _player.Spellbook.CastSpell(spellSlot, minion);
                                                     }
                                                 }
                                             }
@@ -638,10 +638,10 @@ namespace MasterActivator
                                 {
                                     if (checkTarget(item.range))
                                     {
-                                        int actualTargetHpPercent = (int)((ts.Target.Health / ts.Target.MaxHealth) * 100);
+                                        int actualTargetHpPercent = (int)((target.Health / target.MaxHealth) * 100);
                                         if (checkUsePercent(item, actualTargetHpPercent))
                                         {
-                                            useItem(item.id, item.range == 0 ? null : ts.Target);
+                                            useItem(item.id, item.range == 0 ? null : target);
                                         }
                                     }
                                 }
@@ -730,7 +730,9 @@ namespace MasterActivator
                 range = _player.AttackRange + 125;
             }
 
-            int targetModeSelectedIndex = Config.Item("targetMode").GetValue<StringList>().SelectedIndex;
+            target = TargetSelector.GetTarget(range, TargetSelector.DamageType.Physical);
+
+            /*int targetModeSelectedIndex = Config.Item("targetMode").GetValue<StringList>().SelectedIndex;
             TargetSelector.TargetingMode targetModeSelected = new TargetSelector.TargetingMode();
 
             foreach (TargetSelector.TargetingMode targetMode in Enum.GetValues(typeof(TargetSelector.TargetingMode)))
@@ -743,9 +745,9 @@ namespace MasterActivator
             }
 
             ts.SetRange(range);
-            ts.SetTargetingMode(targetModeSelected);
+            ts.SetTargetingMode(targetModeSelected);*/
 
-            return ts.Target != null ? true : false;
+            return target != null ? true : false;
         }
 
         private void createMenu()
@@ -856,7 +858,8 @@ namespace MasterActivator
 
             // Target selector
             Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
-            Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
+            Config.SubMenu("targetSelector"); // FIX/Test
+            //Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
 
             Config.AddItem(new MenuItem("predict", "Predict DMG")).SetValue(true);
             Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
