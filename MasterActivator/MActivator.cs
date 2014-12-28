@@ -21,17 +21,17 @@ namespace MasterActivator
         
         // leagueoflegends.wikia.com/
         MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
-        MItem mercurial = new MItem("Mercurial Scimitar", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
-        MItem bilgewater = new MItem("Bilgewater Cutlass", "Bilgewater", "bilge", 3144, ItemTypeId.Offensive, 450);
-        MItem king = new MItem("Blade of the Ruined King", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
+        MItem mercurial = new MItem("ItemMercurial", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
+        MItem bilgewater = new MItem("BilgewaterCutlass", "Bilgewater", "bilge", 3144, ItemTypeId.Offensive, 450);
+        MItem king = new MItem("ItemSwordOfFeastAndFamine", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
         MItem youmus = new MItem("Youmuu's Ghostblade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
-        MItem tiamat = new MItem("Tiamat", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
+        MItem tiamat = new MItem("ItemTiamatCleave", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400);
         MItem hydra = new MItem("Ravenous Hydra", "Hydra", "hydra", 3074, ItemTypeId.Offensive, 400);
-        MItem dfg = new MItem("Deathfire Grasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
-        MItem divine = new MItem("Sword of the Divine", "SoDivine", "divine", 3131, ItemTypeId.Offensive);
+        MItem dfg = new MItem("DeathfireGrasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
+        MItem divine = new MItem("ItemSoTD", "SoDivine", "divine", 3131, ItemTypeId.Offensive); //Sword of the Divine
         MItem hextech = new MItem("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
         MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
-        MItem seraph = new MItem("Seraph's Embrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
+        MItem seraph = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
         MItem zhonya = new MItem("Zhonya's Hourglass", "Zhonya's", "zhonya", 3157, ItemTypeId.Deffensive);
         //Item banner = new Item("Randuin's Omen", "Randuin's", "randuin", 3143, 500);
         //Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
@@ -127,12 +127,11 @@ namespace MasterActivator
                 {
                     if (Config.Item("predict").GetValue<bool>())
                     {
-                        if (args.Target != null) // Check (spell w/o target). ??
+                        if (args.Target != null) // Check (spell w/o target) AOE etc?
                         {
                             if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.IsMe)
                             {
                                 Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
-
                                 if (attackerHero != null)
                                 {
                                     SpellSlot spellSlot = Utility.GetSpellSlot(attackerHero, args.SData.Name);
@@ -140,44 +139,42 @@ namespace MasterActivator
 
                                     if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
                                     {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.IGNITE);
+                                        incDmg = Damage.GetSummonerSpellDamage(attackerHero, _player, Damage.SummonerSpell.Ignite);
                                     }
-                                    else if (spellSlot == SpellSlot.Q)
-                                    {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.Q);
-                                    }
-                                    else if (spellSlot == SpellSlot.W)
-                                    {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.W);
-                                    }
-                                    else if (spellSlot == SpellSlot.E)
-                                    {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.E);
-                                    }
-                                    else if (spellSlot == SpellSlot.R)
-                                    {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.R);
-                                    }
+                                    
                                     else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
                                     {
+                                        Console.WriteLine(args.SData.Name);
                                         if (args.SData.Name == king.name)
                                         {
-                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BOTRK);
+                                            Console.WriteLine("KINGG");
+                                            incDmg = Damage.GetItemDamage(attackerHero, _player, Damage.DamageItems.Botrk);
                                         }
-                                        else if (args.SData.Name == bilgewater.name)
+                                        else if (args.SData.Name == bilgewater.name || args.SData.Name == "BilgewaterCutlass")
                                         {
-                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.BILGEWATER);
+                                            Console.WriteLine("BILG");
+                                            incDmg = Damage.GetItemDamage(attackerHero, _player, Damage.DamageItems.Bilgewater);
                                         }
                                         else if (args.SData.Name == dfg.name)
                                         {
-                                            incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.DFG);
+                                            Console.WriteLine("DFGG");
+                                            incDmg = Damage.GetItemDamage(attackerHero, _player, Damage.DamageItems.Dfg);
+                                        }
+                                        else if (args.SData.Name == hydra.name)
+                                        {
+                                            Console.WriteLine("HYDRAA");
+                                            incDmg = Damage.GetItemDamage(attackerHero, _player, Damage.DamageItems.Hydra);
                                         }
                                     }
                                     else if (spellSlot == SpellSlot.Unknown)
                                     {
-                                        incDmg = GenericDamageLib.getDmg(attackerHero, _player, GenericDamageLib.SpellType.AD);
+                                        incDmg = Damage.GetAutoAttackDamage(attackerHero, _player, true);
                                     }
-                                    //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w
+                                    else
+                                    {
+                                        incDmg = Damage.GetSpellDamage(attackerHero, _player, spellSlot);
+                                    }
+                                    //Console.WriteLine(spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name + " Inc2-> " + incDmg2);// 44 = sivir w, 49 = YasuoBasicAttack3, 50 YassuoCritAttack, 45 = LeonaShieldOfDaybreakAttack
                                 }
                             }
                             else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.IsMe)
@@ -631,7 +628,7 @@ namespace MasterActivator
                                 }
                             }
                         }
-                        catch (Exception e)
+                        catch
                         {
                             Game.PrintChat("Problem with MasterActivator(AutoShield).");
                         }
@@ -815,11 +812,11 @@ namespace MasterActivator
             createMenuItem(ignite, 100, "offensive", false, false);
             Config.SubMenu("offensive").AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
             createMenuItem(youmus, 100, "offensive");
-            createMenuItem(bilgewater, 60, "offensive");
-            createMenuItem(king, 60, "offensive");
-            createMenuItem(tiamat, 90, "offensive");
-            createMenuItem(hydra, 90, "offensive");
-            createMenuItem(dfg, 80, "offensive");
+            createMenuItem(bilgewater, 100, "offensive");
+            createMenuItem(king, 100, "offensive");
+            createMenuItem(tiamat, 100, "offensive");
+            createMenuItem(hydra, 100, "offensive");
+            createMenuItem(dfg, 100, "offensive");
             createMenuItem(divine, 80, "offensive");
             createMenuItem(hextech, 80, "offensive");
             createMenuItem(muramana, 80, "offensive");
