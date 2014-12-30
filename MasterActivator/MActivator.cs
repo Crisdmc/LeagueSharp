@@ -145,7 +145,6 @@ namespace MasterActivator
 
                                 else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
                                 {
-                                    Console.WriteLine(args.SData.Name);
                                     if (args.SData.Name == king.name)
                                     {
                                         incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Botrk);
@@ -216,7 +215,7 @@ namespace MasterActivator
                 if (Config.Item("dSmite").GetValue<bool>())
                 {
                     MMinion[] jungleMinions;
-                    if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                    if (Utility.Map.GetMap().Type.Equals(Utility.Map.MapType.TwistedTreeline))
                     {
                         jungleMinions = new MMinion[] { tVilemaw, tWraith, tWolf, tGolem };
                     }
@@ -266,7 +265,6 @@ namespace MasterActivator
                 {
 
                     checkAndUse(clarity);
-
                     teamCheckAndUse(mikael);
                     if (!_player.InFountain())
                     {
@@ -296,7 +294,6 @@ namespace MasterActivator
                     checkAndUse(smiteGanker);
                     checkAndUse(smiteQuick);
 
-
                     if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                     {
                         combo();
@@ -316,8 +313,8 @@ namespace MasterActivator
             checkAndUse(youmus);
             checkAndUse(bilgewater);
             checkAndUse(king);
-            checkAndUse(tiamat);
-            checkAndUse(hydra);
+            checkAndUse(tiamat, "", 0, true);
+            checkAndUse(hydra, "", 0, true);
             checkAndUse(dfg);
             checkAndUse(divine);
             checkAndUse(hextech);
@@ -490,7 +487,7 @@ namespace MasterActivator
             return activeAllyHeros;
         }
 
-        private void checkAndUse(MItem item, String buff = "", double incDamage = 0)
+        private void checkAndUse(MItem item, String buff = "", double incDamage = 0, bool self = false)
         {
             if (Config.Item(item.menuVariable) != null)
             {
@@ -584,7 +581,7 @@ namespace MasterActivator
                                         try
                                         {
                                             string[] jungleMinions;
-                                            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+                                            if (Utility.Map.GetMap().Type.Equals(Utility.Map.MapType.TwistedTreeline))
                                             {
                                                 jungleMinions = new string[] { tVilemaw.name, tWraith.name, tGolem.name, tWolf.name };
                                             }
@@ -654,7 +651,7 @@ namespace MasterActivator
                                         int actualTargetHpPercent = (int)((target.Health / target.MaxHealth) * 100);
                                         if (checkUsePercent(item, actualTargetHpPercent))
                                         {
-                                            useItem(item.id, item.range == 0 ? null : target);
+                                            useItem(item.id, (item.range == 0 || self) ? null : target);
                                         }
                                     }
                                 }
@@ -817,7 +814,7 @@ namespace MasterActivator
             Config.SubMenu("smiteCfg").AddSubMenu(menuSmiteSpell);
 
             var menuSmiteMobs = new Menu("Mob", "smiteMobs");
-            if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
+            if (Utility.Map.GetMap().Type.Equals(Utility.Map.MapType.TwistedTreeline))
             {
                 menuSmiteMobs.AddItem(new MenuItem("TT_Spiderboss", "Vilemaw")).SetValue(true);
                 menuSmiteMobs.AddItem(new MenuItem("TT_NWraith", "Wraith")).SetValue(false);
