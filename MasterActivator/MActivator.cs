@@ -268,8 +268,11 @@ namespace MasterActivator
                     checkAndUse(clarity);
 
                     teamCheckAndUse(mikael);
-                    teamCheckAndUse(heal);
-
+                    if (!_player.InFountain())
+                    {
+                        teamCheckAndUse(heal);
+                    }
+                    
                     checkAndUse(cleanse);
                     checkAndUse(qss);
                     checkAndUse(mercurial);
