@@ -52,7 +52,7 @@ namespace MasterActivator
         MItem cleanse = new MItem("Cleanse", "Cleanse", "SummonerBoost", 0, ItemTypeId.PurifierSpell);
         MItem clarity = new MItem("Clarity", "Clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
         MItem ignite = new MItem("Ignite", "Ignite", "SummonerDot", 0, ItemTypeId.OffensiveSpell, 600);
-        MItem smite = new MItem("Smite", "Active", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smite = new MItem("Smite", "Smite", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 750);
         MItem smiteAOE = new MItem("SmiteAOE", "smite AOE", "itemsmiteaoe", 0, ItemTypeId.OffensiveSpell, 750);
         MItem smiteDuel = new MItem("SmiteDuel", "smite Duel", "s5_summonersmiteduel", 0, ItemTypeId.OffensiveSpell, 750);
         MItem smiteQuick = new MItem("SmiteQuick", "smite Quick", "s5_summonersmitequick", 0, ItemTypeId.OffensiveSpell, 750);
@@ -184,8 +184,7 @@ namespace MasterActivator
                             }
                         }
                     }
-                    // Se o justPred estiver ligado e estar recebendo algum dano (já necessita o prediction ligado).
-                    if (Config.Item("justPred").GetValue<bool>() && incDmg > 0)
+                    if (incDmg > 0)
                     {
                         if (args.Target.Team == _player.Team)
                         {
@@ -201,16 +200,6 @@ namespace MasterActivator
                                 checkAndUseShield(incDmg);
                             }
                         }
-                    }
-                    // Se justPred ou predict estiver desligado, verifica tudo.
-                    else if (!Config.Item("justPred").GetValue<bool>() || !Config.Item("predict").GetValue<bool>())
-                    {
-                        checkAndUse(zhonya);
-                        checkAndUse(barrier);
-                        checkAndUse(seraph);
-                        teamCheckAndUse(heal);
-                        teamCheckAndUse(solari, "", true);
-                        teamCheckAndUse(mountain);
                     }
                 }
             }
@@ -279,6 +268,7 @@ namespace MasterActivator
                     checkAndUse(clarity);
 
                     teamCheckAndUse(mikael);
+                    teamCheckAndUse(heal);
 
                     checkAndUse(cleanse);
                     checkAndUse(qss);
@@ -287,6 +277,15 @@ namespace MasterActivator
                     checkAndUse(manaPot, "FlaskOfCrystalWater");
                     checkAndUse(hpPot, "RegenerationPotion");
                     checkAndUse(biscuit, "ItemMiniRegenPotion");
+
+                    if (!Config.Item("justPred").GetValue<bool>() || !Config.Item("predict").GetValue<bool>())
+                    {
+                        checkAndUse(zhonya);
+                        checkAndUse(barrier);
+                        checkAndUse(seraph);
+                        teamCheckAndUse(solari, "", true);
+                        teamCheckAndUse(mountain);
+                    }
 
                     checkAndUse(smite);
                     checkAndUse(smiteAOE);
@@ -806,38 +805,45 @@ namespace MasterActivator
             Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
-            createMenuItem(smite, "smiteCfg");
-            createMenuItem(smiteAOE, "smiteCfg");
-            createMenuItem(smiteDuel, "smiteCfg");
-            createMenuItem(smiteGanker, "smiteCfg");
-            createMenuItem(smiteQuick, "smiteCfg");
+            var menuSmiteSpell = new Menu("Spell", "smiteSpell");
+            menuSmiteSpell.AddItem(new MenuItem(smite.menuVariable, smite.menuName).SetValue(true));
+            menuSmiteSpell.AddItem(new MenuItem(smiteAOE.menuVariable, smiteAOE.menuName).SetValue(true));
+            menuSmiteSpell.AddItem(new MenuItem(smiteDuel.menuVariable, smiteDuel.menuName).SetValue(true));
+            menuSmiteSpell.AddItem(new MenuItem(smiteGanker.menuVariable, smiteGanker.menuName).SetValue(true));
+            menuSmiteSpell.AddItem(new MenuItem(smiteQuick.menuVariable, smiteQuick.menuName).SetValue(true));
+            Config.SubMenu("smiteCfg").AddSubMenu(menuSmiteSpell);
 
+            var menuSmiteMobs = new Menu("Mob", "smiteMobs");
             if (Utility.Map.GetMap()._MapType.Equals(Utility.Map.MapType.TwistedTreeline))
             {
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_Spiderboss", "Vilemaw")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NWraith", "Wraith")).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NGolem", "Golem")).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem("TT_NWolf", "Wolf")).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem("TT_Spiderboss", "Vilemaw")).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem("TT_NWraith", "Wraith")).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem("TT_NGolem", "Golem")).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem("TT_NWolf", "Wolf")).SetValue(true);
             }
             else
             {
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(blue.name, blue.menuName)).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(red.name, red.menuName)).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(dragon.name, dragon.menuName)).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(baron.name, baron.menuName)).SetValue(true);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(razor.name, razor.menuName)).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(krug.name, krug.menuName)).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(wolf.name, wolf.menuName)).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(gromp.name, gromp.menuName)).SetValue(false);
-                Config.SubMenu("smiteCfg").AddItem(new MenuItem(crab.name, crab.menuName)).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem(blue.name, blue.menuName)).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem(red.name, red.menuName)).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem(dragon.name, dragon.menuName)).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem(baron.name, baron.menuName)).SetValue(true);
+                menuSmiteMobs.AddItem(new MenuItem(razor.name, razor.menuName)).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem(krug.name, krug.menuName)).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem(wolf.name, wolf.menuName)).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem(gromp.name, gromp.menuName)).SetValue(false);
+                menuSmiteMobs.AddItem(new MenuItem(crab.name, crab.menuName)).SetValue(false);
 
             }
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("dSmite", "Draw")).SetValue(true);
-            Config.SubMenu("smiteCfg").AddItem(new MenuItem("justAS", "Just ON")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddSubMenu(menuSmiteMobs);
+
+            var menuSmiteDraw = new Menu("Draw", "smiteDraw");
+            menuSmiteDraw.AddItem(new MenuItem("dSmite", "Enabled")).SetValue(true);
+            menuSmiteDraw.AddItem(new MenuItem("justAS", "Just Selected Mobs")).SetValue(false);
+            Config.SubMenu("smiteCfg").AddSubMenu(menuSmiteDraw);
 
             Config.AddSubMenu(new Menu("Offensive", "offensive"));
             createMenuItem(ignite, "offensive");
-            Config.SubMenu("offensive").AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
+            Config.SubMenu("offensive").SubMenu("menu" + ignite.menuVariable).AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
             createMenuItem(youmus, "offensive", 100);
             createMenuItem(bilgewater, "offensive", 100);
             createMenuItem(king, "offensive", 100);
@@ -856,9 +862,9 @@ namespace MasterActivator
             createMenuItem(barrier, "deffensive", 35);
             createMenuItem(seraph, "deffensive", 45);
             createMenuItem(zhonya, "deffensive", 35);
-            Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             createMenuItem(solari, "deffensive", 45);
             createMenuItem(mountain, "deffensive", 45);
+            Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             Config.SubMenu("deffensive").AddItem(new MenuItem("useRecalling", "Use Recalling")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Auto Shield", "autoshield"));
@@ -900,8 +906,7 @@ namespace MasterActivator
 
             // Target selector
             Config.AddSubMenu(new Menu("Target Selector", "targetSelector"));
-            Config.SubMenu("targetSelector"); // FIX/Test
-            //Config.SubMenu("targetSelector").AddItem(new MenuItem("targetMode", "")).SetValue(new StringList(new[] { "LowHP", "MostAD", "MostAP", "Closest", "NearMouse", "AutoPriority", "LessAttack", "LessCast" }, 0));
+            TargetSelector.AddToMenu(Config.SubMenu("targetSelector"));
 
             Config.AddItem(new MenuItem("predict", "Predict DMG")).SetValue(true);
             //Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
