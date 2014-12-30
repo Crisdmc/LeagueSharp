@@ -187,7 +187,7 @@ namespace MasterActivator
                     {
                         if (args.Target.Team == _player.Team)
                         {
-                            teamCheckAndUse(heal, "", false, incDmg);
+                            teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
                             teamCheckAndUse(solari, "", true, incDmg);
                             teamCheckAndUse(mountain, "", false, incDmg);
 
@@ -266,9 +266,9 @@ namespace MasterActivator
 
                     checkAndUse(clarity);
                     teamCheckAndUse(mikael);
-                    if (!_player.InFountain())
+                    if (!_player.InFountain() && !Config.Item("justPredHeal").GetValue<bool>())
                     {
-                        teamCheckAndUse(heal);
+                        teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck");
                     }
                     
                     checkAndUse(cleanse);
@@ -883,7 +883,8 @@ namespace MasterActivator
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);
-            //Config.SubMenu("regenerators").AddItem(new MenuItem("useWithHealDebuff", "With debuff")).SetValue(true);
+            Config.SubMenu("regenerators").SubMenu("menu" + heal.menuVariable).AddItem(new MenuItem("useWithHealDebuff", "Use with debuff")).SetValue(true);
+            Config.SubMenu("regenerators").SubMenu("menu" + heal.menuVariable).AddItem(new MenuItem("justPredHeal", "Just predicted")).SetValue(false);
             createMenuItem(clarity, "regenerators", 25, true);
             createMenuItem(hpPot, "regenerators", 55);
             createMenuItem(manaPot, "regenerators", 55, true);
