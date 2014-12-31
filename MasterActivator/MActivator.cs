@@ -355,7 +355,7 @@ namespace MasterActivator
                 if (Utility.GetSpellSlot(_player, item.name, false) != SpellSlot.Unknown)
                 {
                     // Se estiver habilitado para o determinado player
-                    Console.WriteLine(item.menuVariable + attacker.BaseSkinName);
+                    //Console.WriteLine(item.menuVariable + attacker.BaseSkinName);
                     if (Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
                     {
                         //Console.WriteLine("Player habilitado->" + attacker.BaseSkinName);
