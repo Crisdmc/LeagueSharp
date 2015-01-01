@@ -195,8 +195,8 @@ namespace MasterActivator
                             }
                         }
                     }
-                    
-                    if (incDmg > 0)
+
+                    if (incDmg > 0 || spellSlot != SpellSlot.Unknown)
                     {
                         if (args.Target.Team == _player.Team)
                         {
@@ -209,15 +209,7 @@ namespace MasterActivator
                                 checkAndUse(zhonya, "", incDmg);
                                 checkAndUse(barrier, "", incDmg);
                                 checkAndUse(seraph, "", incDmg);
-
-                                if (spellSlot != SpellSlot.Unknown)
-                                {
-                                    checkAndUseShield(incDmg, attacker, null, spellSlot);
-                                }
-                                else
-                                {
-                                    checkAndUseShield(incDmg, attacker);
-                                }
+                                checkAndUseShield(incDmg, attacker, null, spellSlot);
                             }
                         }
                     }
@@ -307,6 +299,7 @@ namespace MasterActivator
                         checkAndUse(seraph);
                         teamCheckAndUse(solari, "", true);
                         teamCheckAndUse(mountain);
+                        checkAndUseShield();
                     }
 
                     checkAndUse(smite);
@@ -347,48 +340,54 @@ namespace MasterActivator
         // And about ignore HP% check?
         private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
         {
-            // player
-            if (attacker.Type == GameObjectType.obj_AI_Hero)
+            //Console.WriteLine("É PLAYER");
+            // Se tem o spell
+            if (Utility.GetSpellSlot(_player, item.name, false) != SpellSlot.Unknown)
             {
-                //Console.WriteLine("É PLAYER");
-                // Se tem o spell
-                if (Utility.GetSpellSlot(_player, item.name, false) != SpellSlot.Unknown)
+                if (attacker != null)
                 {
-                    // Se estiver habilitado para o determinado player
-                    //Console.WriteLine(item.menuVariable + attacker.BaseSkinName);
-                    if (Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
+                    // player
+                    if (attacker.Type == GameObjectType.obj_AI_Hero)
                     {
-                        //Console.WriteLine("Player habilitado->" + attacker.BaseSkinName);
-                        if (attackerSpellSlot != SpellSlot.Unknown)
+                        // Se estiver habilitado para o determinado player
+                        //Console.WriteLine(item.menuVariable + attacker.BaseSkinName);
+                        if (Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
                         {
-                            // Se a habilidade estiver habilitada
-                            if (Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
+                            //Console.WriteLine("Player habilitado->" + attacker.BaseSkinName);
+                            if (attackerSpellSlot != SpellSlot.Unknown)
                             {
-                                //Console.WriteLine("Usar na hab-> " + attackerSpellSlot);
-                                checkAndUse(item, "", incDmg);
-                            }
-                            else
-                            {
-                                //Console.WriteLine("NÃO usar na hab-> " + attackerSpellSlot);
+                                // Se a habilidade estiver habilitada
+                                if (Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
+                                {
+                                    //Console.WriteLine("Usar na hab-> " + attackerSpellSlot);
+                                    checkAndUse(item, "", incDmg);
+                                }
+                                else
+                                {
+                                    //Console.WriteLine("NÃO usar na hab-> " + attackerSpellSlot);
+                                }
                             }
                         }
+                        else
+                        {
+                            //Console.WriteLine("Player desabilitado->" + attacker.BaseSkinName);
+                            checkAndUse(item, "", incDmg);
+                        }
                     }
+                    // tower
                     else
                     {
-                        //Console.WriteLine("Player desabilitado->" + attacker.BaseSkinName);
-                        checkAndUse(item, "", incDmg);
+                        //Console.WriteLine("É TORRE");
+                        if (Config.Item("tower" + item.menuVariable).GetValue<bool>())
+                        {
+                            checkAndUse(item, "", incDmg);
+                        }
                     }
                 }
             }
-            // tower
-            else
-            {
-                //Console.WriteLine("É TORRE");
-                checkAndUse(item, "", incDmg);
-            }
         }
 
-        private void checkAndUseShield(double incDmg, Obj_AI_Base attacker, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
+        private void checkAndUseShield(double incDmg = 0, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
         {
             justUseAgainstCheck(titanswraith, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(blackshield, incDmg, attacker, attacked, attackerSpellSlot);
@@ -428,7 +427,7 @@ namespace MasterActivator
                         menu.AddItem(new MenuItem(item.menuVariable + "UseManaPct", "Min Mana%")).SetValue(new Slider(minManaPct, 0, 100));
                     }
                     var menuUseAgainst = new Menu("Use against", "UseAgainst");
-
+                    menuUseAgainst.AddItem(new MenuItem("tower" + item.menuVariable, "Tower").SetValue(true));
                     var enemyHero = from hero in ObjectManager.Get<Obj_AI_Hero>()
                                    where hero.Team != _player.Team
                                   select hero;
