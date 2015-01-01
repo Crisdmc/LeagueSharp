@@ -426,7 +426,7 @@ namespace MasterActivator
                     {
                         menu.AddItem(new MenuItem(item.menuVariable + "UseManaPct", "Min Mana%")).SetValue(new Slider(minManaPct, 0, 100));
                     }
-                    var menuUseAgainst = new Menu("Use against", "UseAgainst");
+                    var menuUseAgainst = new Menu("Filter", "UseAgainst");
                     menuUseAgainst.AddItem(new MenuItem("tower" + item.menuVariable, "Tower").SetValue(true));
                     var enemyHero = from hero in ObjectManager.Get<Obj_AI_Hero>()
                                    where hero.Team != _player.Team
