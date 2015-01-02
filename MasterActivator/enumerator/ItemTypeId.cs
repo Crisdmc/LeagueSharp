@@ -15,6 +15,7 @@ namespace MasterActivator.enumerator
         ManaRegeneratorSpell = 8,
         OffensiveSpell = 9,
         Ability = 10,
-        OffensiveAOE = 11
+        OffensiveAOE = 11,
+        TeamAbility = 12
     }
 }

@@ -59,17 +59,17 @@ namespace MasterActivator
         MItem smiteGanker = new MItem("SmiteGanker", "smite Ganker", "s5_summonersmiteplayerganker", 0, ItemTypeId.OffensiveSpell, 750);
 
         // Auto shields 
-        MItem blackshield = new MItem("BlackShield", "Black Shield", "bShield", 0, ItemTypeId.Ability, 750, SpellSlot.E);
+        MItem blackshield = new MItem("BlackShield", "Black Shield", "bShield", 0, ItemTypeId.TeamAbility, 750, SpellSlot.E); //Morgana
         MItem unbreakable = new MItem("BraumE", "Unbreakable", "unbreak", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
         MItem palecascade = new MItem("DianaOrbs", "Pale Cascade", "cascade", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem bulwark = new MItem("GalioBulwark", "Bulwark", "bulwark", 0, ItemTypeId.Ability, 800, SpellSlot.W);
+        MItem bulwark = new MItem("GalioBulwark", "Bulwark", "bulwark", 0, ItemTypeId.TeamAbility, 800, SpellSlot.W);
         MItem courage = new MItem("GarenW", "Courage", "courage", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem eyeofstorm = new MItem("EyeOfTheStorm", "Eye of the Storm", "storm", 0, ItemTypeId.Ability, 800, SpellSlot.E);
-        MItem inspire = new MItem("KarmaSolKimShield", "Inspire", "inspire", 0, ItemTypeId.Ability, 800, SpellSlot.E);
-        MItem helppix = new MItem("LuluE", "Help Pix!", "pix", 0, ItemTypeId.Ability, 650, SpellSlot.E);
-        MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.Ability, 1075, SpellSlot.W);
+        MItem eyeofstorm = new MItem("EyeOfTheStorm", "Eye of the Storm", "storm", 0, ItemTypeId.Ability, 800, SpellSlot.E); //Janna
+        MItem inspire = new MItem("KarmaSolKimShield", "Inspire", "inspire", 0, ItemTypeId.TeamAbility, 800, SpellSlot.E);
+        MItem helppix = new MItem("LuluE", "Help Pix!", "pix", 0, ItemTypeId.TeamAbility, 650, SpellSlot.E);
+        MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.TeamAbility, 1075, SpellSlot.W);
         MItem titanswraith = new MItem("NautilusPiercingGaze", "Titans Wraith", "tWraith", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.Ability, 1100, SpellSlot.E);
+        MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.TeamAbility, 1100, SpellSlot.E);
         MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
 
@@ -191,7 +191,7 @@ namespace MasterActivator
                                 // TODO: Get multiplier/real dmg
                                 incDmg = attacker.BaseAttackDamage;
                                 Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == args.Target.NetworkId);
-                                //Console.WriteLine("Base->" + attacker.BaseAttackDamage + "   Tower Dmg-> " + Damage.GetAutoAttackDamage(attacker, attackedHero, true));
+                                //Console.WriteLine("Base->" + attacker.BaseAttackDamage + "   Tower Dmg-> " + Damage.GetAutoAttackDamage(attacker, attackedHero, true) + "   " + Damage.GetAutoAttackDamage(attacker, attackedHero));
                             }
                         }
                     }
@@ -200,16 +200,18 @@ namespace MasterActivator
                     {
                         if (args.Target.Team == _player.Team)
                         {
+                            Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == args.Target.NetworkId);
+
                             teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
                             teamCheckAndUse(solari, "", true, incDmg);
                             teamCheckAndUse(mountain, "", false, incDmg);
+                            checkAndUseShield(incDmg, attacker, attackedHero, spellSlot);
 
                             if (args.Target.IsMe)
                             {
                                 checkAndUse(zhonya, "", incDmg);
                                 checkAndUse(barrier, "", incDmg);
                                 checkAndUse(seraph, "", incDmg);
-                                checkAndUseShield(incDmg, attacker, null, spellSlot);
                             }
                         }
                     }
@@ -338,7 +340,7 @@ namespace MasterActivator
         }
 
         // And about ignore HP% check?
-        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
+        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
         {
             //Console.WriteLine("É PLAYER");
             // Se tem o spell
@@ -359,8 +361,15 @@ namespace MasterActivator
                                 // Se a habilidade estiver habilitada
                                 if (Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
                                 {
-                                    //Console.WriteLine("Usar na hab-> " + attackerSpellSlot);
-                                    checkAndUse(item, "", incDmg);
+                                    //Console.WriteLine("Usar na hab-> " + attackerSpellSlot + "  para->" + attacked.Name);
+                                    if (item.type == ItemTypeId.Ability)
+                                    {
+                                        checkAndUse(item, "", incDmg);
+                                    }
+                                    else
+                                    {
+                                        teamCheckAndUse(item, "", false, incDmg, attacked);
+                                    }
                                 }
                                 else
                                 {
@@ -414,7 +423,7 @@ namespace MasterActivator
 
         private void createMenuItem(MItem item, String parent, int defaultValue = 0, bool mana = false, int minManaPct = 0)
         {
-            if (item.type == ItemTypeId.Ability)
+            if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility)
             {
                 var abilitySlot = Utility.GetSpellSlot(_player, item.name, false);
                 if (abilitySlot != SpellSlot.Unknown && abilitySlot == item.abilitySlot)
@@ -459,9 +468,8 @@ namespace MasterActivator
                                 Game.PrintChat("MasterActivator cant get " + hero.BaseSkinName + " spells!");
                             }*/
                         }
-                        menu.AddSubMenu(menuUseAgainst);
                     }
-                    
+                    menu.AddSubMenu(menuUseAgainst);
                     Config.SubMenu(parent).AddSubMenu(menu);
                 }
             }
@@ -485,7 +493,7 @@ namespace MasterActivator
             }
         }
 
-        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0)
+        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0, Obj_AI_Base attacked = null)
         {
             if (Config.Item(item.menuVariable) != null)
             {
@@ -522,6 +530,41 @@ namespace MasterActivator
                                     }
                                 }
                             }
+                        }
+                    }
+                    else if (item.type == ItemTypeId.TeamAbility)
+                    {
+                        try
+                        {
+                            var spellSlot = Utility.GetSpellSlot(_player, item.name, false);
+                            if (spellSlot != SpellSlot.Unknown)
+                            {
+                                var activeAllyHeros = getActiveAllyHeros(item);
+                                if (activeAllyHeros.Count() > 0)
+                                {
+                                    if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
+                                    {
+                                        int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                        int manaPercent = Config.Item(item.menuVariable + "UseManaPct") != null ? Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value : 0;
+                                        foreach (Obj_AI_Hero hero in activeAllyHeros)
+                                        {
+                                            if (hero.NetworkId == attacked.NetworkId)
+                                            {
+                                                int actualHeroHpPercent = (int)(((hero.Health - incDmg) / hero.MaxHealth) * 100); //after dmg not Actual ^^
+                                                int playerManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+                                                if (playerManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
+                                                {
+                                                    _player.Spellbook.CastSpell(item.abilitySlot, hero);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            Game.PrintChat("Problem with MasterActivator(AutoShield).");
                         }
                     }
                     else
@@ -712,7 +755,7 @@ namespace MasterActivator
                             }
                         }
                     }
-                    else if (item.type == ItemTypeId.Ability)
+                    else if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility)
                     {
                         try
                         {
