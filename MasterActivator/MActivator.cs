@@ -342,11 +342,10 @@ namespace MasterActivator
         // And about ignore HP% check?
         private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
         {
-            //Console.WriteLine("É PLAYER");
             // Se tem o spell
             if (Utility.GetSpellSlot(_player, item.name, false) != SpellSlot.Unknown)
             {
-                if (attacker != null)
+                if (attacker != null && attacked != null)
                 {
                     // player
                     if (attacker.Type == GameObjectType.obj_AI_Hero)
@@ -361,37 +360,39 @@ namespace MasterActivator
                                 // Se a habilidade estiver habilitada
                                 if (Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
                                 {
-                                    //Console.WriteLine("Usar na hab-> " + attackerSpellSlot + "  para->" + attacked.Name);
-                                    if (item.type == ItemTypeId.Ability)
+                                    if (item.type == ItemTypeId.Ability && attacked.IsMe)
                                     {
                                         checkAndUse(item, "", incDmg);
                                     }
-                                    else
+                                    else if (item.type == ItemTypeId.TeamAbility)
                                     {
                                         teamCheckAndUse(item, "", false, incDmg, attacked);
                                     }
                                 }
-                                else
-                                {
-                                    //Console.WriteLine("NÃO usar na hab-> " + attackerSpellSlot);
-                                }
                             }
-                        }
-                        else
-                        {
-                            //Console.WriteLine("Player desabilitado->" + attacker.BaseSkinName);
-                            checkAndUse(item, "", incDmg);
                         }
                     }
                     // tower
                     else
                     {
-                        //Console.WriteLine("É TORRE");
                         if (Config.Item("tower" + item.menuVariable).GetValue<bool>())
                         {
-                            checkAndUse(item, "", incDmg);
+                            if (item.type == ItemTypeId.Ability && attacked.IsMe)
+                            {
+                                checkAndUse(item, "", incDmg);
+                            }
+                            else if(item.type == ItemTypeId.TeamAbility)
+                            {
+                                teamCheckAndUse(item, "", false, incDmg, attacked);
+                            }
                         }
                     }
+                }
+                // OFF JustPred
+                else 
+                {
+                    checkAndUse(item, "", incDmg);
+                    teamCheckAndUse(item, "", false, incDmg, attacked);
                 }
             }
         }
