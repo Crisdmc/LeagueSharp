@@ -343,7 +343,7 @@ namespace MasterActivator
         private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
         {
             // Se tem o spell
-            if (Utility.GetSpellSlot(_player, item.name, false) != SpellSlot.Unknown)
+            if (Utility.GetSpellSlot(_player, item.name) != SpellSlot.Unknown)
             {
                 if (attacker != null && attacked != null)
                 {
@@ -426,7 +426,7 @@ namespace MasterActivator
         {
             if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility)
             {
-                var abilitySlot = Utility.GetSpellSlot(_player, item.name, false);
+                var abilitySlot = Utility.GetSpellSlot(_player, item.name);
                 if (abilitySlot != SpellSlot.Unknown && abilitySlot == item.abilitySlot)
                 {
                     var menu = new Menu(item.menuName, "menu" + item.menuVariable);
@@ -537,7 +537,7 @@ namespace MasterActivator
                     {
                         try
                         {
-                            var spellSlot = Utility.GetSpellSlot(_player, item.name, false);
+                            var spellSlot = Utility.GetSpellSlot(_player, item.name);
                             if (spellSlot != SpellSlot.Unknown)
                             {
                                 var activeAllyHeros = getActiveAllyHeros(item);
@@ -760,7 +760,7 @@ namespace MasterActivator
                     {
                         try
                         {
-                            var spellSlot = Utility.GetSpellSlot(_player, item.name, false);
+                            var spellSlot = Utility.GetSpellSlot(_player, item.name);
                             if (spellSlot != SpellSlot.Unknown)
                             {
                                 if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
@@ -947,6 +947,8 @@ namespace MasterActivator
             Config.SubMenu("purify").AddItem(new MenuItem("stun", "Stun")).SetValue(true);
             Config.SubMenu("purify").AddItem(new MenuItem("polymorph", "Polymorph")).SetValue(false);
             Config.SubMenu("purify").AddItem(new MenuItem("silence", "Silence")).SetValue(false);
+            Config.SubMenu("purify").AddItem(new MenuItem("dehancer", "Dehancer")).SetValue(false);
+            Config.SubMenu("purify").AddItem(new MenuItem("zedultexecute", "Zed Ult")).SetValue(true);
 
             Config.AddSubMenu(new Menu("Smite", "smiteCfg"));
             var menuSmiteSpell = new Menu("Spell", "smiteSpell");
@@ -1140,6 +1142,22 @@ namespace MasterActivator
             if (Config.Item("silence").GetValue<bool>())
             {
                 if (hero.HasBuffOfType(BuffType.Silence))
+                {
+                    cc = true;
+                }
+            }
+
+            if (Config.Item("dehancer").GetValue<bool>())
+            {
+                if (hero.HasBuffOfType(BuffType.CombatDehancer))
+                {
+                    cc = true;
+                }
+            }
+
+            if (Config.Item("zedultexecute").GetValue<bool>())
+            {
+                if (hero.HasBuff("zedultexecute"))
                 {
                     cc = true;
                 }
