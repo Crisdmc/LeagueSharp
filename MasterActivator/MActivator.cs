@@ -120,25 +120,26 @@ namespace MasterActivator
             {
                 double incDmg = 0;
                 SpellSlot spellSlot = SpellSlot.Unknown;
-                //.GetValue<KeyBind>().Active
+                GameObject spellTarget = args.Target;
+
                 if (Config.Item("enabled").GetValue<KeyBind>().Active)
                 {
                     if (Config.Item("predict").GetValue<bool>())
                     {
-                        if (args.Target != null) // Check (spell w/o target) AOE etc?
+                        if (spellTarget != null) // Check (spell w/o target) AOE etc?
                         {
-                            // TARGET SELF
-                            //if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && attacker.NetworkId == args.Target.NetworkId)
-                            //{
-                              //  Console.WriteLine("Target Name2-> " + args.Target.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
-                            //}
+                            // Self target && attacker.IsEnemy 
+                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
+                            {
+                                //Console.WriteLine("Target Name2-> " + spellTarget.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
+                            }
 
                             //Config.Item(hero.SkinName).GetValue<bool>()
                             // 750 from greater range(mikael).
-                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.Target.Type == GameObjectType.obj_AI_Hero && (args.Target.IsMe || (args.Target.IsAlly && _player.Distance(args.Target.Position) <= 750)))
+                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && spellTarget.Type == GameObjectType.obj_AI_Hero && (spellTarget.IsMe || (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750)))
                             {
                                 Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
-                                Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == args.Target.NetworkId);
+                                Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
 
                                 //foreach (var spellAA in attacker.Spellbook.Spells.Select((value, i) => new { i, value }))
                                 //{
@@ -185,29 +186,55 @@ namespace MasterActivator
 
                                 //Console.WriteLine("Slot->" + spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w, 49 = YasuoBasicAttack3, 50 YassuoCritAttack, 45 = LeonaShieldOfDaybreakAttack
                             }
-                            else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && args.Target.Type == GameObjectType.obj_AI_Hero && (args.Target.IsAlly && _player.Distance(args.Target.Position) <= 750))
+                            else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && spellTarget.Type == GameObjectType.obj_AI_Hero && (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750))
                             {
                                 //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
                                 // TODO: Get multiplier/real dmg
                                 incDmg = attacker.BaseAttackDamage;
-                                Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == args.Target.NetworkId);
+                                Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
                                 //Console.WriteLine("Base->" + attacker.BaseAttackDamage + "   Tower Dmg-> " + Damage.GetAutoAttackDamage(attacker, attackedHero, true) + "   " + Damage.GetAutoAttackDamage(attacker, attackedHero));
+                            }
+                        }
+                        // w/o target
+                        else
+                        {
+                            // Self target && attacker.IsEnemy 
+                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
+                            {
+                                float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault(s => s > 0);
+                                float range2 = args.SData.CastRange.FirstOrDefault();
+                                float range = range1 != null ? range1 : range2;
+
+                                //drawPos2 = args.Start.Extend(args.End, range);
+                                if (args.Start.Distance(_player.Position) <= range)
+                                {
+                                    // ponto fake
+                                    Vector3 fakePoint = args.Start.Extend(args.End, args.Start.Distance(_player.Position));
+
+                                    if (_player.Position.Distance(fakePoint) <= 30)
+                                    {
+                                        SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
+                                        spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+
+                                        spellTarget = _player;
+                                    }
+                                }
                             }
                         }
                     }
 
                     if (incDmg > 0 || spellSlot != SpellSlot.Unknown)
                     {
-                        if (args.Target.Team == _player.Team)
+                        if (spellTarget.Team == _player.Team)
                         {
-                            Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == args.Target.NetworkId);
+                            Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
 
                             teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
                             teamCheckAndUse(solari, "", true, incDmg);
                             teamCheckAndUse(mountain, "", false, incDmg);
                             checkAndUseShield(incDmg, attacker, attackedHero, spellSlot);
 
-                            if (args.Target.IsMe)
+                            if (spellTarget.IsMe)
                             {
                                 checkAndUse(zhonya, "", incDmg);
                                 checkAndUse(barrier, "", incDmg);
@@ -1157,7 +1184,7 @@ namespace MasterActivator
 
             if (Config.Item("zedultexecute").GetValue<bool>())
             {
-                if (hero.HasBuff("zedultexecute"))
+                if (hero.HasBuff("zedultexecute", false, true))
                 {
                     cc = true;
                 }
