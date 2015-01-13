@@ -129,10 +129,10 @@ namespace MasterActivator
                         if (spellTarget != null) // Check (spell w/o target) AOE etc?
                         {
                             // Self target && attacker.IsEnemy 
-                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
-                            {
+                            //if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
+                            //{
                                 //Console.WriteLine("Target Name2-> " + spellTarget.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
-                            }
+                            //}
 
                             //Config.Item(hero.SkinName).GetValue<bool>()
                             // 750 from greater range(mikael).
@@ -140,11 +140,6 @@ namespace MasterActivator
                             {
                                 Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
                                 Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
-
-                                //foreach (var spellAA in attacker.Spellbook.Spells.Select((value, i) => new { i, value }))
-                                //{
-                                  //  Console.WriteLine("SName->" + spellAA.value.Name + "  SSlot->" + spellAA.value.Slot + "   new Slot CK->" + spellAA.i);
-                                //}
 
                                 SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero=> args.SData.Name.Contains(hero.SData.Name));
                                
@@ -188,11 +183,9 @@ namespace MasterActivator
                             }
                             else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && spellTarget.Type == GameObjectType.obj_AI_Hero && (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750))
                             {
-                                //Console.WriteLine("Torre-> " + attacker.BaseAttackDamage + "  mg " + attacker.BaseAbilityDamage);
                                 // TODO: Get multiplier/real dmg
                                 incDmg = attacker.BaseAttackDamage;
                                 Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
-                                //Console.WriteLine("Base->" + attacker.BaseAttackDamage + "   Tower Dmg-> " + Damage.GetAutoAttackDamage(attacker, attackedHero, true) + "   " + Damage.GetAutoAttackDamage(attacker, attackedHero));
                             }
                         }
                         // w/o target
@@ -345,7 +338,7 @@ namespace MasterActivator
                 catch
                 {
                     Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
-                    Config.Item("enabled").SetValue<bool>(false); // Check
+                    Config.Item("enabled").SetValue<KeyBind>(new KeyBind("L".ToCharArray()[0], KeyBindType.Toggle, false)); // Check
                 }
             }
         }
