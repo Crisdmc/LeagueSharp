@@ -338,7 +338,7 @@ namespace MasterActivator
                 catch
                 {
                     Game.PrintChat("MasterActivator presented a problem, and has been disabled!");
-                    Config.Item("enabled").SetValue<KeyBind>(new KeyBind("L".ToCharArray()[0], KeyBindType.Toggle, false)); // Check
+                    Config.Item("enabled").SetValue<KeyBind>(new KeyBind('L', KeyBindType.Toggle, false)); // Check
                 }
             }
         }
@@ -1078,7 +1078,7 @@ namespace MasterActivator
             Config.AddItem(new MenuItem("predict", "Predict DMG")).SetValue(true);
             //Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
             //38
-            Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(new KeyBind("L".ToCharArray()[0], KeyBindType.Toggle, true));
+            Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(new KeyBind('L', KeyBindType.Toggle, true));
 
             Config.AddToMainMenu();
         }
