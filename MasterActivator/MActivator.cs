@@ -535,7 +535,7 @@ namespace MasterActivator
                                 foreach (Obj_AI_Hero hero in activeAllyHeros)
                                 {
                                     //Console.WriteLine("Hero-> " + hero.SkinName);
-                                    int enemyInRange = Utility.CountEnemysInRange(hero, 700);
+                                    int enemyInRange = Utility.CountEnemiesInRange(hero, 700);
                                     if (enemyInRange >= 1)
                                     {
                                         int actualHeroHpPercent = (int)(((_player.Health - incDmg) / _player.MaxHealth) * 100); //after dmg not Actual ^^
@@ -612,7 +612,7 @@ namespace MasterActivator
                                         }
                                         else if (item.type == ItemTypeId.Deffensive)
                                         {
-                                            int enemyInRange = Utility.CountEnemysInRange(hero, 700);
+                                            int enemyInRange = Utility.CountEnemiesInRange(hero, 700);
                                             if (enemyInRange >= 1)
                                             {
                                                 int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
@@ -824,7 +824,7 @@ namespace MasterActivator
                                     if (checkTarget(item.range))
                                     {
                                         // FIX-ME: In frost case, we must check the affected area, not just ppl in range(item).
-                                        if (Utility.CountEnemysInRange(_player, (int)item.range) >= Config.Item(item.menuVariable + "UseXUnits").GetValue<Slider>().Value)
+                                        if (Utility.CountEnemiesInRange(_player, (int)item.range) >= Config.Item(item.menuVariable + "UseXUnits").GetValue<Slider>().Value)
                                         {
                                             useItem(item.id, item.range == 0 ? null : target);
                                         }
