@@ -954,7 +954,7 @@ namespace MasterActivator
             createMenuItem(mercurial, "purifiers");
             createMenuItem(cleanse, "purifiers");
             createMenuItem(mikael, "purifiers");
-            Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(true);
+            Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Purify", "purify"));
             Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
