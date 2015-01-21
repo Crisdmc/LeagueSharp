@@ -72,6 +72,8 @@ namespace MasterActivator
         MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.TeamAbility, 1100, SpellSlot.E);
         MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
+        MItem nocturneShield = new MItem("NocturneShroudOfDarkness", "Noct. Shield", "nShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        
 
         // Jungle Minions
         MMinion blue = new MMinion("SRU_Blue", "Blue", 6, 143);
@@ -431,6 +433,7 @@ namespace MasterActivator
             justUseAgainstCheck(prismaticbarrier, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(commandprotect, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(spellshield, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(nocturneShield, incDmg, attacker, attacked, attackerSpellSlot);
         }
 
         private bool checkBuff(String name)
@@ -1046,6 +1049,7 @@ namespace MasterActivator
             createMenuItem(commandprotect, "autoshield", 99, false, 40);
             createMenuItem(feint, "autoshield", 90, false, 0);
             createMenuItem(spellshield, "autoshield", 90, false, 0);
+            createMenuItem(nocturneShield, "autoshield", 90, false, 0);
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);
