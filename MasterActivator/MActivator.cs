@@ -624,8 +624,15 @@ namespace MasterActivator
                                                     }
                                                     else
                                                     {
-                                                        // extend 20 to attacker direction
-                                                        Vector3 pos = attacker != null ? hero.Position.Extend(attacker.Position, 20) : hero.Position;
+                                                        Vector3 pos = hero.Position;
+                                                        // extend 20 to attacker direction THIS 20 COST RANGE
+                                                        if (attacker != null)
+                                                        {
+                                                            if(_player.Distance(hero.Position.Extend(attacker.Position, 20), false) <= item.range)
+                                                            {
+                                                                pos = hero.Position.Extend(attacker.Position, 20);
+                                                            }
+                                                        }
                                                         _player.Spellbook.CastSpell(item.abilitySlot, pos);
                                                     }
                                                 }
