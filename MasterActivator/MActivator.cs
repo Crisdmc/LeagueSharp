@@ -81,6 +81,7 @@ namespace MasterActivator
         MItem leonaW = new MItem("LeonaSolarBarrier", "Leona Barrier", "leonaW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem annieE = new MItem("MoltenShield", "Annie Barrier", "annieE", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); // Annie
         MItem vladW = new MItem("VladimirSanguinePool", "Vlad. Pool", "vladW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // nigga VladImir W
+        MItem wukongW = new MItem("MonkeyKingDecoy", "Wu. Decoy", "wuW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
 
         //jaxcounterstrike E Jax 20%?
         //judicatorintervention R Kayle 30%?
@@ -96,6 +97,7 @@ namespace MasterActivator
         //udyrturtlestance Udyr runner guy W
         // urgotterrorcapacitoractive2 Urgot W never played
         // chronoshift Zilean R NAHH
+        
 
         //poppyparagonofdemacia poppy W def
         //gp heal
@@ -474,6 +476,7 @@ namespace MasterActivator
             justUseAgainstCheck(leonaW, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(annieE, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(vladW, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(wukongW, incDmg, attacker, attacked, attackerSpellSlot);
         }
 
         private bool checkBuff(String name)
@@ -1114,6 +1117,7 @@ namespace MasterActivator
             createMenuItem(leonaW, "autoshield", 60, false, 0);
             createMenuItem(annieE, "autoshield", 60, false, 0);
             createMenuItem(vladW, "autoshield", 45);
+            createMenuItem(wukongW, "autoshield", 40, false, 0);
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);
