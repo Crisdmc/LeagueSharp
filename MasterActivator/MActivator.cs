@@ -73,6 +73,8 @@ namespace MasterActivator
         MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
         MItem nocturneShield = new MItem("NocturneShroudOfDarkness", "Noct. Shield", "nShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem yasuoShield = new MItem("YasuoWMovingWall", "Yasuo Shield", "yShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        
         
 
         // Jungle Minions
@@ -393,6 +395,7 @@ namespace MasterActivator
                                 }
                             }
                         }
+                        //FIX-ME OR ..
                     }
                     // tower
                     else
@@ -434,6 +437,7 @@ namespace MasterActivator
             justUseAgainstCheck(commandprotect, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(spellshield, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(nocturneShield, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot);
         }
 
         private bool checkBuff(String name)
@@ -1050,6 +1054,7 @@ namespace MasterActivator
             createMenuItem(feint, "autoshield", 90, false, 0);
             createMenuItem(spellshield, "autoshield", 90, false, 0);
             createMenuItem(nocturneShield, "autoshield", 90, false, 0);
+            createMenuItem(yasuoShield, "autoshield", 90);
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);
