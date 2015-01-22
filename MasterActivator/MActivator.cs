@@ -70,12 +70,41 @@ namespace MasterActivator
         MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.TeamAbility, 1075, SpellSlot.W);
         MItem titanswraith = new MItem("NautilusPiercingGaze", "Titans Wraith", "tWraith", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.TeamAbility, 1100, SpellSlot.E);
-        MItem feint = new MItem("feint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem feint = new MItem("ShenFeint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // ?
         MItem spellshield = new MItem("SivirE", "SpellShield", "sShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
         MItem nocturneShield = new MItem("NocturneShroudOfDarkness", "Noct. Shield", "nShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem yasuoShield = new MItem("YasuoWMovingWall", "Yasuo Shield", "yShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        
-        
+        MItem yasuoShield = new MItem("YasuoWMovingWall", "Yasuo Shield", "yShield", 0, ItemTypeId.TeamAbilityAOE, 400, SpellSlot.W);
+        MItem fioraRiposte = new MItem("FioraRiposte", "Fiora Riposte", "fRiposte", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);// S2 fiora
+        MItem tryndaUlt = new MItem("UndyIngrage", "Trynda Ult.", "tIngrage", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);// Trynda mia ult
+        MItem nasusUlt = new MItem("NasusR", "Nasus Ult.", "nasusR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);
+        MItem renekUlt = new MItem("RenektonReignOfTheTyrant", "Renek Ult.", "renekR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R); //Renek nek
+        MItem leonaW = new MItem("LeonaSolarBarrier", "Leona Barrier", "leonaW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem annieE = new MItem("MoltenShield", "Annie Barrier", "annieE", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); // Annie
+        MItem vladW = new MItem("VladimirSanguinePool", "Vlad. Pool", "vladW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // nigga VladImir W
+
+        //jaxcounterstrike E Jax 20%?
+        //judicatorintervention R Kayle 30%?
+        // lee W, blindmonkwone(targ), blindmonkwtwo(self-l-steal/mv) 700 range?
+        //lissandrar Liss R 20%?
+        //obduracy malp W
+        //defensiveballcurl rammus W
+        // rivenfeint rivelina E
+        //rumbleshield rumble W crap 
+        //shenfeint W
+        // skarnerexoskeleton skarner W
+        //yorickravenous Yorik E, taget enemy
+        //udyrturtlestance Udyr runner guy W
+        // urgotterrorcapacitoractive2 Urgot W never played
+        // chronoshift Zilean R NAHH
+
+        //poppyparagonofdemacia poppy W def
+        //gp heal
+        //alistouro heal
+        // master meditate
+        //primalsurge nida E range 600
+        // sonaariaofperseverance sona W range 1000
+        // soraka wish R global - astralblessing W 550 !self
+        // imbue taric Q
 
         // Jungle Minions
         MMinion blue = new MMinion("SRU_Blue", "Blue", 6, 143);
@@ -388,9 +417,9 @@ namespace MasterActivator
                                     {
                                         checkAndUse(item, "", incDmg);
                                     }
-                                    else if (item.type == ItemTypeId.TeamAbility)
+                                    else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
                                     {
-                                        teamCheckAndUse(item, "", false, incDmg, attacked);
+                                        teamCheckAndUse(item, "", false, incDmg, attacked, attacker);
                                     }
                                 }
                             }
@@ -406,7 +435,7 @@ namespace MasterActivator
                             {
                                 checkAndUse(item, "", incDmg);
                             }
-                            else if(item.type == ItemTypeId.TeamAbility)
+                            else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
                             {
                                 teamCheckAndUse(item, "", false, incDmg, attacked);
                             }
@@ -438,6 +467,13 @@ namespace MasterActivator
             justUseAgainstCheck(spellshield, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(nocturneShield, incDmg, attacker, attacked, attackerSpellSlot);
             justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(leonaW, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(annieE, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(vladW, incDmg, attacker, attacked, attackerSpellSlot);
         }
 
         private bool checkBuff(String name)
@@ -451,7 +487,7 @@ namespace MasterActivator
 
         private void createMenuItem(MItem item, String parent, int defaultValue = 0, bool mana = false, int minManaPct = 0)
         {
-            if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility)
+            if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
             {
                 var abilitySlot = Utility.GetSpellSlot(_player, item.name);
                 if (abilitySlot != SpellSlot.Unknown && abilitySlot == item.abilitySlot)
@@ -521,7 +557,7 @@ namespace MasterActivator
             }
         }
 
-        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0, Obj_AI_Base attacked = null)
+        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0, Obj_AI_Base attacked = null, Obj_AI_Base attacker = null)
         {
             if (Config.Item(item.menuVariable) != null)
             {
@@ -560,7 +596,7 @@ namespace MasterActivator
                             }
                         }
                     }
-                    else if (item.type == ItemTypeId.TeamAbility)
+                    else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
                     {
                         try
                         {
@@ -582,7 +618,16 @@ namespace MasterActivator
                                                 int playerManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
                                                 if (playerManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
                                                 {
-                                                    _player.Spellbook.CastSpell(item.abilitySlot, hero);
+                                                    if (item.type == ItemTypeId.TeamAbility)
+                                                    {
+                                                        _player.Spellbook.CastSpell(item.abilitySlot, hero);
+                                                    }
+                                                    else
+                                                    {
+                                                        // extend 20 to attacker direction
+                                                        Vector3 pos = attacker != null ? hero.Position.Extend(attacker.Position, 20) : hero.Position;
+                                                        _player.Spellbook.CastSpell(item.abilitySlot, pos);
+                                                    }
                                                 }
                                             }
                                         }
@@ -1040,7 +1085,7 @@ namespace MasterActivator
             Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             Config.SubMenu("deffensive").AddItem(new MenuItem("useRecalling", "Use Recalling")).SetValue(false);
 
-            Config.AddSubMenu(new Menu("Auto Shield", "autoshield"));
+            Config.AddSubMenu(new Menu("Auto Skill", "autoshield"));
             createMenuItem(blackshield, "autoshield", 90, false, 40);
             createMenuItem(unbreakable, "autoshield", 90, false, 40);
             createMenuItem(bulwark, "autoshield", 90, false, 40);
@@ -1055,6 +1100,13 @@ namespace MasterActivator
             createMenuItem(spellshield, "autoshield", 90, false, 0);
             createMenuItem(nocturneShield, "autoshield", 90, false, 0);
             createMenuItem(yasuoShield, "autoshield", 90);
+            createMenuItem(fioraRiposte, "autoshield", 90, false, 0);
+            createMenuItem(tryndaUlt, "autoshield", 30);
+            createMenuItem(nasusUlt, "autoshield", 30, false, 0);
+            createMenuItem(renekUlt, "autoshield", 30);
+            createMenuItem(leonaW, "autoshield", 60, false, 0);
+            createMenuItem(annieE, "autoshield", 60, false, 0);
+            createMenuItem(vladW, "autoshield", 45);
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);

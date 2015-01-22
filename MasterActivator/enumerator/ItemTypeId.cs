@@ -16,6 +16,7 @@ namespace MasterActivator.enumerator
         OffensiveSpell = 9,
         Ability = 10,
         OffensiveAOE = 11,
-        TeamAbility = 12
+        TeamAbility = 12,
+        TeamAbilityAOE = 13
     }
 }
