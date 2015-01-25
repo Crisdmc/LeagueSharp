@@ -31,6 +31,7 @@ namespace MasterActivator
         MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
         MItem seraph = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
         MItem zhonya = new MItem("Zhonya's Hourglass", "Zhonya's", "zhonya", 3157, ItemTypeId.Deffensive);
+        MItem wooglet = new MItem("Wooglet's Witchcap", "Wooglet's", "wooglet", 3090, ItemTypeId.Deffensive);
         MItem randuin = new MItem("RanduinsOmen", "Randuin's", "randuin", 3143, ItemTypeId.OffensiveAOE, 500);
         //Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
         MItem mountain = new MItem("Face of the Mountain", "FoMountain", "mountain", 3401, ItemTypeId.Deffensive, 700); // falta range
@@ -265,6 +266,7 @@ namespace MasterActivator
                             if (spellTarget.IsMe)
                             {
                                 checkAndUse(zhonya, "", incDmg);
+                                checkAndUse(wooglet, "", incDmg);
                                 checkAndUse(barrier, "", incDmg);
                                 checkAndUse(seraph, "", incDmg);
                             }
@@ -352,6 +354,7 @@ namespace MasterActivator
                     if (!Config.Item("justPred").GetValue<bool>() || !Config.Item("predict").GetValue<bool>())
                     {
                         checkAndUse(zhonya);
+                        checkAndUse(wooglet);
                         checkAndUse(barrier);
                         checkAndUse(seraph);
                         teamCheckAndUse(solari, "", true);
@@ -1090,6 +1093,7 @@ namespace MasterActivator
             createMenuItem(barrier, "deffensive", 35);
             createMenuItem(seraph, "deffensive", 45);
             createMenuItem(zhonya, "deffensive", 35);
+            createMenuItem(wooglet, "deffensive", 35);
             createMenuItem(solari, "deffensive", 45);
             createMenuItem(mountain, "deffensive", 45);
             Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
