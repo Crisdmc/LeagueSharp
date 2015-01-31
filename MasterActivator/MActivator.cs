@@ -68,7 +68,7 @@ namespace MasterActivator
         MItem eyeofstorm = new MItem("EyeOfTheStorm", "Eye of the Storm", "storm", 0, ItemTypeId.Ability, 800, SpellSlot.E); //Janna
         MItem inspire = new MItem("KarmaSolKimShield", "Inspire", "inspire", 0, ItemTypeId.TeamAbility, 800, SpellSlot.E);
         MItem helppix = new MItem("LuluE", "Help Pix!", "pix", 0, ItemTypeId.TeamAbility, 650, SpellSlot.E);
-        MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.TeamAbility, 1075, SpellSlot.W);
+        MItem prismaticbarrier = new MItem("LuxPrismaticWave", "Prismatic Barrier", "pBarrier", 0, ItemTypeId.TeamAbilityAOE, 1075, SpellSlot.W);
         MItem titanswraith = new MItem("NautilusPiercingGaze", "Titans Wraith", "tWraith", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem commandprotect = new MItem("OrianaRedactCommand", "Command Protect", "cProt", 0, ItemTypeId.TeamAbility, 1100, SpellSlot.E);
         MItem feint = new MItem("ShenFeint", "Feint", "feint", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // ?
@@ -230,9 +230,11 @@ namespace MasterActivator
                             // Self target && attacker.IsEnemy 
                             if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
                             {
-                                float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault(s => s > 0);
+                                float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
                                 float range2 = args.SData.CastRange.FirstOrDefault();
-                                float range = range1 != null ? range1 : range2;
+                                float range = range1 > 1 ? range1 : range2;
+
+                                // CHECK AOE ???
 
                                 //drawPos2 = args.Start.Extend(args.End, range);
                                 if (args.Start.Distance(_player.Position) <= range)
@@ -1100,7 +1102,7 @@ namespace MasterActivator
             Config.SubMenu("deffensive").AddItem(new MenuItem("useRecalling", "Use Recalling")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Auto Skill", "autoshield"));
-            createMenuItem(blackshield, "autoshield", 90, false, 40);
+            createMenuItem(blackshield, "autoshield", 100, false, 40);
             createMenuItem(unbreakable, "autoshield", 90, false, 40);
             createMenuItem(bulwark, "autoshield", 90, false, 40);
             createMenuItem(courage, "autoshield", 90);
@@ -1111,7 +1113,7 @@ namespace MasterActivator
             createMenuItem(titanswraith, "autoshield", 90, false, 40);
             createMenuItem(commandprotect, "autoshield", 99, false, 40);
             createMenuItem(feint, "autoshield", 90, false, 0);
-            createMenuItem(spellshield, "autoshield", 90, false, 0);
+            createMenuItem(spellshield, "autoshield", 100, false, 0);
             createMenuItem(nocturneShield, "autoshield", 90, false, 0);
             createMenuItem(yasuoShield, "autoshield", 90);
             createMenuItem(fioraRiposte, "autoshield", 90, false, 0);
