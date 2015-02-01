@@ -45,6 +45,16 @@ namespace MasterActivator
         MItem manaPot = new MItem("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
         MItem biscuit = new MItem("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
 
+        // Wards
+        // se tiver thresh cria menu/verifica; Se o thresh estiver longe do skill; for inimigo
+        MItem wardTotem = new MItem("Warding Totem", "Ward Totem", "wTotem", 3340, ItemTypeId.Ward, 600);
+        MItem pink = new MItem("Vision Ward", "Pink", "vWard", 2043, ItemTypeId.VisionWard, 600); //pink
+        MItem ward = new MItem("Stealth Ward", "Ward", "ward", 2044, ItemTypeId.Ward, 600);
+        MItem sightStone = new MItem("Sightstone", "Sightstone", "sightStone", 2049, ItemTypeId.Ward, 600);
+        MItem rubySightStone = new MItem("Ruby Sightstone", "Ruby Sightstone", "rubySightStone", 2045, ItemTypeId.Ward, 600);
+        MItem greatVisionTotem = new MItem("Greater Vision Totem", "G.Vision Totem", "gVTotem", 3362, ItemTypeId.VisionWard, 600);
+        MItem greatWardTotem = new MItem("Greater Stealth Totem", "G. Ward Totem", "gWTotem", 3361, ItemTypeId.Ward, 600);
+
         // Heal prioritizes the allied champion closest to the cursor at the time the ability is cast.
         // If no allied champions are near the cursor, Heal will target the most wounded allied champion in range.
         MItem heal = new MItem("Heal", "Heal", "SummonerHeal", 0, ItemTypeId.DeffensiveSpell, 700); // 300? www.gamefaqs.com/pc/954437-league-of-legends/wiki/3-1-summoner-spells
@@ -83,6 +93,7 @@ namespace MasterActivator
         MItem annieE = new MItem("MoltenShield", "Annie Barrier", "annieE", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E); // Annie
         MItem vladW = new MItem("VladimirSanguinePool", "Vlad. Pool", "vladW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // nigga VladImir W
         MItem wukongW = new MItem("MonkeyKingDecoy", "Wu. Decoy", "wuW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem akaliW = new MItem("AkaliSmokeBomb", "Akali Smoke", "akaliW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
 
         //jaxcounterstrike E Jax 20%?
         //judicatorintervention R Kayle 30%?
@@ -160,6 +171,41 @@ namespace MasterActivator
 
                 if (Config.Item("enabled").GetValue<KeyBind>().Active)
                 {
+                    // Akali R Ward
+                    if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
+                    {
+                        if (Config.Item("menuAkaliR").GetValue<bool>() && args.SData.Name == akaliW.name)
+                        {
+                            int usePercent = Config.Item("menuAkaliR" + "UseOnPercent").GetValue<Slider>().Value;
+                            int attackerHpPercent = (int)((attacker.Health / attacker.MaxHealth) * 100);
+
+                            if (attackerHpPercent <= usePercent)
+                            {
+                                if (Config.Item(akaliW.menuVariable + pink.menuVariable).GetValue<bool>())
+                                {
+                                    if (Items.HasItem(pink.id))
+                                    {
+                                        if (Items.CanUseItem(pink.id) && _player.Distance(args.End) <= pink.range)
+                                        {
+                                            Items.UseItem(pink.id, args.End);
+                                            return;
+                                        }
+                                    }
+                                }
+                                if (Config.Item(akaliW.menuVariable + greatVisionTotem.menuVariable).GetValue<bool>())
+                                {
+                                    if (Items.HasItem(greatVisionTotem.id))
+                                    {
+                                        if (Items.CanUseItem(greatVisionTotem.id) && _player.Distance(args.End) <= greatVisionTotem.range)
+                                        {
+                                            Items.UseItem(greatVisionTotem.id, args.End);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (Config.Item("predict").GetValue<bool>())
                     {
                         if (spellTarget != null) // Check (spell w/o target) AOE etc?
@@ -276,9 +322,10 @@ namespace MasterActivator
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
+                Console.WriteLine(e);
             }
         }
 
@@ -1144,6 +1191,19 @@ namespace MasterActivator
             {
                 Config.SubMenu("teamUseOn").AddItem(new MenuItem(allyHero, allyHero)).SetValue(true);
             }
+
+            // Wards
+            Config.AddSubMenu(new Menu("Wards", "wards"));
+            var menu = new Menu("Akali Ult", "menuAkaliR");
+            menu.AddItem(new MenuItem("menuAkaliR" + "UseOnPercent", "Use on HP%")).SetValue(new Slider(60, 0, 100));
+            menu.AddItem(new MenuItem("menuAkaliR", "Enable").SetValue(true));
+
+            var menuAkaliRWards = new Menu("Wards", "akaliRWards");
+            menuAkaliRWards.AddItem(new MenuItem(akaliW.menuVariable + pink.menuVariable, pink.menuName).SetValue(true));
+            menuAkaliRWards.AddItem(new MenuItem(akaliW.menuVariable + greatVisionTotem.menuVariable, greatVisionTotem.menuName).SetValue(true));
+
+            menu.AddSubMenu(menuAkaliRWards);
+            Config.SubMenu("wards").AddSubMenu(menu);
 
             // Combo mode
             Config.AddSubMenu(new Menu("Combo Mode", "combo"));
