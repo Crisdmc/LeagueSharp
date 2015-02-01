@@ -171,12 +171,12 @@ namespace MasterActivator
 
                 if (Config.Item("enabled").GetValue<KeyBind>().Active)
                 {
-                    // Akali R Ward
+                    // Akali W Ward
                     if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
                     {
-                        if (Config.Item("menuAkaliR").GetValue<bool>() && args.SData.Name == akaliW.name)
+                        if (Config.Item("menuAkaliW").GetValue<bool>() && args.SData.Name == akaliW.name)
                         {
-                            int usePercent = Config.Item("menuAkaliR" + "UseOnPercent").GetValue<Slider>().Value;
+                            int usePercent = Config.Item("menuAkaliW" + "UseOnPercent").GetValue<Slider>().Value;
                             int attackerHpPercent = (int)((attacker.Health / attacker.MaxHealth) * 100);
 
                             if (attackerHpPercent <= usePercent)
@@ -1194,15 +1194,15 @@ namespace MasterActivator
 
             // Wards
             Config.AddSubMenu(new Menu("Wards", "wards"));
-            var menu = new Menu("Akali Ult", "menuAkaliR");
-            menu.AddItem(new MenuItem("menuAkaliR" + "UseOnPercent", "Use on HP%")).SetValue(new Slider(60, 0, 100));
-            menu.AddItem(new MenuItem("menuAkaliR", "Enable").SetValue(true));
+            var menu = new Menu("Akali W", "menuAkaliW");
+            menu.AddItem(new MenuItem("menuAkaliW" + "UseOnPercent", "Use on HP%")).SetValue(new Slider(60, 0, 100));
+            menu.AddItem(new MenuItem("menuAkaliW", "Enable").SetValue(true));
 
-            var menuAkaliRWards = new Menu("Wards", "akaliRWards");
-            menuAkaliRWards.AddItem(new MenuItem(akaliW.menuVariable + pink.menuVariable, pink.menuName).SetValue(true));
-            menuAkaliRWards.AddItem(new MenuItem(akaliW.menuVariable + greatVisionTotem.menuVariable, greatVisionTotem.menuName).SetValue(true));
+            var menuAkaliWWards = new Menu("Wards", "akaliRWards");
+            menuAkaliWWards.AddItem(new MenuItem(akaliW.menuVariable + pink.menuVariable, pink.menuName).SetValue(true));
+            menuAkaliWWards.AddItem(new MenuItem(akaliW.menuVariable + greatVisionTotem.menuVariable, greatVisionTotem.menuName).SetValue(true));
 
-            menu.AddSubMenu(menuAkaliRWards);
+            menu.AddSubMenu(menuAkaliWWards);
             Config.SubMenu("wards").AddSubMenu(menu);
 
             // Combo mode
