@@ -1196,7 +1196,7 @@ namespace MasterActivator
             Config.AddSubMenu(new Menu("Wards", "wards"));
             var menu = new Menu("Akali W", "menuAkaliW");
             menu.AddItem(new MenuItem("menuAkaliW" + "UseOnPercent", "Use on HP%")).SetValue(new Slider(60, 0, 100));
-            menu.AddItem(new MenuItem("menuAkaliW", "Enable").SetValue(true));
+            menu.AddItem(new MenuItem("menuAkaliW", "Enable").SetValue(false));
 
             var menuAkaliWWards = new Menu("Wards", "akaliRWards");
             menuAkaliWWards.AddItem(new MenuItem(akaliW.menuVariable + pink.menuVariable, pink.menuName).SetValue(true));
