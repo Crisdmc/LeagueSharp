@@ -44,6 +44,8 @@ namespace MasterActivator
         MItem hpPot = new MItem("Health Potion", "HP Pot", "hpPot", 2003, ItemTypeId.HPRegenerator);
         MItem manaPot = new MItem("Mana Potion", "Mana Pot", "manaPot", 2004, ItemTypeId.ManaRegenerator);
         MItem biscuit = new MItem("Total Biscuit of Rejuvenation", "Biscuit", "biscuit", 2010, ItemTypeId.HPRegenerator);
+        MItem cFlaskHP = new MItem("Crystalline Flask", "Cryst. Flask HP", "cFlaskHP", 2041, ItemTypeId.HPRegenerator);
+        MItem cFlaskMP = new MItem("Crystalline Flask", "Cryst. Flask MP", "cFlaskMP", 2041, ItemTypeId.ManaRegenerator);
 
         // Wards
         // se tiver thresh cria menu/verifica; Se o thresh estiver longe do skill; for inimigo
@@ -410,6 +412,8 @@ namespace MasterActivator
                     checkAndUse(manaPot, "FlaskOfCrystalWater");
                     checkAndUse(hpPot, "RegenerationPotion");
                     checkAndUse(biscuit, "ItemMiniRegenPotion");
+                    checkAndUse(cFlaskHP, "RegenerationPotion");
+                    checkAndUse(cFlaskMP, "FlaskOfCrystalWater");
 
                     if (!Config.Item("justPred").GetValue<bool>() || !Config.Item("predict").GetValue<bool>())
                     {
@@ -1211,6 +1215,8 @@ namespace MasterActivator
             createMenuItem(hpPot, "regenerators", 55);
             createMenuItem(manaPot, "regenerators", 55, true);
             createMenuItem(biscuit, "regenerators", 55);
+            createMenuItem(cFlaskHP, "regenerators", 40);
+            createMenuItem(cFlaskMP, "regenerators", 40);
 
             Config.AddSubMenu(new Menu("Team Use", "teamUseOn"));
 
