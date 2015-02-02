@@ -211,6 +211,7 @@ namespace MasterActivator
                         }
                     }
 
+                    AttackId attackId = AttackId.Unknown;
                     if (Config.Item("predict").GetValue<bool>())
                     {
                         if (spellTarget != null) // Check (spell w/o target) AOE etc?
@@ -236,6 +237,7 @@ namespace MasterActivator
                                 if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
                                 {
                                     incDmg = Damage.GetSummonerSpellDamage(attackerHero, attackedHero, Damage.SummonerSpell.Ignite);
+                                    attackId = AttackId.Ignite;
                                 }
 
                                 else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
@@ -243,6 +245,7 @@ namespace MasterActivator
                                     if (args.SData.Name == king.name)
                                     {
                                         incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Botrk);
+                                        attackId = AttackId.King;
                                     }
                                     else if (args.SData.Name == bilgewater.name)
                                     {
@@ -260,10 +263,12 @@ namespace MasterActivator
                                 else if (spellSlot == SpellSlot.Unknown)
                                 {
                                     incDmg = Damage.GetAutoAttackDamage(attackerHero, attackedHero, true);
+                                    attackId = AttackId.Basic;
                                 }
                                 else
                                 {
                                     incDmg = Damage.GetSpellDamage(attackerHero, attackedHero, spellSlot);
+                                    attackId = AttackId.Spell;
                                 }
 
                                 //Console.WriteLine("Slot->" + spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w, 49 = YasuoBasicAttack3, 50 YassuoCritAttack, 45 = LeonaShieldOfDaybreakAttack
@@ -273,6 +278,7 @@ namespace MasterActivator
                                 // TODO: Get multiplier/real dmg
                                 incDmg = attacker.BaseAttackDamage;
                                 Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
+                                attackId = AttackId.Tower;
                             }
                         }
                         // w/o target
@@ -314,7 +320,7 @@ namespace MasterActivator
                             teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
                             teamCheckAndUse(solari, "", true, incDmg);
                             teamCheckAndUse(mountain, "", false, incDmg);
-                            checkAndUseShield(incDmg, attacker, attackedHero, spellSlot);
+                            checkAndUseShield(incDmg, attacker, attackedHero, spellSlot, attackId);
 
                             if (spellTarget.IsMe)
                             {
@@ -452,52 +458,51 @@ namespace MasterActivator
         }
 
         // And about ignore HP% check?
-        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
+        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown, AttackId attackId = AttackId.Unknown)
         {
             // Se tem o spell
             if (Utility.GetSpellSlot(_player, item.name) != SpellSlot.Unknown)
             {
                 if (attacker != null && attacked != null)
                 {
-                    // player
-                    if (attacker.Type == GameObjectType.obj_AI_Hero)
+                    bool use = false;
+                    if (attackId != AttackId.Unknown)
                     {
-                        // Se estiver habilitado para o determinado player
-                        //Console.WriteLine(item.menuVariable + attacker.BaseSkinName);
-                        if (Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
+                        switch (attackId)
                         {
-                            //Console.WriteLine("Player habilitado->" + attacker.BaseSkinName);
-                            if (attackerSpellSlot != SpellSlot.Unknown)
-                            {
-                                // Se a habilidade estiver habilitada
-                                if (Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>())
-                                {
-                                    if (item.type == ItemTypeId.Ability && attacked.IsMe)
-                                    {
-                                        checkAndUse(item, "", incDmg);
-                                    }
-                                    else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
-                                    {
-                                        teamCheckAndUse(item, "", false, incDmg, attacked, attacker);
-                                    }
-                                }
-                            }
+                            case AttackId.Basic:
+                                use = Config.Item("basic" + item.menuVariable).GetValue<bool>();
+                                break;
+                            case AttackId.Ignite:
+                                use = Config.Item("king" + item.menuVariable).GetValue<bool>();
+                                break;
+                            case AttackId.King:
+                                use = Config.Item("ignite" + item.menuVariable).GetValue<bool>();
+                                break;
+                            case AttackId.Tower:
+                                use = Config.Item("tower" + item.menuVariable).GetValue<bool>();
+                                break;
+                            case AttackId.Spell:
+                                use = Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>() && Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>();
+                                break;
                         }
-                        //FIX-ME OR ..
                     }
-                    // tower
-                    else
+
+                    if (use)
                     {
-                        if (Config.Item("tower" + item.menuVariable).GetValue<bool>())
+                        bool ignoreHP = false;
+                        if (attackId == AttackId.Spell)
                         {
-                            if (item.type == ItemTypeId.Ability && attacked.IsMe)
-                            {
-                                checkAndUse(item, "", incDmg);
-                            }
-                            else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
-                            {
-                                teamCheckAndUse(item, "", false, incDmg, attacked);
-                            }
+                            ignoreHP = Config.Item("ignore" + item.menuVariable + attacker.BaseSkinName).GetValue<bool>();
+                        }
+
+                        if (item.type == ItemTypeId.Ability && attacked.IsMe)
+                        {
+                            checkAndUse(item, "", incDmg, false, ignoreHP);
+                        }
+                        else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
+                        {
+                            teamCheckAndUse(item, "", false, incDmg, attacked, attacker, ignoreHP);
                         }
                     }
                 }
@@ -510,30 +515,30 @@ namespace MasterActivator
             }
         }
 
-        private void checkAndUseShield(double incDmg = 0, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown)
+        private void checkAndUseShield(double incDmg = 0, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown, AttackId attackId = AttackId.Unknown)
         {
-            justUseAgainstCheck(titanswraith, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(blackshield, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(unbreakable, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(palecascade, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(bulwark, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(courage, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(eyeofstorm, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(inspire, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(helppix, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(prismaticbarrier, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(commandprotect, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(spellshield, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(nocturneShield, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(leonaW, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(annieE, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(vladW, incDmg, attacker, attacked, attackerSpellSlot);
-            justUseAgainstCheck(wukongW, incDmg, attacker, attacked, attackerSpellSlot);
+            justUseAgainstCheck(titanswraith, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(blackshield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(unbreakable, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(palecascade, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(bulwark, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(courage, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(eyeofstorm, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(inspire, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(helppix, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(prismaticbarrier, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(commandprotect, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(spellshield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(nocturneShield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(leonaW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(annieE, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(vladW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(wukongW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
         }
 
         private bool checkBuff(String name)
@@ -561,6 +566,10 @@ namespace MasterActivator
                     }
                     var menuUseAgainst = new Menu("Filter", "UseAgainst");
                     menuUseAgainst.AddItem(new MenuItem("tower" + item.menuVariable, "Tower").SetValue(true));
+                    menuUseAgainst.AddItem(new MenuItem("ignite" + item.menuVariable, "Ignite").SetValue(true));
+                    menuUseAgainst.AddItem(new MenuItem("king" + item.menuVariable, "BoRKing").SetValue(false));
+                    menuUseAgainst.AddItem(new MenuItem("basic" + item.menuVariable, "Basic ATK").SetValue(false));
+
                     var enemyHero = from hero in ObjectManager.Get<Obj_AI_Hero>()
                                    where hero.Team != _player.Team
                                   select hero;
@@ -570,11 +579,12 @@ namespace MasterActivator
                         foreach (Obj_AI_Hero hero in enemyHero)
                         {
                             var menuUseAgainstHero = new Menu(hero.BaseSkinName, "useAgainst" + hero.BaseSkinName);
-                            menuUseAgainstHero.AddItem(new MenuItem(item.menuVariable + hero.BaseSkinName, "Enabled").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem(item.menuVariable + hero.BaseSkinName, "Enabled").SetValue(true));
                             menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.Q + item.menuVariable + hero.BaseSkinName, "Q").SetValue(false));
                             menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.W + item.menuVariable + hero.BaseSkinName, "W").SetValue(false));
                             menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.E + item.menuVariable + hero.BaseSkinName, "E").SetValue(false));
                             menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.R + item.menuVariable + hero.BaseSkinName, "R").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem("ignore" + item.menuVariable + hero.BaseSkinName, "Ignore %HP").SetValue(true));
                             menuUseAgainst.AddSubMenu(menuUseAgainstHero);
                             // Bring all, passives, summoners spells, etc;
                             /*if (hero.Spellbook.Spells.Count() > 0)
@@ -617,7 +627,7 @@ namespace MasterActivator
             }
         }
 
-        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0, Obj_AI_Base attacked = null, Obj_AI_Base attacker = null)
+        private void teamCheckAndUse(MItem item, String buff = "", bool self = false, double incDmg = 0, Obj_AI_Base attacked = null, Obj_AI_Base attacker = null, bool ignoreHP = false)
         {
             if (Config.Item(item.menuVariable) != null)
             {
@@ -668,7 +678,7 @@ namespace MasterActivator
                                 {
                                     if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                     {
-                                        int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                        int usePercent = !ignoreHP ? Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value : 100;
                                         int manaPercent = Config.Item(item.menuVariable + "UseManaPct") != null ? Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value : 0;
                                         foreach (Obj_AI_Hero hero in activeAllyHeros)
                                         {
@@ -770,7 +780,7 @@ namespace MasterActivator
             return activeAllyHeros;
         }
 
-        private void checkAndUse(MItem item, String buff = "", double incDamage = 0, bool self = false)
+        private void checkAndUse(MItem item, String buff = "", double incDamage = 0, bool self = false, bool ignoreHP = false)
         {
             try
             {
@@ -906,7 +916,7 @@ namespace MasterActivator
                                 {
                                     if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                     {
-                                        int usePercent = Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value;
+                                        int usePercent = !ignoreHP ? Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value : 100;
                                         int manaPercent = Config.Item(item.menuVariable + "UseManaPct") != null ? Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value : 0;
                                         //Console.WriteLine("ActualMana%-> " + actualHeroManaPercent + "  Mana%->" + manaPercent + "  Acthp%->" + actualHeroHpPercent + "   Use%->" + usePercent);
 
