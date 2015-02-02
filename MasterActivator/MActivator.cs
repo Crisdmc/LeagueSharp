@@ -443,7 +443,7 @@ namespace MasterActivator
             checkAndUse(hextech);
             checkAndUse(muramana);
             checkAndUse(frost);
-            checkAndUse(randuin);
+            checkAndUse(randuin, "", 0, true);
         }
 
         // And about ignore HP% check?
@@ -940,7 +940,7 @@ namespace MasterActivator
                                         // FIX-ME: In frost case, we must check the affected area, not just ppl in range(item).
                                         if (Utility.CountEnemiesInRange(_player, (int)item.range) >= Config.Item(item.menuVariable + "UseXUnits").GetValue<Slider>().Value)
                                         {
-                                            useItem(item.id, item.range == 0 ? null : target);
+                                            useItem(item.id, (item.range == 0 || self) ? null : target);
                                         }
                                     }
                                 }
