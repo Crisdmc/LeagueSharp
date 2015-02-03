@@ -281,7 +281,7 @@ namespace MasterActivator
                                 spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
                                 SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
 
-                                log.WriteLine("A-Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
+                                log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
                                 if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
                                 {
                                     incDmg = Damage.GetSummonerSpellDamage(attackerHero, attackedHero, Damage.SummonerSpell.Ignite);
@@ -346,6 +346,7 @@ namespace MasterActivator
                                 float range = range1 > 1 ? range1 : range2;
 
                                 // CHECK AOE ???
+                                log.WriteLine("Shot-Attacker->" + attacker.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
 
                                 //drawPos2 = args.Start.Extend(args.End, range);
                                 if (args.Start.Distance(_player.Position) <= range)
@@ -359,6 +360,7 @@ namespace MasterActivator
                                         spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
 
                                         spellTarget = _player;
+                                        log.WriteLine("Shot-Target" + _player.BaseSkinName + "    Slot->" + spellSlot);
                                     }
                                 }
                             }
