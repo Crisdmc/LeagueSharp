@@ -163,14 +163,14 @@ namespace MasterActivator
                 Obj_AI_Base.OnProcessSpellCast += onProcessSpellCast;
                 Game.OnGameEnd += Game_OnGameEnd;
 
-                
-                if (!File.Exists("C:/Windows/temp/MActivatorLOG.log"))
+                String dTime = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
+                if (!File.Exists("C:/Windows/temp/MActivatorLOG" + dTime + ".log"))
                 {
-                    log = new StreamWriter("C:/Windows/temp/MActivatorLOG.log");
+                    log = new StreamWriter("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
                 }
                 else
                 {
-                    log = File.AppendText("C:/Windows/temp/MActivatorLOG.log");
+                    log = File.AppendText("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
                 }
             }
             catch
