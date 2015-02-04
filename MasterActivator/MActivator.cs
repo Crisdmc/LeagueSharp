@@ -196,39 +196,42 @@ namespace MasterActivator
                 {
                     #region AkaliW
                     // Akali W Ward
-                    if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && args.SData.Name == akaliW.name)
+                    if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
                     {
-                        if (Config.Item("menuAkaliW").GetValue<bool>())
+                        if (args.SData.Name == akaliW.name)
                         {
-                            if ((Config.Item("akaliWOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
-                               (!Config.Item("akaliWOnCombo").GetValue<bool>()))
+                            if (Config.Item("menuAkaliW").GetValue<bool>())
                             {
-                                int usePercent = Config.Item("menuAkaliW" + "UseOnPercent").GetValue<Slider>().Value;
-                                int attackerHpPercent = (int)((attacker.Health / attacker.MaxHealth) * 100);
-
-                                if (attackerHpPercent <= usePercent)
+                                if ((Config.Item("akaliWOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
+                                   (!Config.Item("akaliWOnCombo").GetValue<bool>()))
                                 {
-                                    // Try closer ward position; All wards have same range.
-                                    Vector3 wardPos = args.End;
-                                    if (wardPos.Distance(_player.Position) > pink.range)
+                                    int usePercent = Config.Item("menuAkaliW" + "UseOnPercent").GetValue<Slider>().Value;
+                                    int attackerHpPercent = (int)((attacker.Health / attacker.MaxHealth) * 100);
+
+                                    if (attackerHpPercent <= usePercent)
                                     {
-                                        wardPos = wardPos.Extend(_player.Position, 220);
-                                        if (_player.Distance(wardPos) <= pink.range)
+                                        // Try closer ward position; All wards have same range.
+                                        Vector3 wardPos = args.End;
+                                        if (wardPos.Distance(_player.Position) > pink.range)
                                         {
+                                            wardPos = wardPos.Extend(_player.Position, 220);
+                                            if (_player.Distance(wardPos) <= pink.range)
+                                            {
+                                                return;
+                                            }
+                                        }
+
+                                        if (Config.Item(akaliW.menuVariable + greatVisionTotem.menuVariable).GetValue<bool>())
+                                        {
+                                            useItem(greatVisionTotem.id, wardPos);
                                             return;
                                         }
-                                    }
-                                    
-                                    if (Config.Item(akaliW.menuVariable + greatVisionTotem.menuVariable).GetValue<bool>())
-                                    {
-                                        useItem(greatVisionTotem.id, wardPos);
-                                        return;
-                                    }
 
-                                    if (Config.Item(akaliW.menuVariable + pink.menuVariable).GetValue<bool>())
-                                    {
-                                        useItem(pink.id, wardPos);
-                                        return;
+                                        if (Config.Item(akaliW.menuVariable + pink.menuVariable).GetValue<bool>())
+                                        {
+                                            useItem(pink.id, wardPos);
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -240,105 +243,114 @@ namespace MasterActivator
                     if (Config.Item("predict").GetValue<bool>())
                     {
                         #region WithTarget
-                        if (spellTarget != null && spellTarget.Type == GameObjectType.obj_AI_Hero) // Check (spell w/o target) AOE etc?
+                        if (spellTarget != null)
                         {
-                            Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
-
-                            #region SelfTarget
-                            //&& attacker.IsEnemy
-                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
+                            if (spellTarget.Type == GameObjectType.obj_AI_Hero)
                             {
-                                Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
-
-                                float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
-                                float range2 = args.SData.CastRange.FirstOrDefault();
-                                float range = range1 > 1 ? range1 : range2;
-
-                                log.WriteLine("S-Attacker->" + attackerHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
-
-                                // test prop.
-                                List<Obj_AI_Hero> alliesInRange = attackerHero.IsEnemy ? Utility.GetAlliesInRange(attackerHero, range) : Utility.GetEnemiesInRange(attackerHero, range);
-                                if (alliesInRange.Count > 0)
+                                #region SelfTarget
+                                //&& attacker.IsEnemy
+                                if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
                                 {
-                                    log.WriteLine("Count->" + alliesInRange.Count);
-                                    foreach (Obj_AI_Hero hero in alliesInRange)
+                                    Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
+                                    Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
+
+                                    float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
+                                    float range2 = args.SData.CastRange.FirstOrDefault();
+                                    float range = range1 > 1 ? range1 : range2;
+
+                                    log.WriteLine("Self-Attacker->" + attackerHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
+
+                                    // test prop.
+                                    List<Obj_AI_Hero> alliesInRange = attackerHero.IsEnemy ? Utility.GetAlliesInRange(attackerHero, range) : Utility.GetEnemiesInRange(attackerHero, range);
+                                    if (alliesInRange.Count > 0)
                                     {
-                                        log.WriteLine("Got-> " + hero.BaseSkinName);
+                                        log.WriteLine("Count->" + alliesInRange.Count);
+                                        foreach (Obj_AI_Hero hero in alliesInRange)
+                                        {
+                                            log.WriteLine("Got-> " + hero.BaseSkinName);
+                                        }
                                     }
+                                    //Console.WriteLine("Target Name2-> " + spellTarget.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
                                 }
-                                //Console.WriteLine("Target Name2-> " + spellTarget.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
+                                #endregion
+
+                                #region EnemyTarget
+                                //Config.Item(hero.SkinName).GetValue<bool>()
+                                // 750 from greater range(mikael).
+                                if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && (spellTarget.IsMe || (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750)))
+                                {
+                                    Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
+                                    Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
+
+                                    // Check TeamUse config
+                                    if (!Config.Item(attackedHero.SkinName).GetValue<bool>())
+                                    {
+                                        return;
+                                    }
+
+                                    SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
+
+                                    spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+                                    SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
+
+                                    log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
+                                    if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
+                                    {
+                                        incDmg = Damage.GetSummonerSpellDamage(attackerHero, attackedHero, Damage.SummonerSpell.Ignite);
+                                        attackId = AttackId.Ignite;
+                                    }
+
+                                    else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
+                                    {
+                                        if (args.SData.Name == king.name)
+                                        {
+                                            incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Botrk);
+                                            attackId = AttackId.King;
+                                        }
+                                        else if (args.SData.Name == bilgewater.name)
+                                        {
+                                            incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Bilgewater);
+                                        }
+                                        else if (args.SData.Name == dfg.name)
+                                        {
+                                            incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Dfg);
+                                        }
+                                        else if (args.SData.Name == hydra.name)
+                                        {
+                                            incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Hydra);
+                                        }
+                                        // should not appear, because randuins is self target cast
+                                        if (args.SData.Name == randuin.name)
+                                        {
+                                            log.WriteLine("T-Randuin-> " + attackedHero.BaseSkinName + " X " + attackerHero.BaseSkinName);
+                                        }
+                                    }
+                                    else if (spellSlot == SpellSlot.Unknown)
+                                    {
+                                        incDmg = Damage.GetAutoAttackDamage(attackerHero, attackedHero, true);
+                                        attackId = AttackId.Basic;
+                                    }
+                                    else
+                                    {
+                                        incDmg = Damage.GetSpellDamage(attackerHero, attackedHero, spellSlot);
+                                        attackId = AttackId.Spell;
+                                    }
+
+                                    //Console.WriteLine("Slot->" + spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w, 49 = YasuoBasicAttack3, 50 YassuoCritAttack, 45 = LeonaShieldOfDaybreakAttack
+                                }
+                                else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750))
+                                {
+                                    // TODO: Get multiplier/real dmg
+                                    incDmg = attacker.BaseAttackDamage;
+                                    attackId = AttackId.Tower;
+                                }
+                                #endregion
                             }
-                            #endregion
-
-                            #region EnemyTarget
-                            //Config.Item(hero.SkinName).GetValue<bool>()
-                            // 750 from greater range(mikael).
-                            if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy && (spellTarget.IsMe || (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750)))
-                            {
-                                Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
-                                SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero=> args.SData.Name.Contains(hero.SData.Name));
-                               
-                                spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
-                                SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
-
-                                log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
-                                if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
-                                {
-                                    incDmg = Damage.GetSummonerSpellDamage(attackerHero, attackedHero, Damage.SummonerSpell.Ignite);
-                                    attackId = AttackId.Ignite;
-                                }
-
-                                else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
-                                {
-                                    if (args.SData.Name == king.name)
-                                    {
-                                        incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Botrk);
-                                        attackId = AttackId.King;
-                                    }
-                                    else if (args.SData.Name == bilgewater.name)
-                                    {
-                                        incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Bilgewater);
-                                    }
-                                    else if (args.SData.Name == dfg.name)
-                                    {
-                                        incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Dfg);
-                                    }
-                                    else if (args.SData.Name == hydra.name)
-                                    {
-                                        incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Hydra);
-                                    }
-                                    // should not appear, because randuins is self target cast
-                                    if (args.SData.Name == randuin.name)
-                                    {
-                                        log.WriteLine("T-Randuin-> " + attackedHero.BaseSkinName + " X " + attackerHero.BaseSkinName);
-                                    }
-                                }
-                                else if (spellSlot == SpellSlot.Unknown)
-                                {
-                                    incDmg = Damage.GetAutoAttackDamage(attackerHero, attackedHero, true);
-                                    attackId = AttackId.Basic;
-                                }
-                                else
-                                {
-                                    incDmg = Damage.GetSpellDamage(attackerHero, attackedHero, spellSlot);
-                                    attackId = AttackId.Spell;
-                                }
-
-                                //Console.WriteLine("Slot->" + spellSlot + "  inc-> " + incDmg + " Spell-> " + args.SData.Name);// 44 = sivir w, 49 = YasuoBasicAttack3, 50 YassuoCritAttack, 45 = LeonaShieldOfDaybreakAttack
-                            }
-                            else if (attacker.Type == GameObjectType.obj_AI_Turret && attacker.IsEnemy && spellTarget.Type == GameObjectType.obj_AI_Hero && (spellTarget.IsAlly && _player.Distance(spellTarget.Position) <= 750))
-                            {
-                                // TODO: Get multiplier/real dmg
-                                incDmg = attacker.BaseAttackDamage;
-                                attackId = AttackId.Tower;
-                            }
-                            #endregion
                         }
                         #endregion
                         #region W/O Target
                         else
                         {
-                            // Self target && attacker.IsEnemy 
                             if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
                             {
                                 float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
@@ -349,19 +361,33 @@ namespace MasterActivator
                                 log.WriteLine("Shot-Attacker->" + attacker.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
 
                                 //drawPos2 = args.Start.Extend(args.End, range);
-                                if (args.Start.Distance(_player.Position) <= range)
+                                List<Obj_AI_Hero> alliesInRange = Utility.GetAlliesInRange(args.Start, range);
+                                if (alliesInRange.Count > 0)
                                 {
-                                    // ponto fake
-                                    Vector3 fakePoint = args.Start.Extend(args.End, args.Start.Distance(_player.Position));
-
-                                    if (_player.Position.Distance(fakePoint) <= 30)
+                                    Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
+                                    foreach (Obj_AI_Hero hero in alliesInRange)
                                     {
-                                        SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
-                                        spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+                                        // Check TeamUse config
+                                        if (Config.Item(hero.SkinName).GetValue<bool>())
+                                        {
+                                            // ponto fake
+                                            Vector3 fakePoint = args.Start.Extend(args.End, args.Start.Distance(hero.Position));
 
-                                        spellTarget = _player;
-                                        log.WriteLine("Shot-Target" + _player.BaseSkinName + "    Slot->" + spellSlot);
+                                            if (hero.Position.Distance(fakePoint) <= 30)
+                                            {
+                                                SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(spell => args.SData.Name.Contains(spell.SData.Name));
+                                                spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+
+                                                // TEMP log
+                                                log.WriteLine("Shot-Target->" + hero.BaseSkinName + "    Slot->" + spellSlot);
+
+                                                //Calc dmg and check deffs
+                                                incDmg = Damage.GetSpellDamage(attackerHero, hero, spellSlot);
+                                                callDeff(attacker, hero, incDmg, spellSlot, AttackId.Spell);
+                                            }
+                                        }
                                     }
+                                    return;
                                 }
                             }
                         }
@@ -370,21 +396,13 @@ namespace MasterActivator
 
                     if (incDmg > 0 || spellSlot != SpellSlot.Unknown)
                     {
-                        if (spellTarget.Team == _player.Team)
+                        if (spellTarget != null)
                         {
-                            Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
-
-                            teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
-                            teamCheckAndUse(solari, "", true, incDmg);
-                            teamCheckAndUse(mountain, "", false, incDmg);
-                            checkAndUseShield(incDmg, attacker, attackedHero, spellSlot, attackId);
-
-                            if (spellTarget.IsMe)
+                            if (spellTarget.Team == _player.Team)
                             {
-                                checkAndUse(zhonya, "", incDmg);
-                                checkAndUse(wooglet, "", incDmg);
-                                checkAndUse(barrier, "", incDmg);
-                                checkAndUse(seraph, "", incDmg);
+                                Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
+
+                                callDeff(attacker, attackedHero, incDmg, spellSlot, attackId);
                             }
                         }
                     }
@@ -515,6 +533,22 @@ namespace MasterActivator
             checkAndUse(muramana);
             checkAndUse(frost);
             checkAndUse(randuin, "", 0, true);
+        }
+
+        private void callDeff(Obj_AI_Base attacker, Obj_AI_Hero target, double incDmg, SpellSlot spellSlot, AttackId attackId)
+        {
+            teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
+            teamCheckAndUse(solari, "", true, incDmg);
+            teamCheckAndUse(mountain, "", false, incDmg);
+            checkAndUseShield(incDmg, attacker, target, spellSlot, attackId);
+
+            if (target.IsMe)
+            {
+                checkAndUse(zhonya, "", incDmg);
+                checkAndUse(wooglet, "", incDmg);
+                checkAndUse(barrier, "", incDmg);
+                checkAndUse(seraph, "", incDmg);
+            }
         }
 
         // And about ignore HP% check?
@@ -730,51 +764,51 @@ namespace MasterActivator
                     {
                         try
                         {
-                            var spellSlot = Utility.GetSpellSlot(_player, item.name);
-                            if (spellSlot != SpellSlot.Unknown)
+                            if (!Config.Item(attacked.SkinName).GetValue<bool>())
                             {
-                                var activeAllyHeros = getActiveAllyHeros(item);
-                                if (activeAllyHeros.Count() > 0)
+                                return;
+                            }
+                            
+                            if (_player.Distance(attacked, false) <= item.range)
+                            {
+                                var spellSlot = Utility.GetSpellSlot(_player, item.name);
+                                if (spellSlot != SpellSlot.Unknown)
                                 {
                                     if (_player.Spellbook.CanUseSpell(spellSlot) == SpellState.Ready)
                                     {
                                         int usePercent = !ignoreHP ? Config.Item(item.menuVariable + "UseOnPercent").GetValue<Slider>().Value : 100;
                                         int manaPercent = Config.Item(item.menuVariable + "UseManaPct") != null ? Config.Item(item.menuVariable + "UseManaPct").GetValue<Slider>().Value : 0;
-                                        foreach (Obj_AI_Hero hero in activeAllyHeros)
+
+                                        int actualHeroHpPercent = (int)(((attacked.Health - incDmg) / attacked.MaxHealth) * 100); //after dmg not Actual ^^
+                                        int playerManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
+                                        if (playerManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
                                         {
-                                            if (hero.NetworkId == attacked.NetworkId)
+                                            if (item.type == ItemTypeId.TeamAbility)
                                             {
-                                                int actualHeroHpPercent = (int)(((hero.Health - incDmg) / hero.MaxHealth) * 100); //after dmg not Actual ^^
-                                                int playerManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
-                                                if (playerManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
+                                                _player.Spellbook.CastSpell(item.abilitySlot, attacked);
+                                            }
+                                            else
+                                            {
+                                                Vector3 pos = attacked.Position;
+                                                // extend 20 to attacker direction THIS 20 COST RANGE
+                                                if (attacker != null)
                                                 {
-                                                    if (item.type == ItemTypeId.TeamAbility)
+                                                    if (_player.Distance(attacked.Position.Extend(attacker.Position, 20), false) <= item.range)
                                                     {
-                                                        _player.Spellbook.CastSpell(item.abilitySlot, hero);
-                                                    }
-                                                    else
-                                                    {
-                                                        Vector3 pos = hero.Position;
-                                                        // extend 20 to attacker direction THIS 20 COST RANGE
-                                                        if (attacker != null)
-                                                        {
-                                                            if(_player.Distance(hero.Position.Extend(attacker.Position, 20), false) <= item.range)
-                                                            {
-                                                                pos = hero.Position.Extend(attacker.Position, 20);
-                                                            }
-                                                        }
-                                                        _player.Spellbook.CastSpell(item.abilitySlot, pos);
+                                                        pos = attacked.Position.Extend(attacker.Position, 20);
                                                     }
                                                 }
+                                                _player.Spellbook.CastSpell(item.abilitySlot, pos);
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
-                            Game.PrintChat("Problem with MasterActivator(AutoShield).");
+                            log.WriteLine("Problem with MasterActivator(AutoShieldTeam).");
+                            Console.WriteLine(e);
                         }
                     }
                     else
@@ -987,9 +1021,10 @@ namespace MasterActivator
                                     }
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
-                                Game.PrintChat("Problem with MasterActivator(AutoShield).");
+                                log.WriteLine("Problem with MasterActivator(AutoShield).");
+                                Console.WriteLine(e);
                             }
                         }
                         else
