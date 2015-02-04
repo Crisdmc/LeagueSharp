@@ -392,7 +392,8 @@ namespace MasterActivator
             }
             catch (Exception e)
             {
-                Game.PrintChat("Problem with MasterActivator(Receiving dmg sys.).");
+                log.WriteLine("Problem with MasterActivator(Receiving dmg sys.).");
+                log.WriteLine(e);
                 Console.WriteLine(e);
             }
         }
