@@ -78,6 +78,7 @@ namespace MasterActivator
         #endregion
 
         #region Spells
+        #region Deffensive
         // Auto shields 
         MItem blackshield = new MItem("BlackShield", "Black Shield", "bShield", 0, ItemTypeId.TeamAbility, 750, SpellSlot.E); //Morgana
         MItem unbreakable = new MItem("BraumE", "Unbreakable", "unbreak", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.E);
@@ -125,6 +126,10 @@ namespace MasterActivator
         // sonaariaofperseverance sona W range 1000
         // soraka wish R global - astralblessing W 550 !self
         // imbue taric Q
+        #endregion
+        #region Offensives
+        MItem choR = new MItem("Feast", "Feast", "Feast", 0, ItemTypeId.KSAbility, 255, SpellSlot.R);
+        #endregion
         #endregion
 
         #region Jungle Minions
@@ -254,11 +259,14 @@ namespace MasterActivator
                                     Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
                                     Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
 
+                                    SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
+                                    spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+
                                     float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
                                     float range2 = args.SData.CastRange.FirstOrDefault();
                                     float range = range1 > 1 ? range1 : range2;
 
-                                    log.WriteLine("Self-Attacker->" + attackerHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
+                                    log.WriteLine("Self-Attacker->" + attackerHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range + "   Slot->" + spellSlot);
 
                                     // test prop.
                                     List<Obj_AI_Hero> alliesInRange = attackerHero.IsEnemy ? Utility.GetAlliesInRange(attackerHero, range) : Utility.GetEnemiesInRange(attackerHero, range);
@@ -289,8 +297,8 @@ namespace MasterActivator
                                     }
 
                                     SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
-
                                     spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
+
                                     SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
 
                                     log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
@@ -420,6 +428,15 @@ namespace MasterActivator
         {
             try
             {
+                if (Config.Item(choR.menuVariable) != null)
+                {
+                    if (Config.Item(choR.menuVariable).GetValue<bool>() && Config.Item(choR.menuVariable + "drawRange").GetValue<bool>())
+                    {
+                        float range = getChoUltRange();
+                        Drawing.DrawCircle(_player.Position, range, System.Drawing.Color.Brown);
+                    }
+                }
+                
                 if (Config.Item("dSmite").GetValue<bool>())
                 {
                     MMinion[] jungleMinions;
@@ -447,11 +464,23 @@ namespace MasterActivator
                                         Vector2 hpBarPos = minion.HPBarPosition;
                                         hpBarPos.X += jMinion.preX;
                                         hpBarPos.Y += 18;
+
                                         int smiteDmg = getSmiteDmg();
                                         var damagePercent = smiteDmg / minion.MaxHealth;
                                         float hpXPos = hpBarPos.X + (jMinion.width * damagePercent);
+                                        Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg >= minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
 
-                                        Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg > minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                                        if (Config.Item(choR.menuVariable) != null)
+                                        {
+                                            if (Config.Item(choR.menuVariable).GetValue<bool>() && Config.Item(choR.menuVariable + "drawBar").GetValue<bool>())
+                                            {
+                                                float spellDmg = (float)Damage.GetSpellDamage(_player, minion, choR.abilitySlot);
+                                                var spellDmgPercent = spellDmg / minion.MaxHealth;
+                                                hpXPos = hpBarPos.X + (jMinion.width * spellDmgPercent);
+
+                                                Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, spellDmg >= minion.Health ? System.Drawing.Color.BlueViolet : System.Drawing.Color.Black);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -505,6 +534,7 @@ namespace MasterActivator
                     checkAndUse(smiteDuel);
                     checkAndUse(smiteGanker);
                     checkAndUse(smiteQuick);
+                    checkAndUse(choR);
 
                     if (Config.Item("comboModeActive").GetValue<KeyBind>().Active)
                     {
@@ -521,6 +551,14 @@ namespace MasterActivator
 
         private void combo()
         {
+            BuffInstance[] buffs = _player.Buffs;
+            if (buffs.Length > 0)
+            {
+                foreach(BuffInstance buff in buffs)
+                {
+                    Console.WriteLine(buff.Name);
+                }
+            }
             checkAndUse(ignite);
             checkAndUse(youmus);
             checkAndUse(bilgewater);
@@ -886,7 +924,7 @@ namespace MasterActivator
                         int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100); //after dmg not Actual ^^
                         int actualHeroManaPercent = (int)(_player.MaxMana > 0 ? ((_player.Mana / _player.MaxMana) * 100) : 0);
 
-                        if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell)
+                        if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell || item.type == ItemTypeId.KSAbility)
                         {
                             var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
                             if (spellSlot != SpellSlot.Unknown)
@@ -920,7 +958,7 @@ namespace MasterActivator
                                             }
                                         }
                                     }
-                                    else if (item.type == ItemTypeId.OffensiveSpell)
+                                    else if (item.type == ItemTypeId.OffensiveSpell || item.type == ItemTypeId.KSAbility)
                                     {
                                         if (item == ignite)
                                         {
@@ -979,13 +1017,21 @@ namespace MasterActivator
                                                     jungleMinions = new string[] { blue.name, red.name, razor.name, baron.name, krug.name, wolf.name, dragon.name, gromp.name, crab.name };
                                                 }
 
-                                                var minions = MinionManager.GetMinions(_player.Position, item.range, MinionTypes.All, MinionTeam.Neutral);
+                                                float range = item.range;
+                                                if (item == choR)
+                                                {
+                                                    range = getChoUltRange();
+                                                }
+
+                                                var minions = MinionManager.GetMinions(_player.Position, range, MinionTypes.All, MinionTeam.Neutral);
                                                 if (minions.Count() > 0)
                                                 {
                                                     int smiteDmg = getSmiteDmg();
+                                                    
                                                     foreach (Obj_AI_Base minion in minions)
                                                     {
-                                                        if (minion.Health <= smiteDmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
+                                                        int dmg = item.type == ItemTypeId.OffensiveSpell ? smiteDmg : (int)Damage.GetSpellDamage(_player, minion, spellSlot);
+                                                        if (minion.Health <= dmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
                                                         {
                                                             _player.Spellbook.CastSpell(spellSlot, minion);
                                                         }
@@ -1124,6 +1170,26 @@ namespace MasterActivator
             {
                 Console.WriteLine(e);
             }
+        }
+
+        private float getChoUltRange()
+        {
+            float range = choR.range;
+            BuffInstance[] buffs = _player.Buffs;
+            if (buffs.Length > 0)
+            {
+                foreach (BuffInstance pBuff in buffs)
+                {
+                    if (pBuff.Name == "Feast")
+                    {
+                        // Please give me credits
+                        //range = choR.range + ((new float[] { 3.8F, 6.1F, 8.3F }[_player.GetSpell(choR.abilitySlot).Level - 1]) * buff.Count);
+                        range = choR.range + ((new float[] { 5.83F, 9.16F, 12.5F }[_player.GetSpell(choR.abilitySlot).Level - 1]) * pBuff.Count);
+                        SpellDataInst spell = _player.Spellbook.GetSpell(choR.abilitySlot);
+                    }
+                }
+            }
+            return range;
         }
 
         private void useItem(int id, Obj_AI_Hero target = null)
@@ -1303,6 +1369,17 @@ namespace MasterActivator
             createMenuItem(annieE, "autoshield", 60, false, 0);
             createMenuItem(vladW, "autoshield", 45);
             createMenuItem(wukongW, "autoshield", 40, false, 0);
+
+            var abilitySlot = Utility.GetSpellSlot(_player, choR.name);
+            if (abilitySlot != SpellSlot.Unknown && abilitySlot == choR.abilitySlot)
+            {
+                var choRMenu = new Menu(choR.menuName, "menu" + choR.menuVariable);
+                choRMenu.AddItem(new MenuItem(choR.menuVariable, "Enable").SetValue(true));
+                //choRMenu.AddItem(new MenuItem(choR.menuVariable + "plus", "Plus").SetValue(false));
+                choRMenu.AddItem(new MenuItem(choR.menuVariable + "drawRange", "Draw Range").SetValue(true));
+                choRMenu.AddItem(new MenuItem(choR.menuVariable + "drawBar", "Draw Bar").SetValue(true));
+                Config.SubMenu("autoshield").AddSubMenu(choRMenu);
+            }
 
             Config.AddSubMenu(new Menu("Regenerators", "regenerators"));
             createMenuItem(heal, "regenerators", 35);
