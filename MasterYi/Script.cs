@@ -67,7 +67,10 @@ namespace MasterYi
 
                     // Lane Clear
                     Config.AddSubMenu(new Menu("Lane Clear", "laneclear"));
-                    Config.SubMenu("laneclear").AddItem(new MenuItem("useQLC", "Use Q")).SetValue(true);
+                    var menuLaneCQ = new Menu("Q", "LCQ");
+                    menuLaneCQ.AddItem(new MenuItem("useQLC", "Enable")).SetValue(true);
+                    menuLaneCQ.AddItem(new MenuItem("useQLCX", "X Units")).SetValue(new Slider(3, 1, 5));
+                    Config.SubMenu("laneclear").AddSubMenu(menuLaneCQ);
 
                     // Draw
                     Config.AddSubMenu(new Menu("Draw", "draw"));
@@ -111,18 +114,15 @@ namespace MasterYi
             {
                 masterYi.combo(Config); 
             }
-
-            if (masterYi.orbwalker.ActiveMode.ToString() == "Mixed")
+            else if (masterYi.orbwalker.ActiveMode.ToString() == "Mixed")
             {
                 masterYi.mixedMode();
             }
-
-            if (masterYi.orbwalker.ActiveMode.ToString() == "LaneClear")
+            else if (masterYi.orbwalker.ActiveMode.ToString() == "LaneClear")
             {
-                masterYi.laneClear(Config.Item("useQLC").GetValue<bool>());
+                masterYi.laneClear(Config);
             }
-
-            if (masterYi.orbwalker.ActiveMode.ToString() == "LastHit")
+            else if (masterYi.orbwalker.ActiveMode.ToString() == "LastHit")
             {
                 masterYi.lastHit();
             }
@@ -130,6 +130,17 @@ namespace MasterYi
             if (Config.Item("activeSlack").GetValue<KeyBind>().Active)
             {
                 //jg.teste();
+            }
+
+            // Common onLevelUpEvent isnt working
+            if (ObjectManager.Player.SpellTrainingPoints > 0)
+            {
+                // se for eu que evolui de level
+                if (Config.Item("autoUpSkill").GetValue<bool>())
+                {
+                    int order = Config.Item("autoSkillOrder").GetValue<StringList>().SelectedIndex;
+                    masterYi.autoUpSkill(order, ObjectManager.Player.Level);
+                }
             }
         }
 

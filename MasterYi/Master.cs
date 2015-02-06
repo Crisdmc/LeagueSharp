@@ -41,12 +41,12 @@ namespace MasterYi
             rData = sBook.GetSpell(SpellSlot.R);
         }
 
-        public void laneClear(bool useQLC)
+        public void laneClear(Menu menu)
         {
             setOrbwalkToCursorPos();
 
             // Verifica se o Q está pronto e está configurado para usar
-            if (_Q.IsReady() && useQLC)
+            if (_Q.IsReady() && menu.Item("useQLC").GetValue<bool>())
             {
                 // Obtem todos os minions do time inimigo, no range do Q
                 var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, _Q.Range, MinionTypes.All, MinionTeam.Enemy);
@@ -72,7 +72,11 @@ namespace MasterYi
                     }
                     else
                     {
-                        _Q.Cast(closestMinion);
+                        int wXUnits = menu.Item("useQLCX").GetValue<Slider>().Value;
+                        if (allMinions.Count >= wXUnits)
+                        {
+                            _Q.Cast(closestMinion);
+                        }
                     }
                 }
             }

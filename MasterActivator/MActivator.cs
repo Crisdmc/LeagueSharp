@@ -551,14 +551,6 @@ namespace MasterActivator
 
         private void combo()
         {
-            BuffInstance[] buffs = _player.Buffs;
-            if (buffs.Length > 0)
-            {
-                foreach(BuffInstance buff in buffs)
-                {
-                    Console.WriteLine(buff.Name);
-                }
-            }
             checkAndUse(ignite);
             checkAndUse(youmus);
             checkAndUse(bilgewater);
