@@ -46,9 +46,8 @@ namespace MasterYi
                     masterYi.orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
 
                     // Target Selector
-                    var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
-                    SimpleTs.AddToMenu(TargetSelectorMenu);
-                    Config.AddSubMenu(TargetSelectorMenu);
+                    var TargetSelectorMenu = new Menu("Target Selector", "targetSelector");
+                    TargetSelector.AddToMenu(Config.SubMenu("targetSelector"));
 
                     // Combo
                     Config.AddSubMenu(new Menu("Combo", "combo"));
@@ -152,7 +151,7 @@ namespace MasterYi
             }
         }
 
-        private void afterAttackEvent(Obj_AI_Base champ, Obj_AI_Base target)
+        private void afterAttackEvent(AttackableUnit champ, AttackableUnit target)
         {
             int useWWhen = Config.Item("useWWhen").GetValue<StringList>().SelectedIndex;
             int useWOn = Config.Item("useWon").GetValue<Slider>().Value;

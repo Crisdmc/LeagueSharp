@@ -194,7 +194,7 @@ namespace MasterYi
             float trueAARange = _player.AttackRange + target.BoundingRadius;
 
             // Distancia até o target
-            float dist = _player.Distance(target);
+            float dist = _player.Distance(target, false);
 
             if (dist < trueAARange)
             {
@@ -214,7 +214,7 @@ namespace MasterYi
             float trueAARange = _player.AttackRange + target.BoundingRadius;
 
             // Distancia até o target
-            float dist = _player.Distance(target);
+            float dist = _player.Distance(target, false);
 
             if (dist < trueAARange)
             {
@@ -227,12 +227,12 @@ namespace MasterYi
             // Se tem alguém no range do Q e estiver configurado para usar no combo, pega target
             if (_Q.IsReady() && useQ)
             {
-                target = SimpleTs.GetTarget(_Q.Range, SimpleTs.DamageType.Physical);
+                target = TargetSelector.GetTarget(_Q.Range, TargetSelector.DamageType.Magical);
             }
             // Pega target para ataque básico
             else
             {
-                target = SimpleTs.GetTarget(300, SimpleTs.DamageType.Physical); //125 range básico
+                target = TargetSelector.GetTarget(300, TargetSelector.DamageType.Physical); //125 range básico
             }
 
             return target;
@@ -246,7 +246,7 @@ namespace MasterYi
                 _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                 _Q.Cast(target, usePacket);
             }
-            else if (_player.Distance(target) <= range)
+            else if (_player.Distance(target, false) <= range)
             {
                 _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
             }
