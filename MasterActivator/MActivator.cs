@@ -18,6 +18,7 @@ namespace MasterActivator
         private Obj_AI_Hero _player;
         private Obj_AI_Hero target;
         private StreamWriter log;
+        private int checkCCTick;
 
         #region Items
         MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
@@ -161,6 +162,7 @@ namespace MasterActivator
             try
             {
                 _player = ObjectManager.Player;
+                checkCCTick = Environment.TickCount;
                 createMenu();
 
                 LeagueSharp.Drawing.OnDraw += onDraw;
@@ -1259,6 +1261,7 @@ namespace MasterActivator
             Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Purify", "purify"));
+            Config.SubMenu("purify").AddItem(new MenuItem("ccDelay", "Delay(ms)").SetValue(new Slider(0, 0, 2500)));
             Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
             Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
             Config.SubMenu("purify").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
@@ -1429,6 +1432,11 @@ namespace MasterActivator
         {
             bool cc = false;
 
+            if (checkCCTick > Environment.TickCount)
+            {
+                return cc;
+            }
+
             if (Config.Item("blind").GetValue<bool>())
             {
                 if (hero.HasBuffOfType(BuffType.Blind))
@@ -1541,6 +1549,7 @@ namespace MasterActivator
                 }
             }
 
+            checkCCTick = Environment.TickCount + Config.Item("ccDelay").GetValue<Slider>().Value;
             return cc;
         }
     }
