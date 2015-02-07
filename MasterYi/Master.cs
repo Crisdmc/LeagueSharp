@@ -100,7 +100,7 @@ namespace MasterYi
                 }
 
                 // Se o orbwalker lock está ativado
-                if (menu.Item("orbLock").GetValue<bool>() && target.Distance(Game.CursorPos) < 200)
+                if (menu.Item("orbLock").GetValue<bool>() && target.Distance(Game.CursorPos) < 350)
                 {
                     setOrbwalkingToTargetPos();
                 }
@@ -153,11 +153,11 @@ namespace MasterYi
 
         public void setOrbwalkToCursorPos()
         {
-            orbwalker.SetOrbwalkingPoint(Game.CursorPos);
+            orbwalker.SetOrbwalkingPoint(new Vector3());
         }
         public void setOrbwalkingToTargetPos()
         {
-            orbwalker.SetOrbwalkingPoint(target.Position);
+            orbwalker.SetOrbwalkingPoint(target.ServerPosition);
         }
 
         private void useQ(Obj_AI_Hero target, bool packet)
@@ -244,7 +244,7 @@ namespace MasterYi
 
         private void interruptW(bool useQ, bool usePacket, float range)
         {
-            if (_Q.IsReady() && target.IsValidTarget() && useQ)
+            if (_Q.IsReady() && target.IsValidTarget(range, false) && useQ)
             {
                 // Mover para garantir que vai parar o cast do W.
                 _player.IssueOrder(GameObjectOrder.MoveTo, target.Position);

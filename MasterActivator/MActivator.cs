@@ -949,6 +949,7 @@ namespace MasterActivator
                                             if (checkCC(_player))
                                             {
                                                 _player.Spellbook.CastSpell(spellSlot);
+                                                checkCCTick = Environment.TickCount + 2500;
                                             }
                                         }
                                     }
@@ -1151,6 +1152,7 @@ namespace MasterActivator
                                             if (checkCC(_player))
                                             {
                                                 useItem(item.id);
+                                                checkCCTick = Environment.TickCount + 2500;
                                             }
                                         }
                                     }
