@@ -1399,7 +1399,7 @@ namespace MasterActivator
             createMenuItem(wooglet, "deffensive", 35);
             createMenuItem(solari, "deffensive", 45);
             createMenuItem(mountain, "deffensive", 45);
-            createMenuItem(mikaelHP, "deffensive", 0);
+            createMenuItem(mikaelHP, "deffensive", 5);
             Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             Config.SubMenu("deffensive").AddItem(new MenuItem("useRecalling", "Use Recalling")).SetValue(false);
 
