@@ -41,6 +41,7 @@ namespace MasterActivator
         MItem frost = new MItem("Frost Queen's Claim", "Frost Queen's", "frost", 3092, ItemTypeId.OffensiveAOE, 850);
         MItem solari = new MItem("Locket of the Iron Solari", "Solari", "solari", 3190, ItemTypeId.Deffensive, 600);
         MItem mikael = new MItem("Mikael's Crucible", "Mikael's", "mikael", 3222, ItemTypeId.Purifier, 750);
+        MItem mikaelHP = new MItem("Mikael's Crucible", "Mikael's", "mikaelHP", 3222, ItemTypeId.Deffensive, 750);
         //Item talisman = new Item("Talisman of Ascension", "Talisman", "talisman", 3069, 600);
         //Item shadows = new Item("Twin Shadows", "Shadows", "shadows", 3023, 750); //2700
         //Item ohmwrecker = new Item("Ohmwrecker", "Ohmwrecker", "ohmwrecker", 3056, 775); // tower atk range Utility.UnderTurret
@@ -527,6 +528,7 @@ namespace MasterActivator
                         checkAndUse(seraph);
                         teamCheckAndUse(solari, "", true);
                         teamCheckAndUse(mountain);
+                        teamCheckAndUse(mikaelHP);
                         checkAndUseShield();
                     }
 
@@ -602,6 +604,7 @@ namespace MasterActivator
             teamCheckAndUse(heal, Config.Item("useWithHealDebuff").GetValue<bool>() ? "" : "summonerhealcheck", false, incDmg);
             teamCheckAndUse(solari, "", true, incDmg);
             teamCheckAndUse(mountain, "", false, incDmg);
+            teamCheckAndUse(mikaelHP, "", false, incDmg);
             checkAndUseShield(incDmg, attacker, target, spellSlot, attackId);
 
             if (target.IsMe)
@@ -803,6 +806,7 @@ namespace MasterActivator
                 // check if is configured to use
                 if (Config.Item(item.menuVariable).GetValue<bool>())
                 {
+                    #region DeffensiveSpell ManaRegeneratorSpell PurifierSpell
                     if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell)
                     {
                         //Console.WriteLine("TCandU-> " + item.name);
@@ -835,6 +839,8 @@ namespace MasterActivator
                             }
                         }
                     }
+                    #endregion
+                    #region TeamAbility TeamAbilityAOE
                     else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
                     {
                         try
@@ -886,6 +892,8 @@ namespace MasterActivator
                             Console.WriteLine(e);
                         }
                     }
+                    #endregion
+                    #region Others
                     else
                     {
                         if (Items.HasItem(item.id))
@@ -897,6 +905,7 @@ namespace MasterActivator
                                 {
                                     foreach (Obj_AI_Hero hero in activeAllyHeros)
                                     {
+                                        #region Purifier
                                         if (item.type == ItemTypeId.Purifier)
                                         {
                                             if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
@@ -908,6 +917,8 @@ namespace MasterActivator
                                                 }
                                             }
                                         }
+                                        #endregion
+                                        #region Deffensive
                                         else if (item.type == ItemTypeId.Deffensive)
                                         {
                                             int enemyInRange = Utility.CountEnemiesInRange(hero, 700);
@@ -928,11 +939,13 @@ namespace MasterActivator
                                                 }
                                             }
                                         }
+                                        #endregion
                                     }
                                 }
                             }
                         }
                     }
+                    #endregion
                 }
             }
         }
@@ -1386,6 +1399,7 @@ namespace MasterActivator
             createMenuItem(wooglet, "deffensive", 35);
             createMenuItem(solari, "deffensive", 45);
             createMenuItem(mountain, "deffensive", 45);
+            createMenuItem(mikaelHP, "deffensive", 0);
             Config.SubMenu("deffensive").AddItem(new MenuItem("justPred", "Just Predicted")).SetValue(true);
             Config.SubMenu("deffensive").AddItem(new MenuItem("useRecalling", "Use Recalling")).SetValue(false);
 
