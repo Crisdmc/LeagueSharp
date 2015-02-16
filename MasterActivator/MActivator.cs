@@ -168,7 +168,7 @@ namespace MasterActivator
             try
             {
                 _player = ObjectManager.Player;
-                checkCCTick = Environment.TickCount;
+                checkCCTick = Utils.TickCount;
                 createMenu();
 
                 LeagueSharp.Drawing.OnDraw += onDraw;
@@ -502,7 +502,6 @@ namespace MasterActivator
             {
                 try
                 {
-
                     checkAndUse(clarity);
                     teamCheckAndUse(mikael);
                     if (!_player.InFountain() && !Config.Item("justPredHeal").GetValue<bool>())
@@ -1005,7 +1004,7 @@ namespace MasterActivator
                                             if (checkCC(_player))
                                             {
                                                 _player.Spellbook.CastSpell(spellSlot);
-                                                checkCCTick = Environment.TickCount + 2500;
+                                                checkCCTick = Utils.TickCount + 2500;
                                             }
                                         }
                                     }
@@ -1211,7 +1210,7 @@ namespace MasterActivator
                                             if (checkCC(_player))
                                             {
                                                 useItem(item.id);
-                                                checkCCTick = Environment.TickCount + 2500;
+                                                checkCCTick = Utils.TickCount + 2500;
                                             }
                                         }
                                     }
@@ -1489,8 +1488,9 @@ namespace MasterActivator
         {
             bool cc = false;
 
-            if (checkCCTick > Environment.TickCount)
+            if (checkCCTick > Utils.TickCount)
             {
+                Console.WriteLine("tick");
                 return cc;
             }
 
@@ -1606,7 +1606,7 @@ namespace MasterActivator
                 }
             }
 
-            checkCCTick = Environment.TickCount + Config.Item("ccDelay").GetValue<Slider>().Value;
+            checkCCTick = Utils.TickCount + Config.Item("ccDelay").GetValue<Slider>().Value;
             return cc;
         }
     }
