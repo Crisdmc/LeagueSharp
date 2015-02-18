@@ -436,7 +436,11 @@ namespace MasterActivator
         {
             try
             {
-
+                if (Config.Item("drawStatus").IsActive())
+                {
+                    Drawing.DrawText(Drawing.Width - 120, 80, Config.Item("enabled").IsActive() ? System.Drawing.Color.Green : System.Drawing.Color.Red, "MActivator");
+                }
+                
                 ksDrawRange(choR);
                 ksDrawRange(nunuQ);
                 ksDrawRange(amumuE);
@@ -1477,8 +1481,8 @@ namespace MasterActivator
             TargetSelector.AddToMenu(Config.SubMenu("targetSelector"));
 
             Config.AddItem(new MenuItem("predict", "Predict DMG")).SetValue(true);
-            //Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(true);
-            //38
+
+            Config.AddItem(new MenuItem("drawStatus", "Draw Status")).SetValue(true);
             Config.AddItem(new MenuItem("enabled", "Enabled")).SetValue(new KeyBind('L', KeyBindType.Toggle, true));
 
             Config.AddToMainMenu();
