@@ -106,13 +106,17 @@ namespace MasterActivator
         MItem vladW = new MItem("VladimirSanguinePool", "Vlad. Pool", "vladW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W); // nigga VladImir W
         MItem wukongW = new MItem("MonkeyKingDecoy", "Wu. Decoy", "wuW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem akaliW = new MItem("AkaliSmokeBomb", "Akali Smoke", "akaliW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        //jaxcounterstrike E Jax 20%?
-        //judicatorintervention R Kayle 30%?
+        MItem kayleR = new MItem("JudicatorIntervention", "Intervention", "kayleR", 0, ItemTypeId.TeamAbility, 900, SpellSlot.R);
+        //MItem rivenE = new MItem("RivenFeint", "Riven Feint", "rivenE", 0, ItemTypeId.Ability, 325, SpellSlot.E);
+        MItem nidaE = new MItem("PrimalSurge", "Primal Surge", "nidaE", 0, ItemTypeId.TeamAbility, 600, SpellSlot.E);
+        MItem fizzE = new MItem("FizzJump", "Fizz Jump", "fizzE", 0, ItemTypeId.Ability, 400, SpellSlot.E);
+        MItem sionW = new MItem("DeathScaress", "Soul Furnace", "sionW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
+        MItem sonaW = new MItem("SonaAriaOfPerseverance", "Aria of Perseverance	", "sonaW", 0, ItemTypeId.TeamAbility, 1000, SpellSlot.W);
+        //  sona W range 1000
         // lee W, blindmonkwone(targ), blindmonkwtwo(self-l-steal/mv) 700 range?
         //lissandrar Liss R 20%?
         //obduracy malp W
         //defensiveballcurl rammus W
-        // rivenfeint rivelina E
         //rumbleshield rumble W crap 
         //shenfeint W
         // skarnerexoskeleton skarner W
@@ -124,8 +128,6 @@ namespace MasterActivator
         //gp heal
         //alistouro heal
         // master meditate
-        //primalsurge nida E range 600
-        // sonaariaofperseverance sona W range 1000
         // soraka wish R global - astralblessing W 550 !self
         // imbue taric Q
         #endregion
@@ -620,7 +622,7 @@ namespace MasterActivator
         }
 
         // And about ignore HP% check?
-        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown, AttackId attackId = AttackId.Unknown)
+        private void justUseAgainstCheck(MItem item, double incDmg, Obj_AI_Base attacker = null, Obj_AI_Base attacked = null, SpellSlot attackerSpellSlot = SpellSlot.Unknown, AttackId attackId = AttackId.Unknown, bool self = false)
         {
             // Se tem o spell
             if (Utility.GetSpellSlot(_player, item.name) != SpellSlot.Unknown)
@@ -660,11 +662,11 @@ namespace MasterActivator
 
                         if (item.type == ItemTypeId.Ability && attacked.IsMe)
                         {
-                            checkAndUse(item, "", incDmg, false, ignoreHP);
+                            checkAndUse(item, "", incDmg, self, ignoreHP);
                         }
                         else if (item.type == ItemTypeId.TeamAbility || item.type == ItemTypeId.TeamAbilityAOE)
                         {
-                            teamCheckAndUse(item, "", false, incDmg, attacked, attacker, ignoreHP);
+                            teamCheckAndUse(item, "", self, incDmg, attacked, attacker, ignoreHP);
                         }
                     }
                 }
@@ -701,6 +703,11 @@ namespace MasterActivator
             justUseAgainstCheck(annieE, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(vladW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(wukongW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(kayleR, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(nidaE, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(fizzE, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(sionW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(sonaW, incDmg, attacker, attacked, attackerSpellSlot, attackId, true);
         }
 
         private bool checkBuff(String name)
@@ -1429,6 +1436,11 @@ namespace MasterActivator
             createMenuItem(annieE, "autoshield", 60, false, 0);
             createMenuItem(vladW, "autoshield", 45);
             createMenuItem(wukongW, "autoshield", 40, false, 0);
+            createMenuItem(kayleR, "autoshield", 30);
+            createMenuItem(nidaE, "autoshield", 40);
+            createMenuItem(fizzE, "autoshield", 40);
+            createMenuItem(sionW, "autoshield", 40, false, 20);
+            createMenuItem(sonaW, "autoshield", 40, false, 25);
 
             createMenuItem(choR, "autoshield");
             createMenuItem(nunuQ, "autoshield");
