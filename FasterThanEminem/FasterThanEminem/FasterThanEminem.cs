@@ -49,9 +49,9 @@ namespace FasterThanEminem
                     foreach (Obj_AI_Hero hero in heros)
                     {
                         int diff = champMovs[hero.NetworkId].newMovs - champMovs[hero.NetworkId].oldMovs;
-                        if ( diff > 50 )
+                        if ( diff > 40 )
                         {
-                            Game.PrintChat("Champ-><font color='#1e90ff'>" + hero.SkinName + "</font>   +Movs->" + diff);
+                            Game.PrintChat("Champ-><font color='#1e90ff'>" + hero.SkinName + "</font>   +Movs-><font color='#1e90ff'>" + diff + "</font>");
                         }
                         champMovs[hero.NetworkId].oldMovs = champMovs[hero.NetworkId].newMovs;
                     }
