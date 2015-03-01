@@ -72,11 +72,11 @@ namespace MasterActivator
         MItem cleanse = new MItem("Cleanse", "Cleanse", "SummonerBoost", 0, ItemTypeId.PurifierSpell);
         MItem clarity = new MItem("Clarity", "Clarity", "SummonerMana", 0, ItemTypeId.ManaRegeneratorSpell, 600);
         MItem ignite = new MItem("Ignite", "Ignite", "SummonerDot", 0, ItemTypeId.OffensiveSpell, 600);
-        MItem smite = new MItem("Smite", "Smite", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 750);
-        MItem smiteAOE = new MItem("SmiteAOE", "smite AOE", "itemsmiteaoe", 0, ItemTypeId.OffensiveSpell, 750);
-        MItem smiteDuel = new MItem("SmiteDuel", "smite Duel", "s5_summonersmiteduel", 0, ItemTypeId.OffensiveSpell, 750);
-        MItem smiteQuick = new MItem("SmiteQuick", "smite Quick", "s5_summonersmitequick", 0, ItemTypeId.OffensiveSpell, 750);
-        MItem smiteGanker = new MItem("SmiteGanker", "smite Ganker", "s5_summonersmiteplayerganker", 0, ItemTypeId.OffensiveSpell, 750);
+        MItem smite = new MItem("Smite", "Smite", "SummonerSmite", 0, ItemTypeId.OffensiveSpell, 500);
+        MItem smiteAOE = new MItem("SmiteAOE", "smite AOE", "itemsmiteaoe", 0, ItemTypeId.OffensiveSpell, 500);
+        MItem smiteDuel = new MItem("SmiteDuel", "smite Duel", "s5_summonersmiteduel", 0, ItemTypeId.OffensiveSpell, 500);
+        MItem smiteQuick = new MItem("SmiteQuick", "smite Quick", "s5_summonersmitequick", 0, ItemTypeId.OffensiveSpell, 500);
+        MItem smiteGanker = new MItem("SmiteGanker", "smite Ganker", "s5_summonersmiteplayerganker", 0, ItemTypeId.OffensiveSpell, 500);
         #endregion
 
         #region Spells
@@ -481,6 +481,12 @@ namespace MasterActivator
                                         var damagePercent = smiteDmg / minion.MaxHealth;
                                         float hpXPos = hpBarPos.X + (jMinion.width * damagePercent);
                                         Drawing.DrawLine(hpXPos, hpBarPos.Y, hpXPos, hpBarPos.Y + 5, 2, smiteDmg >= minion.Health ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                                        
+                                        // Draw camp
+                                        if (Config.Item("dCamp").IsActive())
+                                        {
+                                            Drawing.DrawCircle(minion.Position, minion.BoundingRadius + smite.range + _player.BoundingRadius, _player.Distance(minion, false) <= (500 + minion.BoundingRadius + _player.BoundingRadius) ? System.Drawing.Color.Lime : System.Drawing.Color.WhiteSmoke);
+                                        }
 
                                         // Draw for abilitys
                                         ksDrawDmg(choR, minion, jMinion, hpBarPos, hpXPos);
@@ -1077,26 +1083,30 @@ namespace MasterActivator
                                                 {
                                                     jungleMinions = new string[] { blue.name, red.name, razor.name, baron.name, krug.name, wolf.name, dragon.name, gromp.name, crab.name };
                                                 }
+                                                
+                                                float searchRange = item == choR ? getChoUltRange() : (item.range + 300); // Get minions in 800 range
 
-                                                float range = item == choR ? getChoUltRange() : item.range;
-
-                                                var minions = MinionManager.GetMinions(_player.Position, range, MinionTypes.All, MinionTeam.Neutral);
+                                                var minions = MinionManager.GetMinions(_player.Position, searchRange, MinionTypes.All, MinionTeam.Neutral);
                                                 if (minions.Count() > 0)
                                                 {
                                                     int smiteDmg = getSmiteDmg();
 
                                                     foreach (Obj_AI_Base minion in minions)
                                                     {
-                                                        int dmg = item.type == ItemTypeId.OffensiveSpell ? smiteDmg : (int)Damage.GetSpellDamage(_player, minion, spellSlot);
-                                                        if (minion.Health <= dmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
+                                                        float range = item == choR ? getChoUltRange() : item.range + minion.BoundingRadius + _player.BoundingRadius;
+                                                        if (_player.Distance(minion, false) <= range)
                                                         {
-                                                            if (item.type == ItemTypeId.KSAbilityAOE)
+                                                            int dmg = item.type == ItemTypeId.OffensiveSpell ? smiteDmg : (int)Damage.GetSpellDamage(_player, minion, spellSlot);
+                                                            if (minion.Health <= dmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
                                                             {
-                                                                _player.Spellbook.CastSpell(spellSlot, minion.Position);
-                                                            }
-                                                            else
-                                                            {
-                                                                _player.Spellbook.CastSpell(spellSlot, self ? null : minion);
+                                                                if (item.type == ItemTypeId.KSAbilityAOE)
+                                                                {
+                                                                    _player.Spellbook.CastSpell(spellSlot, minion.Position);
+                                                                }
+                                                                else
+                                                                {
+                                                                    _player.Spellbook.CastSpell(spellSlot, self ? null : minion);
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -1382,6 +1392,7 @@ namespace MasterActivator
 
             var menuSmiteDraw = new Menu("Draw", "smiteDraw");
             menuSmiteDraw.AddItem(new MenuItem("dSmite", "Enabled")).SetValue(true);
+            menuSmiteDraw.AddItem(new MenuItem("dCamp", "Camp")).SetValue(true);
             menuSmiteDraw.AddItem(new MenuItem("justAS", "Just Selected Mobs")).SetValue(false);
             Config.SubMenu("smiteCfg").AddSubMenu(menuSmiteDraw);
 
