@@ -272,8 +272,8 @@ namespace MasterActivator
                                     SpellDataInst spellA = attacker.Spellbook.Spells.FirstOrDefault(hero => args.SData.Name.Contains(hero.SData.Name));
                                     spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
 
-                                    float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
-                                    float range2 = args.SData.CastRange.FirstOrDefault();
+                                    float range1 = args.SData.CastRangeDisplayOverride;
+                                    float range2 = args.SData.CastRange;
                                     float range = range1 > 1 ? range1 : range2;
 
                                     log.WriteLine("Self-Attacker->" + attackerHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range + "   Slot->" + spellSlot);
@@ -371,8 +371,8 @@ namespace MasterActivator
                         {
                             if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.IsEnemy)
                             {
-                                float range1 = args.SData.CastRangeDisplayOverride.FirstOrDefault();
-                                float range2 = args.SData.CastRange.FirstOrDefault();
+                                float range1 = args.SData.CastRangeDisplayOverride;
+                                float range2 = args.SData.CastRange;
                                 float range = range1 > 1 ? range1 : range2;
 
                                 // CHECK AOE ???
