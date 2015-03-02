@@ -17,7 +17,7 @@ namespace MasterActivator
         private Menu Config;
         private Obj_AI_Hero _player;
         private Obj_AI_Hero target;
-        private StreamWriter log;
+        //private StreamWriter log;
         private int checkCCTick;
 
         #region Items
@@ -98,6 +98,7 @@ namespace MasterActivator
         MItem nocturneShield = new MItem("NocturneShroudOfDarkness", "Noct. Shield", "nShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem yasuoShield = new MItem("YasuoWMovingWall", "Yasuo Shield", "yShield", 0, ItemTypeId.TeamAbilityAOE, 400, SpellSlot.W);
         MItem fioraRiposte = new MItem("FioraRiposte", "Fiora Riposte", "fRiposte", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);// S2 fiora
+        //MItem fioraDance = new MItem("FioraDance", "Fiora Dance", "fDance", 0, ItemTypeId.Ability, 400, SpellSlot.R); // Must cast on enemy FioraDanceStrike
         MItem tryndaUlt = new MItem("UndyIngrage", "Trynda Ult.", "tIngrage", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);// Trynda mia ult
         MItem nasusUlt = new MItem("NasusR", "Nasus Ult.", "nasusR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);
         MItem renekUlt = new MItem("RenektonReignOfTheTyrant", "Renek Ult.", "renekR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R); //Renek nek
@@ -112,9 +113,9 @@ namespace MasterActivator
         MItem fizzE = new MItem("FizzJump", "Fizz Jump", "fizzE", 0, ItemTypeId.Ability, 400, SpellSlot.E);
         MItem sionW = new MItem("DeathScaress", "Soul Furnace", "sionW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem sonaW = new MItem("SonaAriaOfPerseverance", "Aria of Perseverance	", "sonaW", 0, ItemTypeId.TeamAbility, 1000, SpellSlot.W);
+        MItem lissR = new MItem("LissandraR", "Lissandra R", "lissR", 0, ItemTypeId.Ability, 550, SpellSlot.R);
         //  sona W range 1000
         // lee W, blindmonkwone(targ), blindmonkwtwo(self-l-steal/mv) 700 range?
-        //lissandrar Liss R 20%?
         //obduracy malp W
         //defensiveballcurl rammus W
         //rumbleshield rumble W crap 
@@ -178,7 +179,7 @@ namespace MasterActivator
                 Obj_AI_Base.OnProcessSpellCast += onProcessSpellCast;
                 Game.OnGameEnd += Game_OnGameEnd;
 
-                String dTime = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
+                /*String dTime = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
                 if (!File.Exists("C:/Windows/temp/MActivatorLOG" + dTime + ".log"))
                 {
                     log = new StreamWriter("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
@@ -186,7 +187,7 @@ namespace MasterActivator
                 else
                 {
                     log = File.AppendText("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
-                }
+                }*/
             }
             catch
             {
@@ -196,7 +197,7 @@ namespace MasterActivator
 
         private void Game_OnGameEnd(GameEndEventArgs args)
         {
-            log.Close();
+            //log.Close();
         }
 
         private void onProcessSpellCast(Obj_AI_Base attacker, GameObjectProcessSpellCastEventArgs args)
@@ -264,7 +265,7 @@ namespace MasterActivator
                             {
                                 #region SelfTarget
                                 //&& attacker.IsEnemy
-                                if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
+                                /*if (attacker.Type == GameObjectType.obj_AI_Hero && attacker.NetworkId == spellTarget.NetworkId)
                                 {
                                     Obj_AI_Hero attackerHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == attacker.NetworkId);
                                     Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
@@ -289,7 +290,7 @@ namespace MasterActivator
                                         }
                                     }
                                     //Console.WriteLine("Target Name2-> " + spellTarget.Name + "  Spell->" + args.SData.Name + "   SpellTT->" + args.SData.SpellTotalTime);
-                                }
+                                }*/
                                 #endregion
 
                                 #region EnemyTarget
@@ -311,7 +312,7 @@ namespace MasterActivator
 
                                     SpellSlot igniteSlot = Utility.GetSpellSlot(attackerHero, ignite.menuVariable);
 
-                                    log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
+                                    //log.WriteLine("Attacker->" + attackerHero.BaseSkinName + "   Target->" + attackedHero.BaseSkinName + "    Spell->" + args.SData.Name + "    Slot->" + spellSlot);
                                     if (igniteSlot != SpellSlot.Unknown && spellSlot == igniteSlot)
                                     {
                                         incDmg = Damage.GetSummonerSpellDamage(attackerHero, attackedHero, Damage.SummonerSpell.Ignite);
@@ -336,11 +337,6 @@ namespace MasterActivator
                                         else if (args.SData.Name == hydra.name)
                                         {
                                             incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Hydra);
-                                        }
-                                        // should not appear, because randuins is self target cast
-                                        if (args.SData.Name == randuin.name)
-                                        {
-                                            log.WriteLine("T-Randuin-> " + attackedHero.BaseSkinName + " X " + attackerHero.BaseSkinName);
                                         }
                                     }
                                     else if (spellSlot == SpellSlot.Unknown)
@@ -376,7 +372,7 @@ namespace MasterActivator
                                 float range = range1 > 1 ? range1 : range2;
 
                                 // CHECK AOE ???
-                                log.WriteLine("Shot-Attacker->" + attacker.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
+                                //log.WriteLine("Shot-Attacker->" + attacker.BaseSkinName + "    Spell->" + args.SData.Name + "    Range->" + range);
 
                                 //drawPos2 = args.Start.Extend(args.End, range);
                                 List<Obj_AI_Hero> alliesInRange = Utility.GetAlliesInRange(args.Start, range);
@@ -397,7 +393,7 @@ namespace MasterActivator
                                                 spellSlot = spellA == null ? SpellSlot.Unknown : spellA.Slot;
 
                                                 // TEMP log
-                                                log.WriteLine("Shot-Target->" + hero.BaseSkinName + "    Slot->" + spellSlot);
+                                                //log.WriteLine("Shot-Target->" + hero.BaseSkinName + "    Slot->" + spellSlot);
 
                                                 //Calc dmg and check deffs
                                                 incDmg = Damage.GetSpellDamage(attackerHero, hero, spellSlot);
@@ -428,8 +424,8 @@ namespace MasterActivator
             }
             catch (Exception e)
             {
-                log.WriteLine("Problem with MasterActivator(Receiving dmg sys.).");
-                log.WriteLine(e);
+                Console.WriteLine("Problem with MasterActivator(Receiving dmg sys.).");
+                //log.WriteLine(e);
                 Console.WriteLine(e);
             }
         }
@@ -703,6 +699,7 @@ namespace MasterActivator
             justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(lissR, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(leonaW, incDmg, attacker, attacked, attackerSpellSlot, attackId);
@@ -904,7 +901,7 @@ namespace MasterActivator
                         }
                         catch (Exception e)
                         {
-                            log.WriteLine("Problem with MasterActivator(AutoShieldTeam).");
+                            Console.WriteLine("Problem with MasterActivator(AutoShieldTeam).");
                             Console.WriteLine(e);
                         }
                     }
@@ -990,6 +987,7 @@ namespace MasterActivator
                         int actualHeroHpPercent = (int)(((_player.Health - incDamage) / _player.MaxHealth) * 100); //after dmg not Actual ^^
                         int actualHeroManaPercent = (int)(_player.MaxMana > 0 ? ((_player.Mana / _player.MaxMana) * 100) : 0);
 
+                        #region DeffensiveSpell ManaRegeneratorSpell PurifierSpell OffensiveSpell KSAbility KSAbilityAOE
                         if (item.type == ItemTypeId.DeffensiveSpell || item.type == ItemTypeId.ManaRegeneratorSpell || item.type == ItemTypeId.PurifierSpell || item.type == ItemTypeId.OffensiveSpell || item.type == ItemTypeId.KSAbility || item.type == ItemTypeId.KSAbilityAOE)
                         {
                             var spellSlot = Utility.GetSpellSlot(_player, item.menuVariable);
@@ -1121,6 +1119,7 @@ namespace MasterActivator
                                 }
                             }
                         }
+                        #endregion
                         else if (item.type == ItemTypeId.Ability || item.type == ItemTypeId.TeamAbility)
                         {
                             try
@@ -1143,7 +1142,7 @@ namespace MasterActivator
                             }
                             catch (Exception e)
                             {
-                                log.WriteLine("Problem with MasterActivator(AutoShield).");
+                                Console.WriteLine("Problem with MasterActivator(AutoShield).");
                                 Console.WriteLine(e);
                             }
                         }
@@ -1441,6 +1440,7 @@ namespace MasterActivator
             createMenuItem(yasuoShield, "autoshield", 90);
             createMenuItem(fioraRiposte, "autoshield", 90, false, 0);
             createMenuItem(tryndaUlt, "autoshield", 30);
+            createMenuItem(lissR, "autoshield", 20);
             createMenuItem(nasusUlt, "autoshield", 30, false, 0);
             createMenuItem(renekUlt, "autoshield", 30);
             createMenuItem(leonaW, "autoshield", 60, false, 0);
