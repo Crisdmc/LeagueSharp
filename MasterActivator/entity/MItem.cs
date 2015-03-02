@@ -17,8 +17,9 @@ namespace MasterActivator.entity
         public float range { get; set; }
         public ItemTypeId type { get; set; }
         public SpellSlot abilitySlot { get; set; }
+        public SpellType spellType { get; set; }
 
-        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0, SpellSlot abilitySlot = SpellSlot.Unknown)
+        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0, SpellSlot abilitySlot = SpellSlot.Unknown, SpellType spellType = SpellType.Target)
         {
             this.name = name;
             this.menuVariable = menuVariable;
@@ -27,6 +28,7 @@ namespace MasterActivator.entity
             this.range = range;
             this.type = type;
             this.abilitySlot = abilitySlot;
+            this.spellType = spellType;
         }
     }
 }
