@@ -19,7 +19,7 @@ namespace MasterActivator.entity
         public SpellSlot abilitySlot { get; set; }
         public SpellType spellType { get; set; }
 
-        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0, SpellSlot abilitySlot = SpellSlot.Unknown, SpellType spellType = SpellType.Target)
+        public MItem(String name, String menuName, String menuVariable, int id, ItemTypeId type, float range = 0, SpellSlot abilitySlot = SpellSlot.Unknown, SpellType spellType = SpellType.TargetAll)
         {
             this.name = name;
             this.menuVariable = menuVariable;

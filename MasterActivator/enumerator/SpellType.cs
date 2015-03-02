@@ -4,8 +4,12 @@ namespace MasterActivator.enumerator
 {
     public enum SpellType
     {
-        SkillShot = 0,
-        Target = 1,
-        Self = 2
+        SkillShotCircle = 0,
+        SkillShotCone = 1,
+        SkillShotLine = 2,
+        TargetAll = 3,
+        TargetEnemy = 4,
+        TargetTeam = 5,
+        Self = 6
     }
 }

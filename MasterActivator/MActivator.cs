@@ -98,8 +98,8 @@ namespace MasterActivator
         MItem nocturneShield = new MItem("NocturneShroudOfDarkness", "Noct. Shield", "nShield", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem yasuoShield = new MItem("YasuoWMovingWall", "Yasuo Shield", "yShield", 0, ItemTypeId.TeamAbility, 400, SpellSlot.W);
         MItem fioraRiposte = new MItem("FioraRiposte", "Fiora Riposte", "fRiposte", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);// S2 fiora
-        //MItem fioraDance = new MItem("FioraDance", "Fiora Dance", "fDance", 0, ItemTypeId.Ability, 400, SpellSlot.R); // FioraDanceStrike
-        //MItem masterQ = new MItem("AlphaStrike", "Master Q", "masterQ", 0, ItemTypeId.Ability, 600, SpellSlot.Q);
+        MItem fioraDance = new MItem("FioraDance", "Fiora Dance", "fDance", 0, ItemTypeId.Ability, 400, SpellSlot.R, SpellType.TargetEnemy); // FioraDanceStrike
+        MItem masterQ = new MItem("AlphaStrike", "Master Q", "masterQ", 0, ItemTypeId.Ability, 600, SpellSlot.Q, SpellType.TargetEnemy);
         MItem tryndaUlt = new MItem("UndyIngrage", "Trynda Ult.", "tIngrage", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);// Trynda mia ult
         MItem nasusUlt = new MItem("NasusR", "Nasus Ult.", "nasusR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R);
         MItem renekUlt = new MItem("RenektonReignOfTheTyrant", "Renek Ult.", "renekR", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.R); //Renek nek
@@ -114,7 +114,7 @@ namespace MasterActivator
         MItem fizzE = new MItem("FizzJump", "Fizz Jump", "fizzE", 0, ItemTypeId.Ability, 400, SpellSlot.E);
         MItem sionW = new MItem("DeathScaress", "Soul Furnace", "sionW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
         MItem sonaW = new MItem("SonaAriaOfPerseverance", "Aria of Perseverance	", "sonaW", 0, ItemTypeId.TeamAbility, 1000, SpellSlot.W, SpellType.Self);
-        MItem lissR = new MItem("LissandraR", "Lissandra R", "lissR", 0, ItemTypeId.Ability, 550, SpellSlot.R);
+        MItem lissR = new MItem("LissandraR", "Liss R(Self)", "lissR", 0, ItemTypeId.Ability, 550, SpellSlot.R);
         //  sona W range 1000
         // lee W, blindmonkwone(targ), blindmonkwtwo(self-l-steal/mv) 700 range?
         //obduracy malp W
@@ -138,8 +138,8 @@ namespace MasterActivator
         MItem nunuQ = new MItem("Consume", "Consume", "Consume", 0, ItemTypeId.KSAbility, 125, SpellSlot.Q);
         MItem amumuE = new MItem("Tantrum", "Tantrum", "Tantrum", 0, ItemTypeId.KSAbility, 350, SpellSlot.E);
         //nasusq
-        MItem gragasR = new MItem("gragasr", "Explosive Cask", "gragasr", 0, ItemTypeId.KSAbility, 1150, SpellSlot.R, SpellType.SkillShot);
-        MItem luxR = new MItem("luxmalicecannon", "Final Spark", "luxmalicecannon", 0, ItemTypeId.KSAbility, 3340, SpellSlot.R, SpellType.SkillShot); 
+        MItem gragasR = new MItem("gragasr", "Explosive Cask", "gragasr", 0, ItemTypeId.KSAbility, 1150, SpellSlot.R, SpellType.SkillShotCircle);
+        MItem luxR = new MItem("luxmalicecannon", "Final Spark", "luxmalicecannon", 0, ItemTypeId.KSAbility, 3340, SpellSlot.R, SpellType.SkillShotLine); 
         #endregion
         #endregion
 
@@ -700,6 +700,8 @@ namespace MasterActivator
             justUseAgainstCheck(yasuoShield, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(fioraDance, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(masterQ, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(lissR, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
@@ -878,7 +880,7 @@ namespace MasterActivator
                                         int playerManaPercent = (int)((_player.Mana / _player.MaxMana) * 100);
                                         if (playerManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
                                         {
-                                            if (item.type == ItemTypeId.TeamAbility && item.spellType != SpellType.SkillShot)
+                                            if (item.type == ItemTypeId.TeamAbility && item.spellType != SpellType.SkillShotCircle && item.spellType != SpellType.SkillShotCone && item.spellType != SpellType.SkillShotLine)
                                             {
                                                 _player.Spellbook.CastSpell(item.abilitySlot, attacked);
                                             }
@@ -1100,7 +1102,7 @@ namespace MasterActivator
                                                             int dmg = item.type == ItemTypeId.OffensiveSpell ? smiteDmg : (int)Damage.GetSpellDamage(_player, minion, spellSlot);
                                                             if (minion.Health <= dmg && jungleMinions.Any(name => minion.Name.StartsWith(name) && ((minion.Name.Length - name.Length) <= 6) && Config.Item(name).GetValue<bool>()))
                                                             {
-                                                                if (item.spellType == SpellType.SkillShot)
+                                                                if (item.spellType == SpellType.SkillShotLine || item.spellType == SpellType.SkillShotCone || item.spellType == SpellType.SkillShotCircle)
                                                                 {
                                                                     _player.Spellbook.CastSpell(spellSlot, minion.Position);
                                                                 }
@@ -1138,7 +1140,17 @@ namespace MasterActivator
 
                                         if (actualHeroManaPercent >= manaPercent && actualHeroHpPercent <= usePercent)
                                         {
-                                            _player.Spellbook.CastSpell(item.abilitySlot, _player);
+                                            if (item.spellType == SpellType.TargetEnemy)
+                                            {
+                                                if (checkTarget(item.range))
+                                                {
+                                                    _player.Spellbook.CastSpell(item.abilitySlot, target);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                _player.Spellbook.CastSpell(item.abilitySlot, _player);
+                                            }
                                         }
                                     }
                                 }
@@ -1443,6 +1455,8 @@ namespace MasterActivator
             createMenuItem(yasuoShield, "autoshield", 90);
             createMenuItem(fioraRiposte, "autoshield", 90, false, 0);
             createMenuItem(tryndaUlt, "autoshield", 30);
+            createMenuItem(fioraDance, "autoshield", 30);
+            createMenuItem(masterQ, "autoshield", 45);
             createMenuItem(lissR, "autoshield", 20);
             createMenuItem(nasusUlt, "autoshield", 30, false, 0);
             createMenuItem(renekUlt, "autoshield", 30);
