@@ -176,9 +176,9 @@ namespace MasterActivator
                 createMenu();
 
                 LeagueSharp.Drawing.OnDraw += onDraw;
-                Game.OnGameUpdate += onGameUpdate;
+                Game.OnUpdate += onGameUpdate;
                 Obj_AI_Base.OnProcessSpellCast += onProcessSpellCast;
-                Game.OnGameEnd += Game_OnGameEnd;
+                Game.OnEnd += Game_OnGameEnd;
 
                 /*String dTime = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
                 if (!File.Exists("C:/Windows/temp/MActivatorLOG" + dTime + ".log"))
