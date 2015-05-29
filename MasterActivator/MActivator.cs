@@ -33,6 +33,7 @@ namespace MasterActivator
         MItem hextech = new MItem("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
         MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
         MItem seraph = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
+        MItem seraph2 = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3048, ItemTypeId.Deffensive);
         MItem zhonya = new MItem("ZhonyasHourglass", "Zhonya's", "zhonya", 3157, ItemTypeId.Deffensive);
         MItem wooglet = new MItem("Wooglet's Witchcap", "Wooglet's", "wooglet", 3090, ItemTypeId.Deffensive);
         MItem randuin = new MItem("RanduinsOmen", "Randuin's", "randuin", 3143, ItemTypeId.OffensiveAOE, 500, SpellSlot.Unknown, SpellType.Self);
@@ -534,6 +535,7 @@ namespace MasterActivator
                         checkAndUse(wooglet);
                         checkAndUse(barrier);
                         checkAndUse(seraph);
+                        checkAndUse(seraph2);
                         teamCheckAndUse(solari);
                         teamCheckAndUse(mountain);
                         teamCheckAndUse(mikaelHP);
@@ -621,6 +623,7 @@ namespace MasterActivator
                 checkAndUse(wooglet, "", incDmg);
                 checkAndUse(barrier, "", incDmg);
                 checkAndUse(seraph, "", incDmg);
+                checkAndUse(seraph2, "", incDmg);
             }
         }
 
@@ -1628,7 +1631,7 @@ namespace MasterActivator
 
             if (Config.Item("zedultexecute").GetValue<bool>())
             {
-                if (hero.HasBuff("zedultexecute", false))
+                if (hero.HasBuff("zedultexecute"))
                 {
                     cc = true;
                 }
@@ -1636,7 +1639,7 @@ namespace MasterActivator
 
             if (Config.Item("dispellExhaust").GetValue<bool>())
             {
-                if (hero.HasBuff(exhaust.menuVariable, false))
+                if (hero.HasBuff(exhaust.menuVariable))
                 {
                     cc = true;
                 }
@@ -1644,7 +1647,7 @@ namespace MasterActivator
 
             if (Config.Item("dispellEsNumeroUno").GetValue<bool>())
             {
-                if (hero.HasBuff("MordekaiserCOTGPet", false))
+                if (hero.HasBuff("MordekaiserCOTGPet"))
                 {
                     cc = true;
                 }
