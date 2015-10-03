@@ -653,7 +653,7 @@ namespace MasterActivator
                                 use = Config.Item("tower" + item.menuVariable).GetValue<bool>();
                                 break;
                             case AttackId.Spell:
-                                use = Config.Item(item.menuVariable + attacker.BaseSkinName).GetValue<bool>() && Config.Item(attackerSpellSlot + item.menuVariable + attacker.BaseSkinName).GetValue<bool>();
+                                use = Config.Item(item.menuVariable + attacker.CharData.BaseSkinName).GetValue<bool>() && Config.Item(attackerSpellSlot + item.menuVariable + attacker.CharData.BaseSkinName).GetValue<bool>();
                                 break;
                         }
                     }
@@ -663,7 +663,7 @@ namespace MasterActivator
                         bool ignoreHP = false;
                         if (attackId == AttackId.Spell)
                         {
-                            ignoreHP = Config.Item("ignore" + item.menuVariable + attacker.BaseSkinName).GetValue<bool>();
+                            ignoreHP = Config.Item("ignore" + item.menuVariable + attacker.CharData.BaseSkinName).GetValue<bool>();
                         }
 
                         if (item.type == ItemTypeId.Ability && attacked.IsMe)
@@ -756,13 +756,13 @@ namespace MasterActivator
                     {
                         foreach (Obj_AI_Hero hero in enemyHero)
                         {
-                            var menuUseAgainstHero = new Menu(hero.BaseSkinName, "useAgainst" + hero.BaseSkinName);
-                            menuUseAgainstHero.AddItem(new MenuItem(item.menuVariable + hero.BaseSkinName, "Enabled").SetValue(true));
-                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.Q + item.menuVariable + hero.BaseSkinName, "Q").SetValue(false));
-                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.W + item.menuVariable + hero.BaseSkinName, "W").SetValue(false));
-                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.E + item.menuVariable + hero.BaseSkinName, "E").SetValue(false));
-                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.R + item.menuVariable + hero.BaseSkinName, "R").SetValue(false));
-                            menuUseAgainstHero.AddItem(new MenuItem("ignore" + item.menuVariable + hero.BaseSkinName, "Ignore %HP").SetValue(true));
+                            var menuUseAgainstHero = new Menu(hero.CharData.BaseSkinName, "useAgainst" + hero.CharData.BaseSkinName);
+                            menuUseAgainstHero.AddItem(new MenuItem(item.menuVariable + hero.CharData.BaseSkinName, "Enabled").SetValue(true));
+                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.Q + item.menuVariable + hero.CharData.BaseSkinName, "Q").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.W + item.menuVariable + hero.CharData.BaseSkinName, "W").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.E + item.menuVariable + hero.CharData.BaseSkinName, "E").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem(SpellSlot.R + item.menuVariable + hero.CharData.BaseSkinName, "R").SetValue(false));
+                            menuUseAgainstHero.AddItem(new MenuItem("ignore" + item.menuVariable + hero.CharData.BaseSkinName, "Ignore %HP").SetValue(true));
                             menuUseAgainst.AddSubMenu(menuUseAgainstHero);
                             // Bring all, passives, summoners spells, etc;
                             /*if (hero.Spellbook.Spells.Count() > 0)
@@ -1359,7 +1359,8 @@ namespace MasterActivator
             Config.SubMenu("purifiers").AddItem(new MenuItem("defJustOnCombo", "Just on combo")).SetValue(false);
 
             Config.AddSubMenu(new Menu("Purify", "purify"));
-            Config.SubMenu("purify").AddItem(new MenuItem("ccDelay", "Delay(ms)").SetValue(new Slider(0, 0, 2500)));
+            Config.SubMenu("purify").AddItem(new MenuItem("ccDelay", "Check Delay(ms)").SetValue(new Slider(0, 0, 2500)));
+            Config.SubMenu("purify").AddItem(new MenuItem("minDuration", "Min. Duration(ms)").SetValue(new Slider(750, 0, 2500)));
             Config.SubMenu("purify").AddItem(new MenuItem("blind", "Blind")).SetValue(true);
             Config.SubMenu("purify").AddItem(new MenuItem("charm", "Charm")).SetValue(true);
             Config.SubMenu("purify").AddItem(new MenuItem("fear", "Fear")).SetValue(true);
@@ -1541,94 +1542,75 @@ namespace MasterActivator
                 return cc;
             }
 
+            List<BuffType> purifyTypes = new List<BuffType>();
             if (Config.Item("blind").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Blind))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Blind);
             }
 
             if (Config.Item("charm").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Charm))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Charm);
             }
 
             if (Config.Item("fear").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Fear))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Fear);
             }
 
             if (Config.Item("flee").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Flee))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Flee);
             }
 
             if (Config.Item("snare").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Snare))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Snare);
             }
 
             if (Config.Item("taunt").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Taunt))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Taunt);
             }
 
             if (Config.Item("suppression").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Suppression))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Suppression);
             }
 
             if (Config.Item("stun").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Stun))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Stun);
             }
 
             if (Config.Item("polymorph").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Polymorph))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Polymorph);
             }
 
             if (Config.Item("silence").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.Silence))
-                {
-                    cc = true;
-                }
+                purifyTypes.Add(BuffType.Silence);
             }
 
             if (Config.Item("dehancer").GetValue<bool>())
             {
-                if (hero.HasBuffOfType(BuffType.CombatDehancer))
+                purifyTypes.Add(BuffType.CombatDehancer);
+            }
+
+
+            float minDur = Config.Item("minDuration").GetValue<Slider>().Value;
+
+            BuffInstance[] buffs = hero.Buffs;
+            foreach (BuffInstance buff in buffs)
+            {
+                if (purifyTypes.Contains(buff.Type) && ((buff.EndTime - Game.Time) * 1000) >= minDur)
                 {
                     cc = true;
                 }
             }
 
+            // can create name list too, and check together but.. laziness.
             if (Config.Item("zedultexecute").GetValue<bool>())
             {
                 if (hero.HasBuff("zedultexecute"))
