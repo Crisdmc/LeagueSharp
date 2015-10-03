@@ -30,7 +30,7 @@ namespace MasterYi
         private void onLoad(EventArgs args)
         {
             // Se for o Master Yi
-            if (ObjectManager.Player.BaseSkinName == charName)
+            if (ObjectManager.Player.CharData.BaseSkinName == charName)
             {
                 masterYi = new Master();
                 jg = new Jungle();
@@ -94,7 +94,7 @@ namespace MasterYi
 
                 // attach events
                 Drawing.OnDraw += onDraw;
-                Game.OnGameUpdate += OnGameUpdate;
+                Game.OnUpdate += OnGameUpdate;
                 CustomEvents.Unit.OnLevelUp += onLevelUpEvent;
                 Orbwalking.AfterAttack += afterAttackEvent;
 
