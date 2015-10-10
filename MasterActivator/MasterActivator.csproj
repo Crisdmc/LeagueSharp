@@ -60,6 +60,14 @@
     <Compile Include="entity\MMinion.cs" />
     <Compile Include="enumerator\SpellType.cs" />
     <Compile Include="enumerator\AttackId.cs" />
+    <Compile Include="items\Bilgewater.cs" />
+    <Compile Include="items\Hextech.cs" />
+    <Compile Include="items\Hydra.cs" />
+    <Compile Include="items\IItem.cs" />
+    <Compile Include="items\King.cs" />
+    <Compile Include="items\OffensiveItem.cs" />
+    <Compile Include="items\Tiamat.cs" />
+    <Compile Include="items\Youmuus.cs" />
     <Compile Include="MActivator.cs" />
     <Compile Include="entity\MItem.cs" />
     <Compile Include="enumerator\ItemTypeId.cs" />

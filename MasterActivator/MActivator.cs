@@ -9,6 +9,7 @@ using LeagueSharp.Common;
 using MasterActivator.entity;
 using MasterActivator.enumerator;
 using SharpDX;
+using MasterActivator.items;
 
 namespace MasterActivator
 {
@@ -17,20 +18,19 @@ namespace MasterActivator
         private Menu Config;
         private Obj_AI_Hero _player;
         private Obj_AI_Hero target;
+        private List<int> ownedItems = new List<int>(); 
         //private StreamWriter log;
         private int checkCCTick;
 
         #region Items
         MItem qss = new MItem("Quicksilver Sash", "QSS", "qss", 3140, ItemTypeId.Purifier);
         MItem mercurial = new MItem("ItemMercurial", "Mercurial", "mercurial", 3139, ItemTypeId.Purifier);
-        MItem bilgewater = new MItem("BilgewaterCutlass", "Bilgewater", "bilge", 3144, ItemTypeId.Offensive, 450);
-        MItem king = new MItem("ItemSwordOfFeastAndFamine", "BoRKing", "king", 3153, ItemTypeId.Offensive, 450);
-        MItem youmus = new MItem("YoumusBlade", "Youmuu's", "youmus", 3142, ItemTypeId.Offensive);
-        MItem tiamat = new MItem("ItemTiamatCleave", "Tiamat", "tiamat", 3077, ItemTypeId.Offensive, 400, SpellSlot.Unknown, SpellType.Self);
-        MItem hydra = new MItem("Ravenous Hydra", "Hydra", "hydra", 3074, ItemTypeId.Offensive, 400, SpellSlot.Unknown, SpellType.Self);
-        MItem dfg = new MItem("DeathfireGrasp", "DFG", "dfg", 3128, ItemTypeId.Offensive, 750);
-        MItem divine = new MItem("ItemSoTD", "SoDivine", "divine", 3131, ItemTypeId.Offensive); //Sword of the Divine
-        MItem hextech = new MItem("Hextech Gunblade", "Hextech", "hextech", 3146, ItemTypeId.Offensive, 700);
+        Bilgewater bilgewater = new Bilgewater("Bilgewater");
+        King king = new King("BoRKing");
+        Youmuus youmus = new Youmuus("Youmuu's");
+        Tiamat tiamat = new Tiamat("Tiamat");
+        Hydra hydra = new Hydra("Hydra");
+        Hextech hextech = new Hextech("Hextech");
         MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
         MItem seraph = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
         MItem seraph2 = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3048, ItemTypeId.Deffensive);
@@ -178,22 +178,67 @@ namespace MasterActivator
 
                 LeagueSharp.Drawing.OnDraw += onDraw;
                 Game.OnUpdate += onGameUpdate;
+
+                Obj_AI_Hero.OnPlaceItemInSlot += Obj_AI_Hero_OnPlaceItemInSlot;
+                Obj_AI_Hero.OnRemoveItem += Obj_AI_Hero_OnRemoveItem;
+
                 Obj_AI_Base.OnProcessSpellCast += onProcessSpellCast;
                 Game.OnEnd += Game_OnGameEnd;
 
-                /*String dTime = DateTime.Now.ToString("dd-MM-yyyy_hh-mm-ss");
-                if (!File.Exists("C:/Windows/temp/MActivatorLOG" + dTime + ".log"))
-                {
-                    log = new StreamWriter("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
-                }
-                else
-                {
-                    log = File.AppendText("C:/Windows/temp/MActivatorLOG" + dTime + ".log");
-                }*/
+                itemChanged();
             }
             catch
             {
                 Game.PrintChat("MasterActivator error creating menu!");
+            }
+        }
+
+        private void Obj_AI_Hero_OnRemoveItem(Obj_AI_Base sender, Obj_AI_BaseRemoveItemEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                LeagueSharp.Common.Utility.DelayAction.Add(1000, () => itemChanged());
+            }
+        }
+
+        private void Obj_AI_Hero_OnPlaceItemInSlot(Obj_AI_Base sender, Obj_AI_BasePlaceItemInSlotEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                itemChanged();
+            }
+        }
+
+        private void itemChanged()
+        {
+            addOrRemove(king);
+            addOrRemove(bilgewater);
+            addOrRemove(tiamat);
+            addOrRemove(hydra);
+            addOrRemove(youmus);
+            addOrRemove(hextech);
+        }
+
+        private void addOrRemove(IItem item)
+        {
+           
+            if (!ownedItems.Exists(i => i == item.data.Id))
+            {
+                if (Items.HasItem(item.data.Id))
+                {
+                    Game.OnUpdate += item.onGameUpdate;
+                    Game.PrintChat("[+]<font color='#3BB9FF'> MasterActivator - </font>" + item.data.Name);
+                    ownedItems.Add(item.data.Id);
+                }
+            }
+            else
+            {
+                if (!Items.HasItem(item.data.Id))
+                {
+                    Game.OnUpdate -= item.onGameUpdate;
+                    Game.PrintChat("[-]<font color='#3BB9FF'> MasterActivator - </font>" + item.data.Name);
+                    ownedItems.Remove(item.data.Id);
+                }
             }
         }
 
@@ -323,20 +368,16 @@ namespace MasterActivator
 
                                     else if (spellSlot == SpellSlot.Item1 || spellSlot == SpellSlot.Item2 || spellSlot == SpellSlot.Item3 || spellSlot == SpellSlot.Item4 || spellSlot == SpellSlot.Item5 || spellSlot == SpellSlot.Item6)
                                     {
-                                        if (args.SData.Name == king.name)
+                                        if (args.SData.Name == king.data.Name)
                                         {
                                             incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Botrk);
                                             attackId = AttackId.King;
                                         }
-                                        else if (args.SData.Name == bilgewater.name)
+                                        else if (args.SData.Name == bilgewater.data.Name)
                                         {
                                             incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Bilgewater);
                                         }
-                                        else if (args.SData.Name == dfg.name)
-                                        {
-                                            incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Dfg);
-                                        }
-                                        else if (args.SData.Name == hydra.name)
+                                        else if (args.SData.Name == hydra.data.Name)
                                         {
                                             incDmg = Damage.GetItemDamage(attackerHero, attackedHero, Damage.DamageItems.Hydra);
                                         }
@@ -417,7 +458,6 @@ namespace MasterActivator
                             if (spellTarget.Team == _player.Team)
                             {
                                 Obj_AI_Hero attackedHero = ObjectManager.Get<Obj_AI_Hero>().First(hero => hero.NetworkId == spellTarget.NetworkId);
-
                                 callDeff(attacker, attackedHero, incDmg, spellSlot, attackId);
                             }
                         }
@@ -569,14 +609,6 @@ namespace MasterActivator
         private void combo()
         {
             checkAndUse(ignite);
-            checkAndUse(youmus);
-            checkAndUse(bilgewater);
-            checkAndUse(king);
-            checkAndUse(tiamat);
-            checkAndUse(hydra);
-            checkAndUse(dfg);
-            checkAndUse(divine);
-            checkAndUse(hextech);
             checkAndUse(muramana);
             checkAndUse(frost);
             checkAndUse(randuin);
@@ -704,7 +736,8 @@ namespace MasterActivator
             justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(fioraDance, incDmg, attacker, attacked, attackerSpellSlot, attackId);
-            justUseAgainstCheck(masterQ, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            //fix-me
+            //justUseAgainstCheck(masterQ, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(lissR, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
@@ -726,6 +759,15 @@ namespace MasterActivator
                                select buff;
 
             return searchedBuff.Count() <= 0 ? false : true;
+        }
+
+        private void createNewMenuItem(IItem item, string parent, int defaultValue, bool mana = false, int minManaPct = 0)
+        {
+            var menu = new Menu(item.menuName, "menu" + item.data.Id);
+            menu.AddItem(new MenuItem(item.data.Id.ToString(), "Enable").SetValue(true));
+            menu.AddItem(new MenuItem(item.data.Id + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
+            
+            Config.SubMenu(parent).AddSubMenu(menu);
         }
 
         private void createMenuItem(MItem item, String parent, int defaultValue = 0, bool mana = false, int minManaPct = 0)
@@ -1417,14 +1459,13 @@ namespace MasterActivator
             Config.AddSubMenu(new Menu("Offensive", "offensive"));
             createMenuItem(ignite, "offensive");
             Config.SubMenu("offensive").SubMenu("menu" + ignite.menuVariable).AddItem(new MenuItem("overIgnite", "Over Ignite")).SetValue(false);
-            createMenuItem(youmus, "offensive", 100);
-            createMenuItem(bilgewater, "offensive", 100);
-            createMenuItem(king, "offensive", 100);
-            createMenuItem(tiamat, "offensive", 100);
-            createMenuItem(hydra, "offensive", 100);
-            createMenuItem(dfg, "offensive", 100);
-            createMenuItem(divine, "offensive", 80);
-            createMenuItem(hextech, "offensive", 80);
+            
+            createNewMenuItem(youmus, "offensive", 100);
+            createNewMenuItem(king, "offensive", 100);
+            createNewMenuItem(bilgewater, "offensive", 100);
+            createNewMenuItem(tiamat, "offensive", 100);
+            createNewMenuItem(hydra, "offensive", 100);
+            createNewMenuItem(hextech, "offensive", 80);
             createMenuItem(muramana, "offensive", 80);
 
             Config.AddSubMenu(new Menu("Off. AOE", "offAOE"));
@@ -1538,7 +1579,6 @@ namespace MasterActivator
 
             if (checkCCTick > Utils.TickCount)
             {
-                Console.WriteLine("tick");
                 return cc;
             }
 
@@ -1604,7 +1644,7 @@ namespace MasterActivator
             BuffInstance[] buffs = hero.Buffs;
             foreach (BuffInstance buff in buffs)
             {
-                if (purifyTypes.Contains(buff.Type) && ((buff.EndTime - Game.Time) * 1000) >= minDur)
+                if (purifyTypes.Contains(buff.Type) && ((buff.EndTime - Game.Time) * 1000) >= minDur && buff.IsActive)
                 {
                     cc = true;
                 }
