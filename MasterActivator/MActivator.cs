@@ -736,8 +736,7 @@ namespace MasterActivator
             justUseAgainstCheck(fioraRiposte, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(tryndaUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(fioraDance, incDmg, attacker, attacked, attackerSpellSlot, attackId);
-            //fix-me
-            //justUseAgainstCheck(masterQ, incDmg, attacker, attacked, attackerSpellSlot, attackId);
+            justUseAgainstCheck(masterQ, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(lissR, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(nasusUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
             justUseAgainstCheck(renekUlt, incDmg, attacker, attacked, attackerSpellSlot, attackId);
