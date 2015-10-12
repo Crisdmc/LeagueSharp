@@ -31,15 +31,15 @@ namespace MasterActivator
         Tiamat tiamat = new Tiamat("Tiamat");
         Hydra hydra = new Hydra("Hydra");
         Hextech hextech = new Hextech("Hextech");
-        MItem muramana = new MItem("Muramana", "Muramana", "muramana", 3042, ItemTypeId.Buff);
+        Muramana muramana = new Muramana("Muramana");
         MItem seraph = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3040, ItemTypeId.Deffensive);
         MItem seraph2 = new MItem("ItemSeraphsEmbrace", "Seraph's", "seraph", 3048, ItemTypeId.Deffensive);
         MItem zhonya = new MItem("ZhonyasHourglass", "Zhonya's", "zhonya", 3157, ItemTypeId.Deffensive);
         MItem wooglet = new MItem("Wooglet's Witchcap", "Wooglet's", "wooglet", 3090, ItemTypeId.Deffensive);
-        MItem randuin = new MItem("RanduinsOmen", "Randuin's", "randuin", 3143, ItemTypeId.OffensiveAOE, 500, SpellSlot.Unknown, SpellType.Self);
+        Randuin randuin = new Randuin("Randuin's");
         //Item banner = new Item("Banner of Command", "BoCommand", "banner", 3060); // falta range
         MItem mountain = new MItem("Face of the Mountain", "FoMountain", "mountain", 3401, ItemTypeId.Deffensive, 700); // falta range
-        MItem frost = new MItem("Frost Queen's Claim", "Frost Queen's", "frost", 3092, ItemTypeId.OffensiveAOE, 850);
+        Frost frost = new Frost("Frost Queen's");
         MItem solari = new MItem("Locket of the Iron Solari", "Solari", "solari", 3190, ItemTypeId.Deffensive, 600, SpellSlot.Unknown, SpellType.Self);
         MItem mikael = new MItem("Mikael's Crucible", "Mikael's", "mikael", 3222, ItemTypeId.Purifier, 750);
         MItem mikaelHP = new MItem("Mikael's Crucible", "Mikael's", "mikaelHP", 3222, ItemTypeId.Deffensive, 750);
@@ -217,6 +217,9 @@ namespace MasterActivator
             addOrRemove(hydra);
             addOrRemove(youmus);
             addOrRemove(hextech);
+            addOrRemove(muramana);
+            addOrRemove(frost);
+            addOrRemove(randuin);
         }
 
         private void addOrRemove(IItem item)
@@ -609,9 +612,6 @@ namespace MasterActivator
         private void combo()
         {
             checkAndUse(ignite);
-            checkAndUse(muramana);
-            checkAndUse(frost);
-            checkAndUse(randuin);
         }
 
         private void ksDrawRange(MItem item)
@@ -761,11 +761,16 @@ namespace MasterActivator
             return searchedBuff.Count() <= 0 ? false : true;
         }
 
-        private void createNewMenuItem(IItem item, string parent, int defaultValue, bool mana = false, int minManaPct = 0)
+        private void createNewMenuItem(IItem item, string parent, int defaultPercentValue, bool mana = false, int minManaPct = 0, int defaultAOEValue = 0)
         {
             var menu = new Menu(item.menuName, "menu" + item.data.Id);
             menu.AddItem(new MenuItem(item.data.Id.ToString(), "Enable").SetValue(true));
-            menu.AddItem(new MenuItem(item.data.Id + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultValue, 0, 100));
+            menu.AddItem(new MenuItem(item.data.Id + "UseOnPercent", "Use on " + (mana == false ? "%HP" : "%Mana"))).SetValue(new Slider(defaultPercentValue, 0, 100));
+
+            if (defaultAOEValue > 0)
+            {
+                menu.AddItem(new MenuItem(item.data.Id + "UseXUnits", "On X Units")).SetValue(new Slider(defaultAOEValue, 1, 5));
+            }
             
             Config.SubMenu(parent).AddSubMenu(menu);
         }
@@ -1265,23 +1270,6 @@ namespace MasterActivator
                                             }
                                         }
                                     }
-                                    else if (item.type == ItemTypeId.Buff)
-                                    {
-                                        if (checkTarget(item.range))
-                                        {
-                                            if (!checkBuff(item.name))
-                                            {
-                                                useItem(item.id);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (checkBuff(item.name))
-                                            {
-                                                useItem(item.id);
-                                            }
-                                        }
-                                    }
                                     else if (item.type == ItemTypeId.Purifier)
                                     {
                                         if ((Config.Item("defJustOnCombo").GetValue<bool>() && Config.Item("comboModeActive").GetValue<KeyBind>().Active) ||
@@ -1466,11 +1454,11 @@ namespace MasterActivator
             createNewMenuItem(tiamat, "offensive", 100);
             createNewMenuItem(hydra, "offensive", 100);
             createNewMenuItem(hextech, "offensive", 80);
-            createMenuItem(muramana, "offensive", 80);
+            createNewMenuItem(muramana, "offensive", 80);
 
             Config.AddSubMenu(new Menu("Off. AOE", "offAOE"));
-            createMenuItem(frost, "offAOE", 2);
-            createMenuItem(randuin, "offAOE", 1);
+            createNewMenuItem(frost, "offAOE", 100, false, 0, 2);
+            createNewMenuItem(randuin, "offAOE", 100, false, 0, 1);
 
             Config.AddSubMenu(new Menu("Deffensive", "deffensive"));
             createMenuItem(barrier, "deffensive", 35);
